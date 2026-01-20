@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In / Sign Up - MathMaster</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="../css/styles.css" rel="stylesheet">
+    <style>
+        .dark {
+            --bg-primary: #020617;
+            --bg-secondary: #0f172a;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #4f46e5;
+            --accent-hover: #4338ca;
+            --card-bg: rgba(30, 41, 59, 0.5);
+        }
+
+        body.dark {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .math-bg {
+            background-color: var(--bg-primary);
+            background-image:
+                radial-gradient(at 47% 33%, rgba(15, 23, 42, 0.8) 0%, transparent 40%),
+                radial-gradient(at 82% 65%, rgba(30, 41, 59, 0.9) 0%, transparent 55%);
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input {
+            background-color: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .input::placeholder {
+            color: rgba(148, 163, 184, 1);
+        }
+
+        body {
+            padding-bottom: 120px;
+        }
+
+        .floating-dock {
+            position: fixed;
+            left: 50%;
+            right: auto;
+            bottom: 0px;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: calc(100% - 32px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 999px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 40px rgba(2, 6, 23, 0.35);
+            z-index: 50;
+        }
+
+        .dock-item {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: rgba(30, 41, 59, 0.7);
+            color: #e2e8f0;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+
+        .dock-item:hover {
+            transform: translateY(-6px) scale(1.08);
+            background: rgba(79, 70, 229, 0.35);
+            color: #ffffff;
+        }
+
+        .dock-label {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.9);
+            color: #e2e8f0;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .dock-item:hover .dock-label {
+            opacity: 1;
+            transform: translate(-50%, -6px);
+        }
+
+        .dock-item.active {
+            background: rgba(79, 70, 229, 0.6);
+            color: #ffffff;
+            border-color: rgba(99, 102, 241, 0.8);
+        }
+
+        .dock-user {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 8px 0 6px;
+            height: 40px;
+            border-radius: 999px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+
+        .dock-user button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #e2e8f0;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding-bottom: 110px;
+            }
+
+            .floating-dock {
+                width: calc(100% - 24px);
+                justify-content: space-between;
+                padding: 8px;
+            }
+
+            .dock-label {
+                display: none;
+            }
+
+            .dock-user {
+                padding-right: 6px;
+            }
+        }
+    </style>
+</head>
+<body class="math-bg min-h-screen" data-mm-bg="numbers" data-mm-bg-style="fly" data-mm-bg-direction="left" data-mm-bg-opacity="0.18" data-mm-bg-density="0.9">
+    <div class="floating-dock" aria-label="Primary">
+        <a href="../index.html" class="dock-item" aria-label="Home">
+            <span class="dock-label">Home</span>
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="about.html" class="dock-item" aria-label="About">
+            <span class="dock-label">About</span>
+            <i class="fas fa-info-circle"></i>
+        </a>
+        <a href="schedule.html" class="dock-item" aria-label="Schedule">
+            <span class="dock-label">Schedule</span>
+            <i class="fas fa-calendar-alt"></i>
+        </a>
+        <a href="dashboard.html" class="dock-item" aria-label="Dashboard">
+            <span class="dock-label">Dashboard</span>
+            <i class="fas fa-chart-line"></i>
+        </a>
+        <a href="resources.html" class="dock-item" aria-label="Resources">
+            <span class="dock-label">Resources</span>
+            <i class="fas fa-book"></i>
+        </a>
+        <a href="community.html" class="dock-item" aria-label="Community">
+            <span class="dock-label">Community</span>
+            <i class="fas fa-users"></i>
+        </a>
+        <a href="support.html" class="dock-item" aria-label="Support">
+            <span class="dock-label">Support</span>
+            <i class="fas fa-life-ring"></i>
+        </a>
+        <a href="auth.html" class="dock-item active" aria-label="Sign in" id="nav-sign-in">
+            <span class="dock-label">Sign in</span>
+            <i class="fas fa-sign-in-alt"></i>
+        </a>
+        <div class="relative hidden" id="nav-user">
+            <div class="dock-user">
+                <button class="text-sm rounded-full focus:outline-none" id="user-menu" aria-haspopup="true" aria-expanded="false">
+                    <span class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold" id="nav-user-initial">U</span>
+                    <span class="hidden sm:inline text-gray-300" id="nav-user-name">User</span>
+                    <i class="fas fa-chevron-up text-xs text-gray-400"></i>
+                </button>
+            </div>
+            <div class="hidden origin-bottom-right absolute right-0 bottom-14 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-gray-700 focus:outline-none z-50" role="menu" id="user-dropdown">
+                <div class="py-1" role="none">
+                    <a href="auth.html" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem">
+                        <i class="fas fa-id-card mr-2 w-4"></i> Account
+                    </a>
+                    <a href="#" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem" id="nav-sign-out">
+                        <i class="fas fa-sign-out-alt mr-2 w-4"></i> Sign out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="hidden" id="account-view">
+            <div class="card rounded-xl p-6">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Account</h1>
+                        <p class="text-gray-300 mt-1">Your profile and learning stats.</p>
+                    </div>
+                    <a href="dashboard.html" class="inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold">
+                        <i class="fas fa-tachometer-alt mr-2"></i> Go to Dashboard
+                    </a>
+                </div>
+
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-900/40 border border-gray-800 rounded-lg p-4">
+                        <div class="text-sm text-gray-300">Name</div>
+                        <div class="text-lg font-semibold text-white mt-1" id="account-name">—</div>
+                    </div>
+                    <div class="bg-gray-900/40 border border-gray-800 rounded-lg p-4">
+                        <div class="text-sm text-gray-300">Email</div>
+                        <div class="text-lg font-semibold text-white mt-1" id="account-email">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="card overflow-hidden rounded-xl">
+                    <div class="px-4 py-5 sm:p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 bg-indigo-600 rounded-md p-3">
+                                <i class="fas fa-clock text-white text-xl"></i>
+                            </div>
+                            <div class="ml-5 w-0 flex-1">
+                                <div class="text-sm font-medium text-gray-300 truncate">Hours Studied</div>
+                                <div class="mt-1 text-2xl font-semibold text-white" id="stat-hours-studied">0.0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card overflow-hidden rounded-xl">
+                    <div class="px-4 py-5 sm:p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 bg-green-600 rounded-md p-3">
+                                <i class="far fa-calendar-check text-white text-xl"></i>
+                            </div>
+                            <div class="ml-5 w-0 flex-1">
+                                <div class="text-sm font-medium text-gray-300 truncate">Study Sessions</div>
+                                <div class="mt-1 text-2xl font-semibold text-white" id="stat-sessions">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card overflow-hidden rounded-xl">
+                    <div class="px-4 py-5 sm:p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 bg-purple-600 rounded-md p-3">
+                                <i class="fas fa-bullseye text-white text-xl"></i>
+                            </div>
+                            <div class="ml-5 w-0 flex-1">
+                                <div class="text-sm font-medium text-gray-300 truncate">Goals</div>
+                                <div class="mt-1 text-2xl font-semibold text-white" id="stat-goals">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card overflow-hidden rounded-xl">
+                    <div class="px-4 py-5 sm:p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 bg-yellow-600 rounded-md p-3">
+                                <i class="fas fa-hourglass-half text-white text-xl"></i>
+                            </div>
+                            <div class="ml-5 w-0 flex-1">
+                                <div class="text-sm font-medium text-gray-300 truncate">Upcoming</div>
+                                <div class="mt-1 text-2xl font-semibold text-white" id="stat-upcoming">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 card rounded-xl p-6">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-white">Quick Actions</h2>
+                    <a href="schedule.html" class="text-sm font-medium text-indigo-400 hover:text-indigo-300">Open Schedule</a>
+                </div>
+                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <a href="schedule-session.html" class="bg-gray-900/40 border border-gray-800 rounded-lg p-4 hover:border-indigo-500/60 transition-colors">
+                        <div class="text-white font-semibold"><i class="far fa-calendar-plus mr-2"></i>Book Tutor Session</div>
+                        <div class="text-sm text-gray-300 mt-1">Choose time, subject, tutor</div>
+                    </a>
+                    <a href="dashboard-goals.html" class="bg-gray-900/40 border border-gray-800 rounded-lg p-4 hover:border-indigo-500/60 transition-colors">
+                        <div class="text-white font-semibold"><i class="fas fa-plus mr-2"></i>Create Goal</div>
+                        <div class="text-sm text-gray-300 mt-1">Track what you want to master</div>
+                    </a>
+                    <a href="dashboard-analytics.html" class="bg-gray-900/40 border border-gray-800 rounded-lg p-4 hover:border-indigo-500/60 transition-colors">
+                        <div class="text-white font-semibold"><i class="fas fa-chart-line mr-2"></i>View Analytics</div>
+                        <div class="text-sm text-gray-300 mt-1">See progress & activity</div>
+                    </a>
+                    <a href="resources.html" class="bg-gray-900/40 border border-gray-800 rounded-lg p-4 hover:border-indigo-500/60 transition-colors">
+                        <div class="text-white font-semibold"><i class="fas fa-book mr-2"></i>Explore Resources</div>
+                        <div class="text-sm text-gray-300 mt-1">Practice and lessons</div>
+                    </a>
+                </div>
+                <div class="mt-4 text-xs text-gray-400" id="stats-note"></div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="auth-forms">
+            <div class="card rounded-xl p-6">
+                <h1 class="text-2xl font-bold text-white">Sign in</h1>
+                <p class="text-gray-300 mt-1">Use your email to sign in.</p>
+
+                <form class="mt-6 space-y-4" id="sign-in-form">
+                    <div>
+                        <label class="block text-sm text-gray-300 mb-1" for="sign-in-email">Email</label>
+                        <input class="input w-full rounded-md px-4 py-3" type="email" id="sign-in-email" autocomplete="email" required placeholder="you@example.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-300 mb-1" for="sign-in-password">Password</label>
+                        <input class="input w-full rounded-md px-4 py-3" type="password" id="sign-in-password" autocomplete="current-password" required placeholder="Your password">
+                    </div>
+                    <div class="text-sm text-red-400 hidden" id="sign-in-error"></div>
+                    <button class="w-full px-4 py-3 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white font-semibold" type="submit">
+                        Sign in
+                    </button>
+                </form>
+            </div>
+
+            <div class="card rounded-xl p-6">
+                <h2 class="text-2xl font-bold text-white">Create an account</h2>
+                <p class="text-gray-300 mt-1">Sign up to personalize your learning journey.</p>
+
+                <form class="mt-6 space-y-4" id="sign-up-form">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-gray-300 mb-1" for="first-name">First name</label>
+                            <input class="input w-full rounded-md px-4 py-3" type="text" id="first-name" autocomplete="given-name" required placeholder="First name">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-300 mb-1" for="last-name">Last name</label>
+                            <input class="input w-full rounded-md px-4 py-3" type="text" id="last-name" autocomplete="family-name" required placeholder="Last name">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-300 mb-1" for="email">Email</label>
+                        <input class="input w-full rounded-md px-4 py-3" type="email" id="email" autocomplete="email" required placeholder="you@example.com">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-gray-300 mb-1" for="age">Age</label>
+                            <input class="input w-full rounded-md px-4 py-3" type="number" id="age" min="5" max="120" required placeholder="16">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-300 mb-1" for="level">Level</label>
+                            <select class="input w-full rounded-md px-4 py-3" id="level" required>
+                                <option value="">Select</option>
+                                <option>Middle School</option>
+                                <option>High School</option>
+                                <option>College</option>
+                                <option>Self-study</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-300 mb-1" for="focus">What do you want to study most?</label>
+                        <select class="input w-full rounded-md px-4 py-3" id="focus" required>
+                            <option value="">Select</option>
+                            <option>Algebra</option>
+                            <option>Geometry</option>
+                            <option>Trigonometry</option>
+                            <option>Calculus</option>
+                            <option>Statistics</option>
+                            <option>Linear Algebra</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-gray-300 mb-1" for="password">Password</label>
+                            <input class="input w-full rounded-md px-4 py-3" type="password" id="password" autocomplete="new-password" required placeholder="Create a password">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-300 mb-1" for="confirm-password">Confirm password</label>
+                            <input class="input w-full rounded-md px-4 py-3" type="password" id="confirm-password" autocomplete="new-password" required placeholder="Confirm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-300 mb-1" for="goal">Learning goal</label>
+                        <input class="input w-full rounded-md px-4 py-3" type="text" id="goal" placeholder="e.g., Improve grades, Prepare for SAT/ACT, Learn for fun">
+                    </div>
+
+                    <div class="text-sm text-red-400 hidden" id="sign-up-error"></div>
+                    <button class="w-full px-4 py-3 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white font-semibold" type="submit">
+                        Sign up
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script defer src="../mm-effects.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+
+            const userMenuButton = document.getElementById('user-menu');
+            const userDropdown = document.getElementById('user-dropdown');
+
+            if (userMenuButton && userDropdown) {
+                userMenuButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
+            const safeParse = (raw) => {
+                try {
+                    return JSON.parse(raw);
+                } catch (e) {
+                    return null;
+                }
+            };
+
+            const capitalize = (value) => {
+                const v = (value || '').trim();
+                if (!v) return '';
+                return v.charAt(0).toUpperCase() + v.slice(1);
+            };
+
+            const formatDisplayName = (profile) => {
+                const first = capitalize(profile?.firstName);
+                const last = (profile?.lastName || '').trim();
+                const initial = last ? (last.charAt(0).toUpperCase() + '.') : '';
+                return [first, initial].filter(Boolean).join(' ');
+            };
+
+            const renderAccountStats = (profile) => {
+                const sessions = safeParse(localStorage.getItem('mm_tutor_sessions') || '[]') || [];
+                const goals = safeParse(localStorage.getItem('mm_goals') || '[]') || [];
+
+                const now = Date.now();
+                const upcomingCount = sessions.filter((s) => {
+                    const start = s && s.start ? Date.parse(s.start) : NaN;
+                    return Number.isFinite(start) && start > now;
+                }).length;
+
+                const hoursStudied = sessions.reduce((sum, s) => {
+                    if (!s) return sum;
+                    const minutes = Number(s.durationMinutes);
+                    if (Number.isFinite(minutes) && minutes > 0) return sum + minutes / 60;
+                    const start = s.start ? Date.parse(s.start) : NaN;
+                    const end = s.end ? Date.parse(s.end) : NaN;
+                    if (Number.isFinite(start) && Number.isFinite(end) && end > start) {
+                        return sum + (end - start) / (1000 * 60 * 60);
+                    }
+                    return sum;
+                }, 0);
+
+                const nameEl = document.getElementById('account-name');
+                const emailEl = document.getElementById('account-email');
+                const statHours = document.getElementById('stat-hours-studied');
+                const statSessions = document.getElementById('stat-sessions');
+                const statGoals = document.getElementById('stat-goals');
+                const statUpcoming = document.getElementById('stat-upcoming');
+                const noteEl = document.getElementById('stats-note');
+
+                if (nameEl) nameEl.textContent = formatDisplayName(profile) || 'User';
+                if (emailEl) emailEl.textContent = (profile?.email || '').trim() || '—';
+                if (statHours) statHours.textContent = (Math.round(hoursStudied * 10) / 10).toFixed(1);
+                if (statSessions) statSessions.textContent = String(sessions.length);
+                if (statGoals) statGoals.textContent = String(goals.length);
+                if (statUpcoming) statUpcoming.textContent = String(upcomingCount);
+
+                if (noteEl) {
+                    noteEl.textContent = 'Stats are calculated from your locally stored goals and scheduled tutor sessions.';
+                }
+            };
+
+            const refreshNavbar = () => {
+                const profile = safeParse(localStorage.getItem('mm_profile') || 'null');
+                const session = safeParse(localStorage.getItem('mm_session') || 'null');
+
+                const navUser = document.getElementById('nav-user');
+                const navUserName = document.getElementById('nav-user-name');
+                const navUserInitial = document.getElementById('nav-user-initial');
+                const navSignIn = document.getElementById('nav-sign-in');
+
+                const signedIn = profile && session && session.email && profile.email && session.email === profile.email;
+
+                if (signedIn) {
+                    const displayName = formatDisplayName(profile);
+                    if (navUserName) navUserName.textContent = displayName || 'User';
+                    if (navUserInitial) {
+                        const first = (profile.firstName || '').trim();
+                        navUserInitial.textContent = first ? first.charAt(0).toUpperCase() : 'U';
+                    }
+                    if (navUser) navUser.classList.remove('hidden');
+                    if (navSignIn) navSignIn.classList.add('hidden');
+
+                    const authForms = document.getElementById('auth-forms');
+                    const accountView = document.getElementById('account-view');
+                    if (authForms) authForms.classList.add('hidden');
+                    if (accountView) accountView.classList.remove('hidden');
+                    renderAccountStats(profile);
+                } else {
+                    if (navUser) navUser.classList.add('hidden');
+                    if (navSignIn) navSignIn.classList.remove('hidden');
+
+                    const authForms = document.getElementById('auth-forms');
+                    const accountView = document.getElementById('account-view');
+                    if (accountView) accountView.classList.add('hidden');
+                    if (authForms) authForms.classList.remove('hidden');
+                }
+            };
+
+            const signOutLink = document.getElementById('nav-sign-out');
+            if (signOutLink) {
+                signOutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    localStorage.removeItem('mm_session');
+                    refreshNavbar();
+                });
+            }
+
+            refreshNavbar();
+
+            const maybeFocusSignUp = () => {
+                const signedIn = !document.getElementById('account-view')?.classList.contains('hidden');
+                if (signedIn) return;
+
+                const params = new URLSearchParams(window.location.search);
+                const mode = (params.get('mode') || '').toLowerCase();
+                const wantsSignup = window.location.hash === '#signup' || mode === 'signup' || mode === 'sign-up' || mode === 'register';
+                if (!wantsSignup) return;
+
+                const signUpForm = document.getElementById('sign-up-form');
+                if (!signUpForm) return;
+                signUpForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                const firstName = document.getElementById('first-name');
+                if (firstName) firstName.focus({ preventScroll: true });
+            };
+
+            maybeFocusSignUp();
+
+            const signInForm = document.getElementById('sign-in-form');
+            const signUpForm = document.getElementById('sign-up-form');
+
+            const signInError = document.getElementById('sign-in-error');
+            const signUpError = document.getElementById('sign-up-error');
+
+            if (signInForm) {
+                signInForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    if (signInError) {
+                        signInError.classList.add('hidden');
+                        signInError.textContent = '';
+                    }
+
+                    const storedProfile = safeParse(localStorage.getItem('mm_profile') || 'null');
+                    if (!storedProfile) {
+                        if (signInError) {
+                            signInError.textContent = 'No account found. Please sign up first.';
+                            signInError.classList.remove('hidden');
+                        }
+                        return;
+                    }
+
+                    const email = (document.getElementById('sign-in-email')?.value || '').trim().toLowerCase();
+                    const password = document.getElementById('sign-in-password')?.value || '';
+
+                    if (email !== (storedProfile.email || '').toLowerCase() || password !== (storedProfile.password || '')) {
+                        if (signInError) {
+                            signInError.textContent = 'Incorrect email or password.';
+                            signInError.classList.remove('hidden');
+                        }
+                        return;
+                    }
+
+                    localStorage.setItem('mm_session', JSON.stringify({ email }));
+                    window.location.href = 'dashboard.html';
+                });
+            }
+
+            if (signUpForm) {
+                signUpForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    if (signUpError) {
+                        signUpError.classList.add('hidden');
+                        signUpError.textContent = '';
+                    }
+
+                    const firstName = (document.getElementById('first-name')?.value || '').trim();
+                    const lastName = (document.getElementById('last-name')?.value || '').trim();
+                    const email = (document.getElementById('email')?.value || '').trim().toLowerCase();
+                    const ageRaw = document.getElementById('age')?.value || '';
+                    const level = document.getElementById('level')?.value || '';
+                    const focus = document.getElementById('focus')?.value || '';
+                    const password = document.getElementById('password')?.value || '';
+                    const confirmPassword = document.getElementById('confirm-password')?.value || '';
+                    const goal = (document.getElementById('goal')?.value || '').trim();
+
+                    if (password.length < 6) {
+                        if (signUpError) {
+                            signUpError.textContent = 'Password must be at least 6 characters.';
+                            signUpError.classList.remove('hidden');
+                        }
+                        return;
+                    }
+
+                    if (password !== confirmPassword) {
+                        if (signUpError) {
+                            signUpError.textContent = 'Passwords do not match.';
+                            signUpError.classList.remove('hidden');
+                        }
+                        return;
+                    }
+
+                    const age = Number(ageRaw);
+                    if (!Number.isFinite(age) || age <= 0) {
+                        if (signUpError) {
+                            signUpError.textContent = 'Please enter a valid age.';
+                            signUpError.classList.remove('hidden');
+                        }
+                        return;
+                    }
+
+                    const profile = {
+                        firstName,
+                        lastName,
+                        email,
+                        age,
+                        level,
+                        focus,
+                        goal,
+                        password
+                    };
+
+                    localStorage.setItem('mm_profile', JSON.stringify(profile));
+                    localStorage.setItem('mm_session', JSON.stringify({ email }));
+                    window.location.href = 'dashboard.html';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

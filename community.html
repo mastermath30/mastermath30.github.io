@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community - Math Learning Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script>
+        // Check for dark mode preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="../css/styles.css" rel="stylesheet">
+    <style>
+        .dark {
+            --bg-primary: #020617;
+            --bg-secondary: #0f172a;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #4f46e5;
+            --accent-hover: #4338ca;
+            --card-bg: rgba(30, 41, 59, 0.5);
+        }
+        
+        body.dark {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        .math-bg {
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 47% 33%, rgba(15, 23, 42, 0.8) 0%, transparent 40%),
+                radial-gradient(at 82% 65%, rgba(30, 41, 59, 0.9) 0%, transparent 55%);
+        }
+        
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            padding-bottom: 120px;
+        }
+
+        .floating-dock {
+            position: fixed;
+            left: 50%;
+            right: auto;
+            bottom: 0px;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: calc(100% - 32px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 999px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 40px rgba(2, 6, 23, 0.35);
+            z-index: 50;
+        }
+
+        .dock-item {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: rgba(30, 41, 59, 0.7);
+            color: #e2e8f0;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+
+        .dock-item:hover {
+            transform: translateY(-6px) scale(1.08);
+            background: rgba(79, 70, 229, 0.35);
+            color: #ffffff;
+        }
+
+        .dock-label {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.9);
+            color: #e2e8f0;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .dock-item:hover .dock-label {
+            opacity: 1;
+            transform: translate(-50%, -6px);
+        }
+
+        .dock-item.active {
+            background: rgba(79, 70, 229, 0.6);
+            color: #ffffff;
+            border-color: rgba(99, 102, 241, 0.8);
+        }
+
+        .dock-user {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 8px 0 6px;
+            height: 40px;
+            border-radius: 999px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+
+        .dock-user button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #e2e8f0;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding-bottom: 110px;
+            }
+
+            .floating-dock {
+                width: calc(100% - 24px);
+                justify-content: space-between;
+                padding: 8px;
+            }
+
+            .dock-label {
+                display: none;
+            }
+
+            .dock-user {
+                padding-right: 6px;
+            }
+        }
+    </style>
+</head>
+<body class="math-bg min-h-screen" data-mm-bg="numbers" data-mm-bg-style="drift" data-mm-bg-direction="left" data-mm-bg-opacity="0.2" data-mm-bg-density="0.8">
+    <div class="floating-dock" aria-label="Primary">
+        <a href="../index.html" class="dock-item" aria-label="Home">
+            <span class="dock-label">Home</span>
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="about.html" class="dock-item" aria-label="About">
+            <span class="dock-label">About</span>
+            <i class="fas fa-info-circle"></i>
+        </a>
+        <a href="schedule.html" class="dock-item" aria-label="Schedule">
+            <span class="dock-label">Schedule</span>
+            <i class="fas fa-calendar-alt"></i>
+        </a>
+        <a href="dashboard.html" class="dock-item" aria-label="Dashboard">
+            <span class="dock-label">Dashboard</span>
+            <i class="fas fa-chart-line"></i>
+        </a>
+        <a href="resources.html" class="dock-item" aria-label="Resources">
+            <span class="dock-label">Resources</span>
+            <i class="fas fa-book"></i>
+        </a>
+        <a href="community.html" class="dock-item active" aria-label="Community">
+            <span class="dock-label">Community</span>
+            <i class="fas fa-users"></i>
+        </a>
+        <a href="support.html" class="dock-item" aria-label="Support">
+            <span class="dock-label">Support</span>
+            <i class="fas fa-life-ring"></i>
+        </a>
+        <a href="auth.html" class="dock-item" aria-label="Sign in" id="nav-sign-in">
+            <span class="dock-label">Sign in</span>
+            <i class="fas fa-sign-in-alt"></i>
+        </a>
+        <div class="relative hidden" id="nav-user">
+            <div class="dock-user">
+                <button class="text-sm rounded-full focus:outline-none" id="user-menu" aria-haspopup="true" aria-expanded="false">
+                    <span class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold" id="nav-user-initial">U</span>
+                    <span class="hidden sm:inline text-gray-300" id="nav-user-name">User</span>
+                    <i class="fas fa-chevron-up text-xs text-gray-400"></i>
+                </button>
+            </div>
+            <div class="hidden origin-bottom-right absolute right-0 bottom-14 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-gray-700 focus:outline-none z-50" role="menu" id="user-dropdown">
+                <div class="py-1" role="none">
+                    <a href="auth.html" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem">
+                        <i class="fas fa-id-card mr-2 w-4"></i> Account
+                    </a>
+                    <a href="#" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem" id="nav-sign-out">
+                        <i class="fas fa-sign-out-alt mr-2 w-4"></i> Sign out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Header -->
+    <header class="bg-gray-800 border-b border-gray-700">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold text-white">Community</h1>
+            <p class="mt-1 text-gray-300">Connect with fellow math enthusiasts and collaborate</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Discussion Forums -->
+                <div class="lg:col-span-2">
+                    <div class="card p-6 mb-8">
+                        <div class="flex items-start justify-between gap-4 mb-6">
+                            <div>
+                                <h2 class="text-xl font-bold text-white">Math Help Forum</h2>
+                                <p class="mt-1 text-sm text-gray-300">Ask a question, share an explanation, and help others learn.</p>
+                            </div>
+                            <a href="#ask" class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-plus mr-2"></i> New Post
+                            </a>
+                        </div>
+
+                        <div id="ask" class="rounded-lg bg-gray-900/40 border border-gray-700 p-4">
+                            <h3 class="text-sm font-semibold text-white">Ask a question</h3>
+                            <form id="forum-form" class="mt-4 space-y-3">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                    <div class="md:col-span-2">
+                                        <label class="block text-xs text-gray-300 mb-1" for="forum-title">Title</label>
+                                        <input id="forum-title" class="w-full px-3 py-2 rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white" placeholder="e.g., How do I factor this quadratic?" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-gray-300 mb-1" for="forum-tag">Topic</label>
+                                        <select id="forum-tag" class="w-full px-3 py-2 rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white">
+                                            <option value="Algebra">Algebra</option>
+                                            <option value="Geometry">Geometry</option>
+                                            <option value="Calculus">Calculus</option>
+                                            <option value="Statistics">Statistics</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-300 mb-1" for="forum-body">Details</label>
+                                    <textarea id="forum-body" rows="4" class="w-full px-3 py-2 rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white" placeholder="Include the problem, what you've tried, and where you're stuck."></textarea>
+                                </div>
+                                <div class="flex items-center justify-between gap-3 flex-wrap">
+                                    <div class="text-xs text-red-400 hidden" id="forum-error"></div>
+                                    <button type="submit" class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+                                        Post
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="mt-6">
+                            <h3 class="text-sm font-semibold text-white">Latest posts</h3>
+                            <div id="forum-posts" class="mt-3 divide-y divide-gray-700 rounded-lg border border-gray-700 overflow-hidden"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Community Stats -->
+                <div>
+                    <div class="card p-6 mb-6">
+                        <h2 class="text-xl font-bold text-white mb-4">Community Stats</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 bg-indigo-600/20 p-3 rounded-full">
+                                    <i class="fas fa-users text-indigo-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-300">Total Members</p>
+                                    <p class="text-2xl font-bold text-white">1,245</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 bg-green-600/20 p-3 rounded-full">
+                                    <i class="fas fa-comments text-green-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-300">Active Discussions</p>
+                                    <p class="text-2xl font-bold text-white" id="stat-discussions">328</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 bg-purple-600/20 p-3 rounded-full">
+                                    <i class="fas fa-lightbulb text-purple-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-300">Problems Solved</p>
+                                    <p class="text-2xl font-bold text-white">5,723</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card p-6">
+                        <h2 class="text-xl font-bold text-white mb-4">Top Contributors</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <img class="h-10 w-10 rounded-full" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20128%20128'%3E%3Crect%20width='128'%20height='128'%20fill='%23374151'/%3E%3Ccircle%20cx='64'%20cy='50'%20r='24'%20fill='%239ca3af'/%3E%3Cpath%20d='M24%20116c8-22%2024-34%2040-34s32%2012%2040%2034'%20fill='%239ca3af'/%3E%3C/svg%3E" alt="User avatar">
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-white">Alex Johnson</p>
+                                    <p class="text-xs text-gray-400">1,245 points</p>
+                                </div>
+                                <span class="ml-auto inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-600/20 text-yellow-300">
+                                    <i class="fas fa-trophy mr-1"></i> Gold
+                                </span>
+                            </div>
+                            <div class="flex items-center">
+                                <img class="h-10 w-10 rounded-full" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20128%20128'%3E%3Crect%20width='128'%20height='128'%20fill='%23374151'/%3E%3Ccircle%20cx='64'%20cy='50'%20r='24'%20fill='%239ca3af'/%3E%3Cpath%20d='M24%20116c8-22%2024-34%2040-34s32%2012%2040%2034'%20fill='%239ca3af'/%3E%3C/svg%3E" alt="User avatar">
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-white">David Kim</p>
+                                    <p class="text-xs text-gray-400">1,098 points</p>
+                                </div>
+                                <span class="ml-auto inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-600/20 text-gray-200">
+                                    <i class="fas fa-medal mr-1"></i> Silver
+                                </span>
+                            </div>
+                            <div class="flex items-center">
+                                <img class="h-10 w-10 rounded-full" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20128%20128'%3E%3Crect%20width='128'%20height='128'%20fill='%23374151'/%3E%3Ccircle%20cx='64'%20cy='50'%20r='24'%20fill='%239ca3af'/%3E%3Cpath%20d='M24%20116c8-22%2024-34%2040-34s32%2012%2040%2034'%20fill='%239ca3af'/%3E%3C/svg%3E" alt="User avatar">
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-white">Maria Garcia</p>
+                                    <p class="text-xs text-gray-400">987 points</p>
+                                </div>
+                                <span class="ml-auto inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-600/20 text-amber-300">
+                                    <i class="fas fa-award mr-1"></i> Bronze
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">MathMaster</h3>
+                    <p class="text-gray-400">Empowering students to master mathematics through personalized learning experiences.</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="about.html" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="schedule.html" class="text-gray-400 hover:text-white">Schedule</a></li>
+                        <li><a href="resources.html" class="text-gray-400 hover:text-white">Resources</a></li>
+                        <li><a href="community.html" class="text-gray-400 hover:text-white">Community</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="support.html" class="text-gray-400 hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Connect With Us</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-700">
+                <p class="text-center text-gray-400 text-sm">&copy; 2023 MathMaster. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script defer src="../mm-effects.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+
+            const userMenuButton = document.getElementById('user-menu');
+            const userDropdown = document.getElementById('user-dropdown');
+
+            if (userMenuButton && userDropdown) {
+                userMenuButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
+            const safeParse = (raw) => {
+                try {
+                    return JSON.parse(raw);
+                } catch (e) {
+                    return null;
+                }
+            };
+
+            const capitalize = (value) => {
+                const v = (value || '').trim();
+                if (!v) return '';
+                return v.charAt(0).toUpperCase() + v.slice(1);
+            };
+
+            const formatDisplayName = (profile) => {
+                const first = capitalize(profile?.firstName);
+                const last = (profile?.lastName || '').trim();
+                const initial = last ? (last.charAt(0).toUpperCase() + '.') : '';
+                return [first, initial].filter(Boolean).join(' ');
+            };
+
+            const refreshNavbar = () => {
+                const profile = safeParse(localStorage.getItem('mm_profile') || 'null');
+                const session = safeParse(localStorage.getItem('mm_session') || 'null');
+
+                const navUser = document.getElementById('nav-user');
+                const navUserName = document.getElementById('nav-user-name');
+                const navUserInitial = document.getElementById('nav-user-initial');
+                const navSignIn = document.getElementById('nav-sign-in');
+
+                const signedIn = profile && session && session.email && profile.email && session.email === profile.email;
+
+                if (signedIn) {
+                    const displayName = formatDisplayName(profile);
+                    if (navUserName) navUserName.textContent = displayName || 'User';
+                    if (navUserInitial) {
+                        const first = (profile.firstName || '').trim();
+                        navUserInitial.textContent = first ? first.charAt(0).toUpperCase() : 'U';
+                    }
+                    if (navUser) navUser.classList.remove('hidden');
+                    if (navSignIn) navSignIn.classList.add('hidden');
+                } else {
+                    if (navUser) navUser.classList.add('hidden');
+                    if (navSignIn) navSignIn.classList.remove('hidden');
+                }
+            };
+
+            const signOutLink = document.getElementById('nav-sign-out');
+            if (signOutLink) {
+                signOutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    localStorage.removeItem('mm_session');
+                    refreshNavbar();
+                });
+            }
+
+            const FORUM_STORAGE_KEY = 'mm_forum_posts';
+
+            const safeParseArray = (raw) => {
+                const parsed = safeParse(raw);
+                return Array.isArray(parsed) ? parsed : [];
+            };
+
+            const formatTimeAgo = (iso) => {
+                const ts = iso ? new Date(iso).getTime() : 0;
+                if (!ts) return '';
+                const diff = Date.now() - ts;
+                const mins = Math.floor(diff / (1000 * 60));
+                if (mins < 1) return 'just now';
+                if (mins < 60) return `${mins} min ago`;
+                const hours = Math.floor(mins / 60);
+                if (hours < 24) return `${hours} hr ago`;
+                const days = Math.floor(hours / 24);
+                return `${days} day${days === 1 ? '' : 's'} ago`;
+            };
+
+            const getForumPosts = () => {
+                return safeParseArray(localStorage.getItem(FORUM_STORAGE_KEY) || '[]');
+            };
+
+            const setForumPosts = (posts) => {
+                localStorage.setItem(FORUM_STORAGE_KEY, JSON.stringify(posts));
+            };
+
+            const ensureSeedPosts = () => {
+                const existing = getForumPosts();
+                if (existing.length) return;
+
+                setForumPosts([
+                    {
+                        id: `seed_${Date.now()}_1`,
+                        title: 'Algebra: factoring a quadratic',
+                        body: 'How do I factor x^2 + 5x + 6? I know it should be (x + ?)(x + ?), but I get stuck.',
+                        tag: 'Algebra',
+                        author: 'Student',
+                        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+                    },
+                    {
+                        id: `seed_${Date.now()}_2`,
+                        title: 'Calculus: understanding limits',
+                        body: 'Can someone explain what it really means when we say lim x→a f(x) = L? A simple example would help a lot.',
+                        tag: 'Calculus',
+                        author: 'Student',
+                        createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString()
+                    }
+                ]);
+            };
+
+            const renderForum = () => {
+                const container = document.getElementById('forum-posts');
+                const statDiscussions = document.getElementById('stat-discussions');
+                const posts = getForumPosts();
+
+                if (statDiscussions) {
+                    const base = 328;
+                    statDiscussions.textContent = String(base + posts.length);
+                }
+
+                if (!container) return;
+                container.innerHTML = '';
+
+                if (!posts.length) {
+                    container.innerHTML = '<div class="p-4 text-sm text-gray-300">No posts yet. Be the first to ask a question.</div>';
+                    return;
+                }
+
+                posts
+                    .slice()
+                    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                    .forEach((post) => {
+                        const el = document.createElement('div');
+                        el.className = 'p-4 hover:bg-gray-800/40 transition-colors';
+                        el.innerHTML = `
+                            <div class="flex items-start">
+                                <span class="h-10 w-10 rounded-full bg-indigo-600/20 flex items-center justify-center text-indigo-200 font-semibold">?</span>
+                                <div class="ml-4 flex-1">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <h4 class="text-sm font-semibold text-white">${(post.title || '').replace(/</g, '&lt;')}</h4>
+                                        <span class="text-xs text-gray-400">${formatTimeAgo(post.createdAt)}</span>
+                                    </div>
+                                    <div class="mt-1 flex items-center gap-2 flex-wrap">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-indigo-600/20 text-indigo-200 border border-indigo-500/20">${(post.tag || 'Other').replace(/</g, '&lt;')}</span>
+                                        <span class="text-xs text-gray-400">Posted by ${((post.author || 'Student') + '').replace(/</g, '&lt;')}</span>
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-300">${(post.body || '').replace(/</g, '&lt;')}</p>
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(el);
+                    });
+            };
+
+            const form = document.getElementById('forum-form');
+            const titleInput = document.getElementById('forum-title');
+            const tagInput = document.getElementById('forum-tag');
+            const bodyInput = document.getElementById('forum-body');
+            const errorEl = document.getElementById('forum-error');
+
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    if (errorEl) {
+                        errorEl.classList.add('hidden');
+                        errorEl.textContent = '';
+                    }
+
+                    const title = (titleInput?.value || '').trim();
+                    const body = (bodyInput?.value || '').trim();
+                    const tag = (tagInput?.value || 'Other').trim();
+
+                    if (!title || !body) {
+                        if (errorEl) {
+                            errorEl.textContent = 'Please add a title and details before posting.';
+                            errorEl.classList.remove('hidden');
+                        }
+                        return;
+                    }
+
+                    const profile = safeParse(localStorage.getItem('mm_profile') || 'null');
+                    const session = safeParse(localStorage.getItem('mm_session') || 'null');
+                    const signedIn = profile && session && session.email && profile.email && session.email === profile.email;
+
+                    const author = signedIn ? (formatDisplayName(profile) || 'User') : 'Guest';
+                    const posts = getForumPosts();
+                    posts.push({
+                        id: `p_${Date.now()}`,
+                        title,
+                        body,
+                        tag,
+                        author,
+                        createdAt: new Date().toISOString()
+                    });
+                    setForumPosts(posts);
+
+                    if (titleInput) titleInput.value = '';
+                    if (bodyInput) bodyInput.value = '';
+                    if (tagInput) tagInput.value = 'Algebra';
+                    renderForum();
+                });
+            }
+
+            refreshNavbar();
+            ensureSeedPosts();
+            renderForum();
+        });
+    </script>
+</body>
+</html>

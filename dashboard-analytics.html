@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Math Learning Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <link href="../css/styles.css" rel="stylesheet">
+    <style>
+        .dark {
+            --bg-primary: #020617;
+            --bg-secondary: #0f172a;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #4f46e5;
+            --accent-hover: #4338ca;
+            --card-bg: rgba(30, 41, 59, 0.5);
+        }
+
+        body.dark {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .math-bg {
+            background-color: var(--bg-primary);
+            background-image:
+                radial-gradient(at 47% 33%, rgba(15, 23, 42, 0.8) 0%, transparent 40%),
+                radial-gradient(at 82% 65%, rgba(30, 41, 59, 0.9) 0%, transparent 55%);
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+        }
+
+        body {
+            padding-bottom: 120px;
+        }
+
+        .floating-dock {
+            position: fixed;
+            left: 50%;
+            right: auto;
+            bottom: 0px;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: calc(100% - 32px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 999px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 40px rgba(2, 6, 23, 0.35);
+            z-index: 50;
+        }
+
+        .dock-item {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: rgba(30, 41, 59, 0.7);
+            color: #e2e8f0;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+
+        .dock-item:hover {
+            transform: translateY(-6px) scale(1.08);
+            background: rgba(79, 70, 229, 0.35);
+            color: #ffffff;
+        }
+
+        .dock-label {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.9);
+            color: #e2e8f0;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .dock-item:hover .dock-label {
+            opacity: 1;
+            transform: translate(-50%, -6px);
+        }
+
+        .dock-item.active {
+            background: rgba(79, 70, 229, 0.6);
+            color: #ffffff;
+            border-color: rgba(99, 102, 241, 0.8);
+        }
+
+        .dock-user {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 8px 0 6px;
+            height: 40px;
+            border-radius: 999px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+
+        .dock-user button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #e2e8f0;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding-bottom: 110px;
+            }
+
+            .floating-dock {
+                width: calc(100% - 24px);
+                justify-content: space-between;
+                padding: 8px;
+            }
+
+            .dock-label {
+                display: none;
+            }
+
+            .dock-user {
+                padding-right: 6px;
+            }
+        }
+    </style>
+</head>
+<body class="math-bg min-h-screen" data-mm-bg="numbers" data-mm-bg-style="drift" data-mm-bg-direction="right" data-mm-bg-opacity="0.2" data-mm-bg-density="0.75">
+    <div class="floating-dock" aria-label="Primary">
+        <a href="../index.html" class="dock-item" aria-label="Home">
+            <span class="dock-label">Home</span>
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="about.html" class="dock-item" aria-label="About">
+            <span class="dock-label">About</span>
+            <i class="fas fa-info-circle"></i>
+        </a>
+        <a href="schedule.html" class="dock-item" aria-label="Schedule">
+            <span class="dock-label">Schedule</span>
+            <i class="fas fa-calendar-alt"></i>
+        </a>
+        <a href="dashboard.html" class="dock-item active" aria-label="Dashboard">
+            <span class="dock-label">Dashboard</span>
+            <i class="fas fa-chart-line"></i>
+        </a>
+        <a href="resources.html" class="dock-item" aria-label="Resources">
+            <span class="dock-label">Resources</span>
+            <i class="fas fa-book"></i>
+        </a>
+        <a href="community.html" class="dock-item" aria-label="Community">
+            <span class="dock-label">Community</span>
+            <i class="fas fa-users"></i>
+        </a>
+        <a href="support.html" class="dock-item" aria-label="Support">
+            <span class="dock-label">Support</span>
+            <i class="fas fa-life-ring"></i>
+        </a>
+        <a href="auth.html" class="dock-item" aria-label="Sign in" id="nav-sign-in">
+            <span class="dock-label">Sign in</span>
+            <i class="fas fa-sign-in-alt"></i>
+        </a>
+        <div class="relative hidden" id="nav-user">
+            <div class="dock-user">
+                <button class="text-sm rounded-full focus:outline-none" id="user-menu" aria-haspopup="true" aria-expanded="false">
+                    <span class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold" id="nav-user-initial">U</span>
+                    <span class="hidden sm:inline text-gray-300" id="nav-user-name">User</span>
+                    <i class="fas fa-chevron-up text-xs text-gray-400"></i>
+                </button>
+            </div>
+            <div class="hidden origin-bottom-right absolute right-0 bottom-14 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-gray-700 focus:outline-none z-50" role="menu" id="user-dropdown">
+                <div class="py-1" role="none">
+                    <a href="auth.html" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem">
+                        <i class="fas fa-id-card mr-2 w-4"></i> Account
+                    </a>
+                    <a href="#" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem" id="nav-sign-out">
+                        <i class="fas fa-sign-out-alt mr-2 w-4"></i> Sign out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header class="bg-gray-800 border-b border-gray-700">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="flex-1 min-w-0">
+                    <h1 class="text-3xl font-bold text-white">Analytics</h1>
+                    <p class="mt-1 text-sm text-gray-300">A quick overview of your activity.</p>
+                </div>
+                <div class="mt-4 flex space-x-3 md:mt-0">
+                    <a href="dashboard.html" class="inline-flex items-center px-4 py-2 border border-gray-600 rounded-md shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i> Back
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="card rounded-lg p-6">
+                <div class="text-sm text-gray-300">Goals Created</div>
+                <div class="text-3xl font-bold text-white mt-1" id="stat-goals">0</div>
+            </div>
+            <div class="card rounded-lg p-6">
+                <div class="text-sm text-gray-300">Tutor Sessions Booked</div>
+                <div class="text-3xl font-bold text-white mt-1" id="stat-sessions">0</div>
+            </div>
+            <div class="card rounded-lg p-6">
+                <div class="text-sm text-gray-300">Unique Subjects</div>
+                <div class="text-3xl font-bold text-white mt-1" id="stat-subjects">0</div>
+            </div>
+        </div>
+
+        <div class="mt-6 card rounded-lg p-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-white">Sessions by Subject</h2>
+                <a href="schedule.html" class="text-sm font-medium text-indigo-400 hover:text-indigo-300">Go to Schedule</a>
+            </div>
+            <div class="chart-container mt-4">
+                <canvas id="subjectChart"></canvas>
+            </div>
+            <div class="text-sm text-gray-300 mt-3" id="chart-note"></div>
+        </div>
+    </main>
+
+    <script defer src="../mm-effects.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+
+            const userMenuButton = document.getElementById('user-menu');
+            const userDropdown = document.getElementById('user-dropdown');
+
+            if (userMenuButton && userDropdown) {
+                userMenuButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
+            const safeParse = (raw) => {
+                try {
+                    return JSON.parse(raw);
+                } catch (e) {
+                    return null;
+                }
+            };
+
+            const capitalize = (value) => {
+                const v = (value || '').trim();
+                if (!v) return '';
+                return v.charAt(0).toUpperCase() + v.slice(1);
+            };
+
+            const formatDisplayName = (profile) => {
+                const first = capitalize(profile?.firstName);
+                const last = (profile?.lastName || '').trim();
+                const initial = last ? (last.charAt(0).toUpperCase() + '.') : '';
+                return [first, initial].filter(Boolean).join(' ');
+            };
+
+            const refreshNavbar = () => {
+                const profile = safeParse(localStorage.getItem('mm_profile') || 'null');
+                const session = safeParse(localStorage.getItem('mm_session') || 'null');
+
+                const navUser = document.getElementById('nav-user');
+                const navUserName = document.getElementById('nav-user-name');
+                const navUserInitial = document.getElementById('nav-user-initial');
+                const navSignIn = document.getElementById('nav-sign-in');
+
+                const signedIn = profile && session && session.email && profile.email && session.email === profile.email;
+
+                if (signedIn) {
+                    const displayName = formatDisplayName(profile);
+                    if (navUserName) navUserName.textContent = displayName || 'User';
+                    if (navUserInitial) {
+                        const first = (profile.firstName || '').trim();
+                        navUserInitial.textContent = first ? first.charAt(0).toUpperCase() : 'U';
+                    }
+                    if (navUser) navUser.classList.remove('hidden');
+                    if (navSignIn) navSignIn.classList.add('hidden');
+                } else {
+                    if (navUser) navUser.classList.add('hidden');
+                    if (navSignIn) navSignIn.classList.remove('hidden');
+                }
+            };
+
+            const signOutLink = document.getElementById('nav-sign-out');
+            if (signOutLink) {
+                signOutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    localStorage.removeItem('mm_session');
+                    refreshNavbar();
+                });
+            }
+
+            refreshNavbar();
+
+            const goals = safeParse(localStorage.getItem('mm_goals') || '[]') || [];
+            const sessions = safeParse(localStorage.getItem('mm_tutor_sessions') || '[]') || [];
+
+            const bySubject = new Map();
+            sessions.forEach((s) => {
+                const subject = (s && s.subject) ? String(s.subject) : 'Other';
+                bySubject.set(subject, (bySubject.get(subject) || 0) + 1);
+            });
+
+            const labels = Array.from(bySubject.keys());
+            const data = labels.map(l => bySubject.get(l) || 0);
+
+            const statGoals = document.getElementById('stat-goals');
+            const statSessions = document.getElementById('stat-sessions');
+            const statSubjects = document.getElementById('stat-subjects');
+
+            if (statGoals) statGoals.textContent = String(goals.length);
+            if (statSessions) statSessions.textContent = String(sessions.length);
+            if (statSubjects) statSubjects.textContent = String(labels.length);
+
+            const note = document.getElementById('chart-note');
+            if (note) {
+                note.textContent = sessions.length ? 'Based on your locally booked tutor sessions.' : 'No tutor sessions booked yet. Book one from the Schedule page.';
+            }
+
+            const ctx = document.getElementById('subjectChart');
+            if (ctx && window.Chart) {
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'Sessions',
+                            data,
+                            backgroundColor: 'rgba(99, 102, 241, 0.6)',
+                            borderColor: 'rgba(99, 102, 241, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#e5e7eb'
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: { color: '#e5e7eb' },
+                                grid: { color: 'rgba(255,255,255,0.08)' }
+                            },
+                            y: {
+                                ticks: { color: '#e5e7eb', precision: 0 },
+                                grid: { color: 'rgba(255,255,255,0.08)' },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

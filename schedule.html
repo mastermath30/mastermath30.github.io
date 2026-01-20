@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule - Math Learning Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script>
+        // Check for dark mode preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <style>
+        .dark {
+            --bg-primary: #020617;
+            --bg-secondary: #0f172a;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #4f46e5;
+            --accent-hover: #4338ca;
+            --card-bg: rgba(30, 41, 59, 0.5);
+        }
+        
+        body.dark {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        .math-bg {
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 47% 33%, rgba(15, 23, 42, 0.8) 0%, transparent 40%),
+                radial-gradient(at 82% 65%, rgba(30, 41, 59, 0.9) 0%, transparent 55%);
+        }
+        
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* FullCalendar Dark Theme Overrides */
+        .fc {
+            --fc-border-color: rgba(255, 255, 255, 0.1);
+            --fc-page-bg-color: var(--bg-secondary);
+            --fc-now-indicator-color: #e11d48;
+            --fc-today-bg-color: rgba(99, 102, 241, 0.1);
+            --fc-now-indicator-border-color: #e11d48;
+            --fc-list-event-hover-bg-color: rgba(255, 255, 255, 0.05);
+            --fc-bg-event-opacity: 0.3;
+            --fc-neutral-bg-color: var(--bg-primary);
+            --fc-list-sticky-bg: var(--bg-secondary);
+            --fc-highlight-color: rgba(99, 102, 241, 0.3);
+        }
+        
+        .fc .fc-toolbar-title {
+            color: var(--text-primary);
+        }
+        
+        .fc .fc-button {
+            background-color: var(--bg-secondary);
+            border-color: var(--fc-border-color);
+            color: var(--text-primary);
+        }
+        
+        .fc .fc-button-primary:not(:disabled).fc-button-active, 
+        .fc .fc-button-primary:not(:disabled):active {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+        
+        .fc .fc-daygrid-day.fc-day-today {
+            background-color: var(--fc-today-bg-color);
+        }
+        
+        .fc .fc-col-header-cell-cushion {
+            color: var(--text-primary);
+        }
+        
+        .fc .fc-daygrid-day-number {
+            color: var(--text-primary);
+        }
+        
+        .fc .fc-event {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        body {
+            padding-bottom: 120px;
+        }
+
+        .floating-dock {
+            position: fixed;
+            left: 50%;
+            right: auto;
+            bottom: 0px;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: calc(100% - 32px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 999px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 40px rgba(2, 6, 23, 0.35);
+            z-index: 50;
+        }
+
+        .dock-item {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: rgba(30, 41, 59, 0.7);
+            color: #e2e8f0;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+
+        .dock-item:hover {
+            transform: translateY(-6px) scale(1.08);
+            background: rgba(79, 70, 229, 0.35);
+            color: #ffffff;
+        }
+
+        .dock-label {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.9);
+            color: #e2e8f0;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .dock-item:hover .dock-label {
+            opacity: 1;
+            transform: translate(-50%, -6px);
+        }
+
+        .dock-item.active {
+            background: rgba(79, 70, 229, 0.6);
+            color: #ffffff;
+            border-color: rgba(99, 102, 241, 0.8);
+        }
+
+        .dock-user {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 8px 0 6px;
+            height: 40px;
+            border-radius: 999px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+
+        .dock-user button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #e2e8f0;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding-bottom: 110px;
+            }
+
+            .floating-dock {
+                width: calc(100% - 24px);
+                justify-content: space-between;
+                padding: 8px;
+            }
+
+            .dock-label {
+                display: none;
+            }
+
+            .dock-user {
+                padding-right: 6px;
+            }
+        }
+    </style>
+</head>
+<body class="math-bg min-h-screen" data-mm-bg="numbers" data-mm-bg-style="fly" data-mm-bg-direction="right" data-mm-bg-opacity="0.2" data-mm-bg-density="0.95">
+    <div class="floating-dock" aria-label="Primary">
+        <a href="../index.html" class="dock-item" aria-label="Home">
+            <span class="dock-label">Home</span>
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="about.html" class="dock-item" aria-label="About">
+            <span class="dock-label">About</span>
+            <i class="fas fa-info-circle"></i>
+        </a>
+        <a href="schedule.html" class="dock-item active" aria-label="Schedule">
+            <span class="dock-label">Schedule</span>
+            <i class="fas fa-calendar-alt"></i>
+        </a>
+        <a href="dashboard.html" class="dock-item" aria-label="Dashboard">
+            <span class="dock-label">Dashboard</span>
+            <i class="fas fa-chart-line"></i>
+        </a>
+        <a href="resources.html" class="dock-item" aria-label="Resources">
+            <span class="dock-label">Resources</span>
+            <i class="fas fa-book"></i>
+        </a>
+        <a href="community.html" class="dock-item" aria-label="Community">
+            <span class="dock-label">Community</span>
+            <i class="fas fa-users"></i>
+        </a>
+        <a href="support.html" class="dock-item" aria-label="Support">
+            <span class="dock-label">Support</span>
+            <i class="fas fa-life-ring"></i>
+        </a>
+        <a href="auth.html" class="dock-item" aria-label="Sign in" id="nav-sign-in">
+            <span class="dock-label">Sign in</span>
+            <i class="fas fa-sign-in-alt"></i>
+        </a>
+        <div class="relative hidden" id="nav-user">
+            <div class="dock-user">
+                <button class="text-sm rounded-full focus:outline-none" id="user-menu" aria-haspopup="true" aria-expanded="false">
+                    <span class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold" id="nav-user-initial">U</span>
+                    <span class="hidden sm:inline text-gray-300" id="nav-user-name">User</span>
+                    <i class="fas fa-chevron-up text-xs text-gray-400"></i>
+                </button>
+            </div>
+            <div class="hidden origin-bottom-right absolute right-0 bottom-14 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-gray-700 focus:outline-none z-50" role="menu" id="user-dropdown">
+                <div class="py-1" role="none">
+                    <a href="auth.html" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem">
+                        <i class="fas fa-id-card mr-2 w-4"></i> Account
+                    </a>
+                    <a href="#" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem" id="nav-sign-out">
+                        <i class="fas fa-sign-out-alt mr-2 w-4"></i> Sign out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Header -->
+    <header class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="flex-1 min-w-0">
+                    <h1 class="text-3xl font-bold">Schedule</h1>
+                    <p class="mt-2 text-indigo-100">Manage your study sessions and tutoring appointments</p>
+                    <div class="mt-3 text-sm text-indigo-100">
+                        Next session starts in <span class="font-semibold" data-mm-countdown>—</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
+                    <a href="schedule-session.html" class="inline-flex items-center px-4 py-2 border border-indigo-300 rounded-md shadow-sm text-sm font-medium text-white bg-indigo-700 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                        <i class="far fa-calendar-plus mr-2"></i> Create Session
+                    </a>
+                    <a href="schedule-filters.html" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                        <i class="fas fa-filter mr-2"></i> Filters
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            <!-- Calendar View -->
+            <div class="card overflow-hidden sm:rounded-lg mb-8">
+                <div id="calendar" class="p-4"></div>
+            </div>
+
+            <!-- Upcoming Sessions -->
+            <div class="card overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6 border-b border-gray-700">
+                    <h3 class="text-lg leading-6 font-medium text-white">Upcoming Sessions</h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-300">Your scheduled study sessions and tutoring appointments.</p>
+                </div>
+                <div class="overflow-hidden">
+                    <ul class="divide-y divide-gray-700">
+                        <!-- Session 1 -->
+                        <li class="px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-600/20 flex items-center justify-center">
+                                    <i class="fas fa-atom text-indigo-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-white">Physics Study Group: Quantum Mechanics</div>
+                                    <div class="text-sm text-gray-400">Tomorrow, 3:00 PM - 4:30 PM</div>
+                                    <div class="mt-1 text-sm text-gray-400">With: Dr. Sarah Johnson</div>
+                                </div>
+                                <div class="ml-auto">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-600/20 text-green-300">
+                                        Confirmed
+                                    </span>
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <!-- Session 2 -->
+                        <li class="px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-600/20 flex items-center justify-center">
+                                    <i class="fas fa-dna text-green-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-white">Biology: Genetics Crash Course</div>
+                                    <div class="text-sm text-gray-400">Friday, November 19, 5:00 PM - 6:30 PM</div>
+                                    <div class="mt-1 text-sm text-gray-400">With: Priya Patel</div>
+                                </div>
+                                <div class="ml-auto">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-600/20 text-yellow-300">
+                                        Pending
+                                    </span>
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <!-- Session 3 -->
+                        <li class="px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-600/20 flex items-center justify-center">
+                                    <i class="fas fa-square-root-alt text-purple-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-white">Math Help: Calculus Review</div>
+                                    <div class="text-sm text-gray-400">Monday, November 22, 2:00 PM - 3:30 PM</div>
+                                    <div class="mt-1 text-sm text-gray-400">With: Michael Chen</div>
+                                </div>
+                                <div class="ml-auto">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-600/20 text-green-300">
+                                        Confirmed
+                                    </span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Available Tutors -->
+            <div class="mt-8">
+                <h3 class="text-lg leading-6 font-medium text-white mb-4">Available Tutors</h3>
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    <!-- Tutor 1 -->
+                    <div class="card overflow-hidden">
+                        <div class="px-4 py-5 sm:p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <img class="h-12 w-12 rounded-full" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20128%20128'%3E%3Crect%20width='128'%20height='128'%20fill='%23374151'/%3E%3Ccircle%20cx='64'%20cy='50'%20r='24'%20fill='%239ca3af'/%3E%3Cpath%20d='M24%20116c8-22%2024-34%2040-34s32%2012%2040%2034'%20fill='%239ca3af'/%3E%3C/svg%3E" alt="">
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg leading-6 font-medium text-white">Dr. Sarah Johnson</h3>
+                                    <p class="text-sm text-gray-400">Physics, Mathematics</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex items-center text-sm text-gray-400">
+                                    <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                    <span>4.9 (128 reviews)</span>
+                                </div>
+                                <div class="mt-2">
+                                    <span class="text-sm font-medium text-white">$45</span>
+                                    <span class="text-sm text-gray-400">/hour</span>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <a href="schedule-session.html?tutor=Dr.%20Sarah%20Johnson" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <i class="far fa-calendar-plus mr-2"></i> Book Session
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tutor 2 -->
+                    <div class="card overflow-hidden">
+                        <div class="px-4 py-5 sm:p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <img class="h-12 w-12 rounded-full" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20128%20128'%3E%3Crect%20width='128'%20height='128'%20fill='%23374151'/%3E%3Ccircle%20cx='64'%20cy='50'%20r='24'%20fill='%239ca3af'/%3E%3Cpath%20d='M24%20116c8-22%2024-34%2040-34s32%2012%2040%2034'%20fill='%239ca3af'/%3E%3C/svg%3E" alt="">
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg leading-6 font-medium text-white">Priya Patel</h3>
+                                    <p class="text-sm text-gray-400">Biology, Chemistry</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex items-center text-sm text-gray-400">
+                                    <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                    <span>4.8 (96 reviews)</span>
+                                </div>
+                                <div class="mt-2">
+                                    <span class="text-sm font-medium text-white">$35</span>
+                                    <span class="text-sm text-gray-400">/hour</span>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <a href="schedule-session.html?tutor=Priya%20Patel" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <i class="far fa-calendar-plus mr-2"></i> Book Session
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tutor 3 -->
+                    <div class="card overflow-hidden">
+                        <div class="px-4 py-5 sm:p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <img class="h-12 w-12 rounded-full border-2 border-indigo-500" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20128%20128'%3E%3Crect%20width='128'%20height='128'%20fill='%23374151'/%3E%3Ccircle%20cx='64'%20cy='50'%20r='24'%20fill='%239ca3af'/%3E%3Cpath%20d='M24%20116c8-22%2024-34%2040-34s32%2012%2040%2034'%20fill='%239ca3af'/%3E%3C/svg%3E" alt="">
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg leading-6 font-medium text-white">Michael Chen</h3>
+                                    <p class="text-sm text-gray-400">Mathematics, Computer Science</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex items-center text-sm text-gray-400">
+                                    <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                    <span>4.7 (84 reviews)</span>
+                                </div>
+                                <div class="mt-2">
+                                    <span class="text-sm font-medium text-white">$40</span>
+                                    <span class="text-sm text-gray-400">/hour</span>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <a href="schedule-session.html?tutor=Michael%20Chen" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <i class="far fa-calendar-plus mr-2"></i> Book Session
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section class="py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mm-ticker rounded-2xl">
+                <div class="mm-ticker__track">
+                    <div class="mm-ticker__item">4.9/5 average tutor rating <span>128 reviews</span></div>
+                    <div class="mm-ticker__item">"Super clear explanations." <span>— Liam K.</span></div>
+                    <div class="mm-ticker__item">"Helped me pass AP Calc." <span>— Sofia R.</span></div>
+                    <div class="mm-ticker__item">"Friendly and patient tutors." <span>— Ethan W.</span></div>
+                    <div class="mm-ticker__item">"Worth every session." <span>— Mia S.</span></div>
+                    <div class="mm-ticker__item">"Great for last-minute review." <span>— Daniel H.</span></div>
+                    <div class="mm-ticker__item">4.9/5 average tutor rating <span>128 reviews</span></div>
+                    <div class="mm-ticker__item">"Super clear explanations." <span>— Liam K.</span></div>
+                    <div class="mm-ticker__item">"Helped me pass AP Calc." <span>— Sofia R.</span></div>
+                    <div class="mm-ticker__item">"Friendly and patient tutors." <span>— Ethan W.</span></div>
+                    <div class="mm-ticker__item">"Worth every session." <span>— Mia S.</span></div>
+                    <div class="mm-ticker__item">"Great for last-minute review." <span>— Daniel H.</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">MathMaster</h3>
+                    <p class="text-gray-400">Empowering students to master mathematics through personalized learning experiences.</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="about.html" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="schedule.html" class="text-gray-400 hover:text-white">Schedule</a></li>
+                        <li><a href="resources.html" class="text-gray-400 hover:text-white">Resources</a></li>
+                        <li><a href="community.html" class="text-gray-400 hover:text-white">Community</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="support.html" class="text-gray-400 hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Connect With Us</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-700">
+                <p class="text-center text-gray-400 text-sm">&copy; 2023 MathMaster. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            const safeParse = (raw) => {
+                try {
+                    return JSON.parse(raw);
+                } catch (e) {
+                    return null;
+                }
+            };
+
+            const getBookedTutorSessionsAsEvents = () => {
+                const raw = localStorage.getItem('mm_tutor_sessions') || '[]';
+                const sessions = safeParse(raw) || [];
+                return sessions
+                    .filter(s => s && s.start && s.end)
+                    .map(s => ({
+                        title: s.title || 'Tutor Session',
+                        start: s.start,
+                        end: s.end,
+                        backgroundColor: '#f59e0b',
+                        borderColor: '#f59e0b'
+                    }));
+            };
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: [
+                    {
+                        title: 'Physics Study Group',
+                        start: '2025-11-18T15:00:00',
+                        end: '2025-11-18T16:30:00',
+                        backgroundColor: '#3b82f6',
+                        borderColor: '#3b82f6'
+                    },
+                    {
+                        title: 'Genetics Crash Course',
+                        start: '2025-11-19T17:00:00',
+                        end: '2025-11-19T18:30:00',
+                        backgroundColor: '#10b981',
+                        borderColor: '#10b981'
+                    },
+                    {
+                        title: 'Calculus Review',
+                        start: '2025-11-22T14:00:00',
+                        end: '2025-11-22T15:30:00',
+                        backgroundColor: '#8b5cf6',
+                        borderColor: '#8b5cf6'
+                    }
+                ].concat(getBookedTutorSessionsAsEvents())
+            });
+            calendar.render();
+        });
+    </script>
+    <script defer src="../mm-effects.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+
+            const userMenuButton = document.getElementById('user-menu');
+            const userDropdown = document.getElementById('user-dropdown');
+
+            if (userMenuButton && userDropdown) {
+                userMenuButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
+            const safeParse = (raw) => {
+                try {
+                    return JSON.parse(raw);
+                } catch (e) {
+                    return null;
+                }
+            };
+
+            const capitalize = (value) => {
+                const v = (value || '').trim();
+                if (!v) return '';
+                return v.charAt(0).toUpperCase() + v.slice(1);
+            };
+
+            const formatDisplayName = (profile) => {
+                const first = capitalize(profile?.firstName);
+                const last = (profile?.lastName || '').trim();
+                const initial = last ? (last.charAt(0).toUpperCase() + '.') : '';
+                return [first, initial].filter(Boolean).join(' ');
+            };
+
+            const refreshNavbar = () => {
+                const profile = safeParse(localStorage.getItem('mm_profile') || 'null');
+                const session = safeParse(localStorage.getItem('mm_session') || 'null');
+
+                const navUser = document.getElementById('nav-user');
+                const navUserName = document.getElementById('nav-user-name');
+                const navUserInitial = document.getElementById('nav-user-initial');
+                const navSignIn = document.getElementById('nav-sign-in');
+
+                const signedIn = profile && session && session.email && profile.email && session.email === profile.email;
+
+                if (signedIn) {
+                    const displayName = formatDisplayName(profile);
+                    if (navUserName) navUserName.textContent = displayName || 'User';
+                    if (navUserInitial) {
+                        const first = (profile.firstName || '').trim();
+                        navUserInitial.textContent = first ? first.charAt(0).toUpperCase() : 'U';
+                    }
+                    if (navUser) navUser.classList.remove('hidden');
+                    if (navSignIn) navSignIn.classList.add('hidden');
+                } else {
+                    if (navUser) navUser.classList.add('hidden');
+                    if (navSignIn) navSignIn.classList.remove('hidden');
+                }
+            };
+
+            const signOutLink = document.getElementById('nav-sign-out');
+            if (signOutLink) {
+                signOutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    localStorage.removeItem('mm_session');
+                    refreshNavbar();
+                });
+            }
+
+            refreshNavbar();
+        });
+    </script>
+</body>
+</html>
