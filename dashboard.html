@@ -1,242 +1,350 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Math Learning Platform</title>
+    <title>Dashboard - MathMaster</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script>
-        // Check for dark mode preference
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.css" rel="stylesheet">
-    <link href="../css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <style>
-        .dark {
-            --bg-primary: #020617;
-            --bg-secondary: #0f172a;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent: #4f46e5;
-            --accent-hover: #4338ca;
-            --card-bg: rgba(30, 41, 59, 0.5);
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(22, 22, 32, 0.8);
+            --accent-primary: #f97316;
+            --accent-secondary: #fb923c;
+            --accent-glow: rgba(249, 115, 22, 0.4);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(249, 115, 22, 0.3);
+            --success: #22c55e;
+            --warning: #eab308;
+            --info: #3b82f6;
+            --purple: #a855f7;
         }
-        
-        body.dark {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-        }
-        
-        .math-bg {
-            background-color: var(--bg-primary);
-            background-image: 
-                radial-gradient(at 47% 33%, rgba(15, 23, 42, 0.8) 0%, transparent 40%),
-                radial-gradient(at 82% 65%, rgba(30, 41, 59, 0.9) 0%, transparent 55%);
-        }
-        
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-        }
-        
-        .math-formula {
-            font-family: 'Times New Roman', Times, serif;
-            font-style: italic;
-            color: #c7d2fe;
+
+        * {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
-            padding-bottom: 120px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 6rem;
         }
 
-        .floating-dock {
-            position: fixed;
-            left: 50%;
-            right: auto;
-            bottom: 0px;
-            transform: translateX(-50%);
-            width: max-content;
-            max-width: calc(100% - 32px);
+        /* Glass card effect */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Stat card */
+        .stat-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--border-accent);
+            box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.2);
+        }
+
+        .stat-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.75rem;
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-            background: rgba(15, 23, 42, 0.75);
-            border: 1px solid rgba(148, 163, 184, 0.25);
-            border-radius: 999px;
-            backdrop-filter: blur(16px);
-            box-shadow: 0 20px 40px rgba(2, 6, 23, 0.35);
-            z-index: 50;
-        }
-
-        .dock-item {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 999px;
-            background: rgba(30, 41, 59, 0.7);
-            color: #e2e8f0;
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+            font-size: 1.25rem;
         }
 
-        .dock-item:hover {
-            transform: translateY(-6px) scale(1.08);
-            background: rgba(79, 70, 229, 0.35);
-            color: #ffffff;
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 1.75rem;
         }
 
-        .dock-label {
-            position: absolute;
-            bottom: 50px;
+        /* Navigation dock */
+        .nav-dock {
+            position: fixed;
+            bottom: 1.5rem;
             left: 50%;
             transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.625rem 0.875rem;
+            background: rgba(18, 18, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.8);
+            z-index: 100;
+        }
+
+        .nav-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 50%;
+            color: var(--text-secondary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active {
+            color: var(--accent-primary);
+            background: rgba(249, 115, 22, 0.15);
+        }
+
+        .nav-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            padding: 0.375rem 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
             white-space: nowrap;
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            background: rgba(15, 23, 42, 0.9);
-            color: #e2e8f0;
-            border: 1px solid rgba(148, 163, 184, 0.3);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s ease, transform 0.2s ease;
+            transition: all 0.2s ease;
         }
 
-        .dock-item:hover .dock-label {
+        .nav-item:hover .nav-tooltip {
             opacity: 1;
-            transform: translate(-50%, -6px);
+            transform: translateX(-50%) translateY(-8px);
         }
 
-        .dock-item.active {
-            background: rgba(79, 70, 229, 0.6);
-            color: #ffffff;
-            border-color: rgba(99, 102, 241, 0.8);
+        /* Progress bar */
+        .progress-bar {
+            height: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            overflow: hidden;
         }
 
-        .dock-user {
+        .progress-fill {
+            height: 100%;
+            border-radius: 100px;
+            transition: width 0.5s ease;
+        }
+
+        /* Challenge item */
+        .challenge-item {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-subtle);
+            transition: background 0.2s ease;
+        }
+
+        .challenge-item:last-child {
+            border-bottom: none;
+        }
+
+        .challenge-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Activity item */
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Goal item */
+        .goal-item {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .goal-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Status badge */
+        .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 0 8px 0 6px;
-            height: 40px;
-            border-radius: 999px;
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(148, 163, 184, 0.18);
+            gap: 0.25rem;
+            padding: 0.25rem 0.625rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 500;
         }
 
-        .dock-user button {
+        /* Header gradient */
+        .header-gradient {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(251, 146, 60, 0.05));
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            font-weight: 600;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.625rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            font-weight: 500;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.625rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Chart container */
+        .chart-container {
+            position: relative;
+            height: 280px;
+        }
+
+        /* Section label */
+        .section-label {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            color: #e2e8f0;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--accent-primary);
         }
 
-        @media (max-width: 640px) {
-            body {
-                padding-bottom: 110px;
-            }
-
-            .floating-dock {
-                width: calc(100% - 24px);
+        @media (max-width: 768px) {
+            .nav-dock {
+                width: calc(100% - 2rem);
                 justify-content: space-between;
-                padding: 8px;
             }
-
-            .dock-label {
+            
+            .nav-tooltip {
                 display: none;
-            }
-
-            .dock-user {
-                padding-right: 6px;
             }
         }
     </style>
 </head>
-<body class="math-bg min-h-screen" data-mm-bg="numbers" data-mm-bg-style="fly" data-mm-bg-direction="right" data-mm-bg-opacity="0.16" data-mm-bg-density="0.85">
-    <div class="floating-dock" aria-label="Primary">
-        <a href="../index.html" class="dock-item" aria-label="Home">
-            <span class="dock-label">Home</span>
+<body class="antialiased">
+    <!-- Navigation Dock -->
+    <nav class="nav-dock">
+        <a href="index.html" class="nav-item" aria-label="Home">
+            <span class="nav-tooltip">Home</span>
             <i class="fas fa-home"></i>
         </a>
-        <a href="about.html" class="dock-item" aria-label="About">
-            <span class="dock-label">About</span>
+        <a href="about.html" class="nav-item" aria-label="About">
+            <span class="nav-tooltip">About</span>
             <i class="fas fa-info-circle"></i>
         </a>
-        <a href="schedule.html" class="dock-item" aria-label="Schedule">
-            <span class="dock-label">Schedule</span>
+        <a href="schedule.html" class="nav-item" aria-label="Schedule">
+            <span class="nav-tooltip">Schedule</span>
             <i class="fas fa-calendar-alt"></i>
         </a>
-        <a href="dashboard.html" class="dock-item active" aria-label="Dashboard">
-            <span class="dock-label">Dashboard</span>
+        <a href="dashboard.html" class="nav-item active" aria-label="Dashboard">
+            <span class="nav-tooltip">Dashboard</span>
             <i class="fas fa-chart-line"></i>
         </a>
-        <a href="resources.html" class="dock-item" aria-label="Resources">
-            <span class="dock-label">Resources</span>
-            <i class="fas fa-book"></i>
+        <a href="resources.html" class="nav-item" aria-label="Resources">
+            <span class="nav-tooltip">Resources</span>
+            <i class="fas fa-book-open"></i>
         </a>
-        <a href="community.html" class="dock-item" aria-label="Community">
-            <span class="dock-label">Community</span>
+        <a href="community.html" class="nav-item" aria-label="Community">
+            <span class="nav-tooltip">Community</span>
             <i class="fas fa-users"></i>
         </a>
-        <a href="support.html" class="dock-item" aria-label="Support">
-            <span class="dock-label">Support</span>
+        <a href="support.html" class="nav-item" aria-label="Support">
+            <span class="nav-tooltip">Support</span>
             <i class="fas fa-life-ring"></i>
         </a>
-        <a href="auth.html" class="dock-item" aria-label="Sign in" id="nav-sign-in">
-            <span class="dock-label">Sign in</span>
+        <a href="auth.html" class="nav-item" aria-label="Sign In" id="nav-sign-in">
+            <span class="nav-tooltip">Sign In</span>
             <i class="fas fa-sign-in-alt"></i>
         </a>
-        <div class="relative hidden" id="nav-user">
-            <div class="dock-user">
-                <button class="text-sm rounded-full focus:outline-none" id="user-menu" aria-haspopup="true" aria-expanded="false">
-                    <span class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold" id="nav-user-initial">U</span>
-                    <span class="hidden sm:inline text-gray-300" id="nav-user-name">User</span>
-                    <i class="fas fa-chevron-up text-xs text-gray-400"></i>
-                </button>
-            </div>
-            <div class="hidden origin-bottom-right absolute right-0 bottom-14 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-gray-700 focus:outline-none z-50" role="menu" id="user-dropdown">
-                <div class="py-1" role="none">
-                    <a href="auth.html" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem">
-                        <i class="fas fa-id-card mr-2 w-4"></i> Account
-                    </a>
-                    <a href="#" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem" id="nav-sign-out">
-                        <i class="fas fa-sign-out-alt mr-2 w-4"></i> Sign out
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    </nav>
 
-    <!-- Page Header -->
-    <header class="bg-gray-800 border-b border-gray-700">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <div class="md:flex md:items-center md:justify-between">
-                <div class="flex-1 min-w-0">
-                    <h1 class="text-3xl font-bold text-white">Math Dashboard</h1>
-                    <p class="mt-1 text-sm text-gray-300">Welcome back, Sarah! Here's your learning progress. <span class="text-indigo-400">\(\sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}\)</span></p>
+    <!-- Header -->
+    <header class="header-gradient">
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <span class="section-label mb-3">
+                        <i class="fas fa-chart-pie"></i>
+                        Learning Dashboard
+                    </span>
+                    <h1 class="text-3xl font-bold mt-3">Welcome back, <span class="text-orange-400" id="user-name">Student</span>!</h1>
+                    <p class="text-zinc-400 mt-1">Track your progress and stay on top of your learning journey.</p>
                 </div>
-                <div class="mt-4 flex space-x-3 md:mt-0">
-                    <a href="dashboard-goals.html" class="inline-flex items-center px-4 py-2 border border-gray-600 rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                        <i class="fas fa-plus mr-2"></i> New Goal
+                <div class="flex gap-3">
+                    <a href="dashboard-goals.html" class="btn-primary flex items-center gap-2">
+                        <i class="fas fa-plus"></i>
+                        <span>New Goal</span>
                     </a>
-                    <a href="dashboard-analytics.html" class="inline-flex items-center px-4 py-2 border border-gray-600 rounded-md shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                        <i class="fas fa-chart-line mr-2"></i> Analytics
+                    <a href="dashboard-analytics.html" class="btn-secondary flex items-center gap-2">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
                     </a>
                 </div>
             </div>
@@ -244,334 +352,309 @@
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="px-4 py-6 sm:px-0">
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-                <!-- Hours Studied -->
-                <div class="card overflow-hidden">
-                    <div class="px-4 py-5 sm:p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 bg-indigo-600 rounded-md p-3">
-                                <i class="fas fa-clock text-white text-xl"></i>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-400 truncate">Hours Studied</dt>
-                                    <dd class="flex items-baseline">
-                                        <div class="text-2xl font-semibold text-white">24.5</div>
-                                        <div class="ml-2 flex items-baseline text-sm font-semibold text-green-400">
-                                            <i class="fas fa-arrow-up"></i>
-                                            <span class="sr-only">Increased by</span>
-                                            12%
-                                        </div>
-                                    </dd>
-                                </dl>
-                            </div>
-                        </div>
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <!-- Hours Studied -->
+            <div class="stat-card">
+                <div class="flex items-center gap-4">
+                    <div class="stat-icon bg-orange-500/20 text-orange-400">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div>
+                        <p class="text-zinc-500 text-sm">Hours Studied</p>
+                        <p class="stat-value text-white">24.5</p>
+                        <p class="text-green-400 text-xs flex items-center gap-1 mt-1">
+                            <i class="fas fa-arrow-up"></i> 12% this week
+                        </p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Completed Problems -->
-                <div class="card overflow-hidden">
-                    <div class="px-4 py-5 sm:p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 bg-green-600 rounded-md p-3">
-                                <i class="fas fa-check-double text-white text-xl"></i>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-400 truncate">Problems Solved</dt>
-                                    <dd class="flex items-baseline">
-                                        <div class="text-2xl font-semibold text-white">148</div>
-                                        <div class="ml-2 flex items-baseline text-sm font-semibold text-green-400">
-                                            <i class="fas fa-arrow-up"></i>
-                                            <span class="sr-only">Increased by</span>
-                                            +32
-                                        </div>
-                                    </dd>
-                                </dl>
-                            </div>
-                        </div>
+            <!-- Problems Solved -->
+            <div class="stat-card">
+                <div class="flex items-center gap-4">
+                    <div class="stat-icon bg-green-500/20 text-green-400">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                    <div>
+                        <p class="text-zinc-500 text-sm">Problems Solved</p>
+                        <p class="stat-value text-white">148</p>
+                        <p class="text-green-400 text-xs flex items-center gap-1 mt-1">
+                            <i class="fas fa-arrow-up"></i> +32 this week
+                        </p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Current Streak -->
-                <div class="card overflow-hidden">
-                    <div class="px-4 py-5 sm:p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 bg-yellow-600 rounded-md p-3">
-                                <i class="fas fa-fire text-white text-xl"></i>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-400 truncate">Current Streak</dt>
-                                    <dd class="flex items-baseline">
-                                        <div class="text-2xl font-semibold text-white">7 days</div>
-                                        <div class="ml-2 flex items-baseline text-sm font-semibold text-yellow-400">
-                                            <i class="fas fa-bolt"></i>
-                                            <span class="ml-1">Keep it up!</span>
-                                        </div>
-                                    </dd>
-                                </dl>
-                            </div>
-                        </div>
+            <!-- Current Streak -->
+            <div class="stat-card">
+                <div class="flex items-center gap-4">
+                    <div class="stat-icon bg-yellow-500/20 text-yellow-400">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div>
+                        <p class="text-zinc-500 text-sm">Current Streak</p>
+                        <p class="stat-value text-white">7 <span class="text-base font-normal text-zinc-500">days</span></p>
+                        <p class="text-yellow-400 text-xs flex items-center gap-1 mt-1">
+                            <i class="fas fa-bolt"></i> Keep it going!
+                        </p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Math Mastery -->
-                <div class="card overflow-hidden">
-                    <div class="px-4 py-5 sm:p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 bg-purple-600 rounded-md p-3">
-                                <i class="fas fa-calculator text-white text-xl"></i>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-400 truncate">Math Mastery</dt>
-                                    <dd class="flex items-baseline">
-                                        <div class="text-2xl font-semibold text-white">87%</div>
-                                        <div class="ml-2 flex items-baseline text-sm font-semibold text-purple-400">
-                                            <i class="fas fa-chart-line"></i>
-                                            <span class="ml-1">Advanced</span>
-                                        </div>
-                                    </dd>
-                                </dl>
-                            </div>
+            <!-- Math Mastery -->
+            <div class="stat-card">
+                <div class="flex items-center gap-4">
+                    <div class="stat-icon bg-purple-500/20 text-purple-400">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div>
+                        <p class="text-zinc-500 text-sm">Math Mastery</p>
+                        <p class="stat-value text-white">87%</p>
+                        <p class="text-purple-400 text-xs flex items-center gap-1 mt-1">
+                            <i class="fas fa-star"></i> Advanced Level
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Progress Chart -->
+            <div class="lg:col-span-2">
+                <div class="glass-card p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-lg font-semibold">Learning Progress</h2>
+                            <p class="text-zinc-500 text-sm">Your weekly performance</p>
+                        </div>
+                        <select class="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                            <option>This Month</option>
+                            <option>Last Month</option>
+                            <option>Last 3 Months</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="progressChart"></canvas>
+                    </div>
+                    <div class="flex items-center justify-center gap-6 mt-4 text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                            <span class="text-zinc-400">Problems Solved</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="text-zinc-400">Accuracy %</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Progress Overview -->
-                <div class="lg:col-span-2">
-                    <div class="card p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-lg font-medium text-white">Learning Progress</h2>
-                            <div class="relative">
-                                <select class="appearance-none bg-gray-700 border border-gray-600 rounded-md pl-3 pr-8 py-1 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                                    <option class="bg-gray-700">This Month</option>
-                                </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-                                    <i class="fas fa-chevron-down text-xs"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="h-64">
-                            <canvas id="progressChart"></canvas>
-                        </div>
-                        <div class="mt-4 flex justify-between text-sm text-gray-400">
-                            <span>Weekly Progress</span>
-                            <div class="flex items-center">
-                                <span class="w-3 h-3 bg-indigo-500 rounded-full mr-1"></span>
-                                <span class="mr-4">Problems Solved</span>
-                                <span class="w-3 h-3 bg-green-500 rounded-full mr-1"></span>
-                                <span>Accuracy</span>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Challenges -->
+            <div class="glass-card overflow-hidden">
+                <div class="p-6 border-b border-zinc-800">
+                    <h2 class="text-lg font-semibold">Math Challenges</h2>
+                    <p class="text-zinc-500 text-sm">Upcoming assignments</p>
                 </div>
-
-                <!-- Upcoming Deadlines -->
                 <div>
-                    <div class="card overflow-hidden">
-                        <div class="px-6 py-5 border-b border-gray-700">
-                            <h3 class="text-lg font-medium text-white">Math Challenges</h3>
-                            <p class="text-sm text-gray-400 mt-1">Upcoming problem sets and exams</p>
-                        </div>
-                        <div class="divide-y divide-gray-700">
-                            <div class="px-6 py-4 hover:bg-gray-700/50 transition-colors">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0 bg-indigo-600/20 p-2 rounded-md mt-0.5">
-                                        <i class="fas fa-calculator text-indigo-400"></i>
+                    <!-- Challenge 1 -->
+                    <div class="challenge-item">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-400 flex-shrink-0">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-medium text-sm">Calculus: Derivatives</h4>
+                                <p class="text-zinc-500 text-xs mt-0.5">Due in 2 days • 20 problems</p>
+                                <div class="mt-2">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill bg-orange-500" style="width: 65%"></div>
                                     </div>
-                                    <div class="ml-4">
-                                        <h4 class="text-sm font-medium text-white">Calculus: Derivatives</h4>
-                                        <p class="text-xs text-gray-400 mt-1">20 problems • Due in 2 days</p>
-                                        <div class="mt-2 w-full bg-gray-700 rounded-full h-1.5">
-                                            <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 65%"></div>
-                                        </div>
-                                        <p class="text-xs text-gray-400 mt-1">13/20 problems solved</p>
-                                    </div>
+                                    <p class="text-zinc-500 text-xs mt-1">13/20 completed</p>
                                 </div>
                             </div>
-                            <div class="px-6 py-4 hover:bg-gray-700/50 transition-colors">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0 bg-green-600/20 p-2 rounded-md mt-0.5">
-                                        <i class="fas fa-infinity text-green-400"></i>
-                                    </div>
-                                    <div class="ml-4">
-                                        <h4 class="text-sm font-medium text-white">Linear Algebra Basics</h4>
-                                        <p class="text-xs text-gray-400 mt-1">15 problems • Due in 5 days</p>
-                                        <div class="mt-2 w-full bg-gray-700 rounded-full h-1.5">
-                                            <div class="bg-green-500 h-1.5 rounded-full" style="width: 40%"></div>
-                                        </div>
-                                        <p class="text-xs text-gray-400 mt-1">6/15 problems solved</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="px-6 py-4 hover:bg-gray-700/50 transition-colors">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0 bg-yellow-600/20 p-2 rounded-md mt-0.5">
-                                        <i class="fas fa-chart-pie text-yellow-400"></i>
-                                    </div>
-                                    <div class="ml-4">
-                                        <h4 class="text-sm font-medium text-white">Statistics Quiz</h4>
-                                        <p class="text-xs text-yellow-400 mt-1">Starts in 3 days</p>
-                                        <p class="text-xs text-gray-400 mt-1">30 minutes • 10 questions</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="px-6 py-4 hover:bg-gray-700/50 transition-colors">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0 bg-purple-600/20 p-2 rounded-md mt-0.5">
-                                        <i class="fas fa-function text-purple-400"></i>
-                                    </div>
-                                    <div class="ml-4">
-                                        <h4 class="text-sm font-medium text-white">Advanced Functions</h4>
-                                        <p class="text-xs text-gray-400 mt-1">10 problems • Due in 1 week</p>
-                                        <div class="mt-2 w-full bg-gray-700 rounded-full h-1.5">
-                                            <div class="bg-purple-500 h-1.5 rounded-full" style="width: 20%"></div>
-                                        </div>
-                                        <p class="text-xs text-gray-400 mt-1">2/10 problems solved</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="px-6 py-4 border-t border-gray-700 bg-gray-800/50">
-                            <a href="#" class="text-sm font-medium text-indigo-400 hover:text-indigo-300 flex items-center">
-                                View all challenges
-                                <i class="fas fa-arrow-right ml-2 text-xs"></i>
-                            </a>
                         </div>
                     </div>
+
+                    <!-- Challenge 2 -->
+                    <div class="challenge-item">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400 flex-shrink-0">
+                                <i class="fas fa-infinity"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-medium text-sm">Linear Algebra Basics</h4>
+                                <p class="text-zinc-500 text-xs mt-0.5">Due in 5 days • 15 problems</p>
+                                <div class="mt-2">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill bg-green-500" style="width: 40%"></div>
+                                    </div>
+                                    <p class="text-zinc-500 text-xs mt-1">6/15 completed</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 3 -->
+                    <div class="challenge-item">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center text-yellow-400 flex-shrink-0">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-medium text-sm">Statistics Quiz</h4>
+                                <p class="text-yellow-400 text-xs mt-0.5">Starts in 3 days</p>
+                                <p class="text-zinc-500 text-xs mt-1">30 minutes • 10 questions</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 4 -->
+                    <div class="challenge-item">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 flex-shrink-0">
+                                <i class="fas fa-function"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-medium text-sm">Advanced Functions</h4>
+                                <p class="text-zinc-500 text-xs mt-0.5">Due in 1 week • 10 problems</p>
+                                <div class="mt-2">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill bg-purple-500" style="width: 20%"></div>
+                                    </div>
+                                    <p class="text-zinc-500 text-xs mt-1">2/10 completed</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 bg-zinc-900/50 border-t border-zinc-800">
+                    <a href="#" class="text-orange-400 text-sm font-medium flex items-center gap-2 hover:gap-3 transition-all">
+                        View all challenges
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
                 </div>
             </div>
+        </div>
 
+        <!-- Secondary Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
             <!-- Recent Activity -->
-            <div class="mt-8">
-                <div class="card overflow-hidden">
-                    <div class="px-6 py-5 border-b border-gray-700">
-                        <h3 class="text-lg font-medium text-white">Recent Activity</h3>
-                    </div>
-                    <div class="divide-y divide-gray-700">
-                        <!-- Activity 1 -->
-                        <div class="px-6 py-4">
-                            <div class="flex items-start">
-                                <div class="flex-shrink-0 bg-indigo-600/20 p-2 rounded-md">
-                                    <i class="fas fa-check-circle text-indigo-300"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <h4 class="text-sm font-medium text-white">Completed: Quantum Mechanics Basics</h4>
-                                    <p class="text-sm text-gray-400">2 hours ago</p>
-                                    <div class="mt-2 flex items-center text-sm text-indigo-300">
-                                        <span>Earned 50 XP</span>
-                                        <span class="mx-2">•</span>
-                                        <span>New Badge: Quantum Explorer</span>
-                                    </div>
-                                </div>
-                            </div>
+            <div class="glass-card p-6">
+                <h2 class="text-lg font-semibold mb-1">Recent Activity</h2>
+                <p class="text-zinc-500 text-sm mb-4">Your latest learning actions</p>
+
+                <div class="space-y-0">
+                    <!-- Activity 1 -->
+                    <div class="activity-item">
+                        <div class="activity-icon bg-orange-500/20 text-orange-400">
+                            <i class="fas fa-check-circle"></i>
                         </div>
-                        <!-- Activity 2 -->
-                        <div class="px-6 py-4">
-                            <div class="flex items-start">
-                                <div class="flex-shrink-0 bg-purple-600/20 p-2 rounded-md">
-                                    <i class="fas fa-comment-alt text-purple-300"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <h4 class="text-sm font-medium text-white">New comment on your question</h4>
-                                    <p class="text-sm text-gray-400">5 hours ago</p>
-                                    <div class="mt-2 text-sm text-gray-300">
-                                        "Great question! Have you tried using the formula for..."
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Activity 3 -->
-                        <div class="px-6 py-4">
-                            <div class="flex items-start">
-                                <div class="flex-shrink-0 bg-yellow-600/20 p-2 rounded-md">
-                                    <i class="fas fa-calendar-check text-yellow-300"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <h4 class="text-sm font-medium text-white">Session booked: Calculus Review</h4>
-                                    <p class="text-sm text-gray-400">Yesterday</p>
-                                    <div class="mt-2 text-sm text-gray-300">
-                                        Monday, November 22, 2:00 PM - 3:30 PM with Michael Chen
-                                    </div>
-                                </div>
+                        <div>
+                            <h4 class="font-medium text-sm">Completed: Derivatives Practice</h4>
+                            <p class="text-zinc-500 text-xs mt-0.5">2 hours ago</p>
+                            <div class="flex items-center gap-3 mt-2">
+                                <span class="text-orange-400 text-xs">+50 XP</span>
+                                <span class="text-zinc-600">•</span>
+                                <span class="text-zinc-400 text-xs">New Badge: Calculus Explorer</span>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gray-800/50 px-6 py-4 text-right">
-                        <a href="#" class="text-sm font-medium text-indigo-400 hover:text-indigo-300">
-                            View all activity
-                        </a>
+
+                    <!-- Activity 2 -->
+                    <div class="activity-item">
+                        <div class="activity-icon bg-purple-500/20 text-purple-400">
+                            <i class="fas fa-comment-dots"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-sm">New reply on your question</h4>
+                            <p class="text-zinc-500 text-xs mt-0.5">5 hours ago</p>
+                            <p class="text-zinc-400 text-xs mt-2 italic">"Great question! Have you tried using the formula for..."</p>
+                        </div>
+                    </div>
+
+                    <!-- Activity 3 -->
+                    <div class="activity-item">
+                        <div class="activity-icon bg-green-500/20 text-green-400">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-sm">Session Booked: Calculus Review</h4>
+                            <p class="text-zinc-500 text-xs mt-0.5">Yesterday</p>
+                            <p class="text-zinc-400 text-xs mt-2">Monday, 2:00 PM - 3:30 PM with Michael Chen</p>
+                        </div>
                     </div>
                 </div>
+
+                <a href="#" class="text-orange-400 text-sm font-medium flex items-center gap-2 hover:gap-3 transition-all mt-4">
+                    View all activity
+                    <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
 
             <!-- Study Goals -->
-            <div class="mt-8">
-                <div class="card overflow-hidden">
-                    <div class="px-6 py-5 border-b border-gray-700 flex justify-between items-center">
-                        <h3 class="text-lg font-medium text-white">Study Goals</h3>
-                        <button type="button" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <i class="fas fa-plus mr-1"></i> Add Goal
-                        </button>
+            <div class="glass-card overflow-hidden">
+                <div class="p-6 border-b border-zinc-800 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg font-semibold">Study Goals</h2>
+                        <p class="text-zinc-500 text-sm">Track your learning objectives</p>
                     </div>
-                    <div class="divide-y divide-gray-700">
-                        <!-- Goal 1 -->
-                        <div class="px-6 py-4">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="text-sm font-medium text-white">Complete Quantum Physics Module</h4>
-                                    <div class="mt-1 flex items-center">
-                                        <div class="w-48 h-2 bg-gray-700 rounded-full overflow-hidden">
-                                            <div class="h-full bg-indigo-500 rounded-full" style="width: 75%"></div>
-                                        </div>
-                                        <span class="ml-2 text-xs text-gray-400">75%</span>
-                                    </div>
-                                </div>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-600/20 text-green-300">
-                                    In Progress
-                                </span>
-                            </div>
+                    <button class="btn-primary text-sm py-2 px-3">
+                        <i class="fas fa-plus mr-1"></i> Add Goal
+                    </button>
+                </div>
+
+                <div>
+                    <!-- Goal 1 -->
+                    <div class="goal-item">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-medium text-sm">Complete Calculus Module</h4>
+                            <span class="status-badge bg-green-500/20 text-green-400">
+                                <i class="fas fa-spinner fa-spin text-xs"></i>
+                                In Progress
+                            </span>
                         </div>
-                        <!-- Goal 2 -->
-                        <div class="px-6 py-4">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="text-sm font-medium text-white">Solve 50 Practice Problems</h4>
-                                    <div class="mt-1 flex items-center">
-                                        <div class="w-48 h-2 bg-gray-700 rounded-full overflow-hidden">
-                                            <div class="h-full bg-yellow-500 rounded-full" style="width: 30%"></div>
-                                        </div>
-                                        <span class="ml-2 text-xs text-gray-400">15/50</span>
-                                    </div>
-                                </div>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-600/20 text-yellow-300">
-                                    Needs Work
-                                </span>
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-orange-500 to-amber-500" style="width: 75%"></div>
                             </div>
+                            <span class="text-zinc-400 text-xs font-mono">75%</span>
                         </div>
-                        <!-- Goal 3 -->
-                        <div class="px-6 py-4">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="text-sm font-medium text-white">Attend 3 Study Sessions</h4>
-                                    <div class="mt-1 flex items-center">
-                                        <div class="w-48 h-2 bg-gray-700 rounded-full overflow-hidden">
-                                            <div class="h-full bg-green-600 rounded-full" style="width: 100%"></div>
-                                        </div>
-                                        <span class="ml-2 text-xs text-gray-400">3/3</span>
-                                    </div>
-                                </div>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-600/20 text-green-300">
-                                    Completed
-                                </span>
+                    </div>
+
+                    <!-- Goal 2 -->
+                    <div class="goal-item">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-medium text-sm">Solve 50 Practice Problems</h4>
+                            <span class="status-badge bg-yellow-500/20 text-yellow-400">
+                                <i class="fas fa-exclamation-circle text-xs"></i>
+                                Needs Work
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 progress-bar">
+                                <div class="progress-fill bg-yellow-500" style="width: 30%"></div>
                             </div>
+                            <span class="text-zinc-400 text-xs font-mono">15/50</span>
+                        </div>
+                    </div>
+
+                    <!-- Goal 3 -->
+                    <div class="goal-item">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-medium text-sm">Attend 3 Study Sessions</h4>
+                            <span class="status-badge bg-green-500/20 text-green-400">
+                                <i class="fas fa-check-circle text-xs"></i>
+                                Completed
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 progress-bar">
+                                <div class="progress-fill bg-green-500" style="width: 100%"></div>
+                            </div>
+                            <span class="text-zinc-400 text-xs font-mono">3/3</span>
                         </div>
                     </div>
                 </div>
@@ -579,82 +662,48 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-12 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">MathMaster</h3>
-                    <p class="text-gray-400">Empowering students to master mathematics through personalized learning experiences.</p>
-                </div>
-                <div>
-                    <h4 class="text-sm font-semibold uppercase tracking-wider mb-4">Quick Links</h4>
-                    <ul class="space-y-2">
-                        <li><a href="../index.html" class="text-gray-400 hover:text-white">Home</a></li>
-                        <li><a href="about.html" class="text-gray-400 hover:text-white">About</a></li>
-                        <li><a href="schedule.html" class="text-gray-400 hover:text-white">Schedule</a></li>
-                        <li><a href="resources.html" class="text-gray-400 hover:text-white">Resources</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-sm font-semibold uppercase tracking-wider mb-4">Support</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Help Center</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-sm font-semibold uppercase tracking-wider mb-4">Connect</h4>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin text-xl"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-12 pt-8 border-t border-gray-700">
-                <p class="text-center text-gray-400 text-sm">&copy; 2025 MathMaster. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script defer src="../mm-effects.js"></script>
-
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <script>
-        // Initialize progress chart
+        // Initialize Chart
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('progressChart').getContext('2d');
             
-            // Sample data for math progress
-            const labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'This Week'];
-            const problemsData = [15, 22, 18, 27, 32];
-            const accuracyData = [65, 72, 78, 81, 87];
+            const gradient1 = ctx.createLinearGradient(0, 0, 0, 280);
+            gradient1.addColorStop(0, 'rgba(249, 115, 22, 0.3)');
+            gradient1.addColorStop(1, 'rgba(249, 115, 22, 0)');
             
-            const progressChart = new Chart(ctx, {
+            const gradient2 = ctx.createLinearGradient(0, 0, 0, 280);
+            gradient2.addColorStop(0, 'rgba(34, 197, 94, 0.3)');
+            gradient2.addColorStop(1, 'rgba(34, 197, 94, 0)');
+            
+            new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'This Week'],
                     datasets: [
                         {
                             label: 'Problems Solved',
-                            data: problemsData,
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            tension: 0.3,
-                            fill: true
+                            data: [15, 22, 18, 27, 32],
+                            borderColor: '#f97316',
+                            backgroundColor: gradient1,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#f97316',
+                            pointBorderColor: '#0a0a0f',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
                         },
                         {
                             label: 'Accuracy %',
-                            data: accuracyData,
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            tension: 0.3,
+                            data: [65, 72, 78, 81, 87],
+                            borderColor: '#22c55e',
+                            backgroundColor: gradient2,
+                            tension: 0.4,
                             fill: true,
-                            yAxisID: 'y1'
+                            yAxisID: 'y1',
+                            pointBackgroundColor: '#22c55e',
+                            pointBorderColor: '#0a0a0f',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
                         }
                     ]
                 },
@@ -666,58 +715,53 @@
                             display: false
                         },
                         tooltip: {
-                            backgroundColor: '#1f2937',
-                            titleColor: '#f9fafb',
-                            bodyColor: '#e5e7eb',
-                            borderColor: '#4b5563',
+                            backgroundColor: '#1e1e2e',
+                            titleColor: '#fafafa',
+                            bodyColor: '#a1a1aa',
+                            borderColor: 'rgba(255,255,255,0.1)',
                             borderWidth: 1,
                             padding: 12,
-                            usePointStyle: true
+                            cornerRadius: 8
                         }
                     },
                     scales: {
                         x: {
                             grid: {
-                                display: false,
-                                drawBorder: false
+                                display: false
                             },
                             ticks: {
-                                color: '#9ca3af'
+                                color: '#71717a',
+                                font: {
+                                    family: 'Outfit'
+                                }
                             }
                         },
                         y: {
-                            beginAtZero: true,
+                            position: 'left',
                             grid: {
-                                color: 'rgba(55, 65, 81, 0.5)',
-                                drawBorder: false
+                                color: 'rgba(255,255,255,0.05)'
                             },
                             ticks: {
-                                color: '#9ca3af',
-                                callback: function(value) {
-                                    return value;
-                                },
-                                stepSize: 5
+                                color: '#71717a',
+                                font: {
+                                    family: 'Outfit'
+                                }
                             }
                         },
                         y1: {
                             position: 'right',
-                            beginAtZero: true,
                             grid: {
-                                display: false,
-                                drawBorder: false
+                                display: false
                             },
                             ticks: {
-                                color: '#9ca3af',
+                                color: '#71717a',
                                 callback: function(value) {
                                     return value + '%';
                                 },
-                                stepSize: 10
+                                font: {
+                                    family: 'Outfit'
+                                }
                             }
-                        }
-                    },
-                    elements: {
-                        line: {
-                            borderJoinStyle: 'round'
                         }
                     },
                     interaction: {
@@ -727,81 +771,31 @@
                 }
             });
 
-            // User menu toggle
-            const userMenuButton = document.getElementById('user-menu');
-            const userDropdown = document.getElementById('user-dropdown');
-            
-            if (userMenuButton && userDropdown) {
-                userMenuButton.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    userDropdown.classList.toggle('hidden');
-                });
-
-                // Close dropdown when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
-                        userDropdown.classList.add('hidden');
-                    }
-                });
-            }
-
+            // Auth state
             const safeParse = (raw) => {
-                try {
-                    return JSON.parse(raw);
-                } catch (e) {
-                    return null;
+                try { return JSON.parse(raw); } catch { return null; }
+            };
+
+            const capitalize = (v) => v ? v.charAt(0).toUpperCase() + v.slice(1) : '';
+
+            const profile = safeParse(localStorage.getItem('mm_profile'));
+            const session = safeParse(localStorage.getItem('mm_session'));
+            const signedIn = profile && session && session.email === profile.email;
+            
+            const userNameEl = document.getElementById('user-name');
+            const navSignIn = document.getElementById('nav-sign-in');
+            
+            if (signedIn) {
+                if (userNameEl) userNameEl.textContent = capitalize(profile.firstName) || 'Student';
+                if (navSignIn) {
+                    navSignIn.innerHTML = `
+                        <span class="nav-tooltip">Account</span>
+                        <span class="w-7 h-7 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white text-xs font-bold">
+                            ${(profile.firstName || 'U').charAt(0).toUpperCase()}
+                        </span>
+                    `;
                 }
-            };
-
-            const capitalize = (value) => {
-                const v = (value || '').trim();
-                if (!v) return '';
-                return v.charAt(0).toUpperCase() + v.slice(1);
-            };
-
-            const formatDisplayName = (profile) => {
-                const first = capitalize(profile?.firstName);
-                const last = (profile?.lastName || '').trim();
-                const initial = last ? (last.charAt(0).toUpperCase() + '.') : '';
-                return [first, initial].filter(Boolean).join(' ');
-            };
-
-            const refreshNavbar = () => {
-                const profile = safeParse(localStorage.getItem('mm_profile') || 'null');
-                const session = safeParse(localStorage.getItem('mm_session') || 'null');
-
-                const navUser = document.getElementById('nav-user');
-                const navUserName = document.getElementById('nav-user-name');
-                const navUserInitial = document.getElementById('nav-user-initial');
-                const navSignIn = document.getElementById('nav-sign-in');
-
-                const signedIn = profile && session && session.email && profile.email && session.email === profile.email;
-
-                if (signedIn) {
-                    const displayName = formatDisplayName(profile);
-                    if (navUserName) navUserName.textContent = displayName || 'User';
-                    if (navUserInitial) {
-                        const first = (profile.firstName || '').trim();
-                        navUserInitial.textContent = first ? first.charAt(0).toUpperCase() : 'U';
-                    }
-                    if (navUser) navUser.classList.remove('hidden');
-                    if (navSignIn) navSignIn.classList.add('hidden');
-                } else {
-                    if (navUser) navUser.classList.add('hidden');
-                    if (navSignIn) navSignIn.classList.remove('hidden');
-                }
-            };
-
-            const signOutLink = document.getElementById('nav-sign-out');
-            if (signOutLink) {
-                signOutLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    localStorage.removeItem('mm_session');
-                    refreshNavbar();
-                });
             }
-
-            refreshNavbar();
         });
     </script>
 </body>

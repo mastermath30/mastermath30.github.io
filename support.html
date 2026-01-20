@@ -1,725 +1,492 @@
-    <!DOCTYPE html>
-<html lang="en" class="dark">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support - Math Learning Platform</title>
+    <title>Support - MathMaster</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script>
-        // Check for dark mode preference
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="../css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        .dark {
-            --bg-primary: #020617;
-            --bg-secondary: #0f172a;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent: #4f46e5;
-            --accent-hover: #4338ca;
-            --card-bg: rgba(30, 41, 59, 0.5);
-        }
-        
-        body.dark {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-        }
-        
-        .dark .bg-gray-800 {
-            background-color: #0f172a;
-        }
-        
-        .dark .bg-gray-700 {
-            background-color: #1e293b;
-        }
-        
-        .dark .text-gray-400 {
-            color: #94a3b8;
-        }
-        
-        .dark .border-gray-700 {
-            border-color: #334155;
-        }
-        
-        .dark .hover\:text-white:hover {
-            color: white;
-        }
-        
-        .math-bg {
-            background-color: var(--bg-primary);
-            background-image: 
-                radial-gradient(at 47% 33%, rgba(15, 23, 42, 0.8) 0%, transparent 40%),
-                radial-gradient(at 82% 65%, rgba(30, 41, 59, 0.9) 0%, transparent 55%);
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(22, 22, 32, 0.8);
+            --accent-primary: #f97316;
+            --accent-secondary: #fb923c;
+            --accent-glow: rgba(249, 115, 22, 0.4);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(249, 115, 22, 0.3);
         }
 
-        .hope-animated-bg {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            background:
-                radial-gradient(1200px 700px at 20% 20%, rgba(99, 102, 241, 0.22), transparent 60%),
-                radial-gradient(1000px 600px at 80% 30%, rgba(139, 92, 246, 0.2), transparent 62%),
-                radial-gradient(900px 700px at 40% 80%, rgba(59, 130, 246, 0.18), transparent 65%),
-                linear-gradient(120deg, rgba(2, 6, 23, 0.7), rgba(2, 6, 23, 0.9));
-            background-size: 180% 180%;
-            animation: hope-bg-float 36s ease-in-out infinite;
-            filter: blur(0.5px);
-            will-change: transform, background-position;
-            transform: translateZ(0);
-            backface-visibility: hidden;
-        }
-
-        .hope-animated-bg::after {
-            content: '';
-            position: absolute;
-            inset: -20%;
-            background:
-                radial-gradient(900px 600px at 70% 70%, rgba(34, 197, 94, 0.12), transparent 70%),
-                radial-gradient(700px 500px at 30% 60%, rgba(14, 165, 233, 0.12), transparent 72%);
-            background-size: 200% 200%;
-            animation: hope-bg-float 44s ease-in-out infinite reverse;
-            opacity: 0.9;
-            will-change: transform, background-position;
-            transform: translateZ(0);
-            backface-visibility: hidden;
-        }
-
-        @keyframes hope-bg-float {
-            0% {
-                background-position: 0% 0%;
-                transform: translate3d(0, 0, 0) scale(1);
-            }
-            40% {
-                background-position: 55% 45%;
-                transform: translate3d(-0.6%, 0.4%, 0) scale(1.01);
-            }
-            70% {
-                background-position: 85% 70%;
-                transform: translate3d(-0.9%, 0.6%, 0) scale(1.015);
-            }
-            100% {
-                background-position: 0% 0%;
-                transform: translate3d(0, 0, 0) scale(1);
-            }
-        }
-        
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-        }
-        
-        .math-formula {
-            font-family: 'Times New Roman', Times, serif;
-            font-style: italic;
-            color: #c7d2fe;
+        * {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
-            padding-bottom: 120px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 6rem;
         }
 
-        .floating-dock {
-            position: fixed;
+        .hero-glow {
+            position: absolute;
+            top: 0;
             left: 50%;
-            right: auto;
-            bottom: 0px;
             transform: translateX(-50%);
-            width: max-content;
-            max-width: calc(100% - 32px);
+            width: 100%;
+            height: 60vh;
+            background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(249, 115, 22, 0.12), transparent);
+            pointer-events: none;
+        }
+
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-dock {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-            background: rgba(15, 23, 42, 0.75);
-            border: 1px solid rgba(148, 163, 184, 0.25);
-            border-radius: 999px;
-            backdrop-filter: blur(16px);
-            box-shadow: 0 20px 40px rgba(2, 6, 23, 0.35);
-            z-index: 50;
+            gap: 0.5rem;
+            padding: 0.625rem 0.875rem;
+            background: rgba(18, 18, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.8);
+            z-index: 100;
         }
 
-        .dock-item {
+        .nav-item {
             position: relative;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 999px;
-            background: rgba(30, 41, 59, 0.7);
-            color: #e2e8f0;
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 50%;
+            color: var(--text-secondary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .dock-item:hover {
-            transform: translateY(-6px) scale(1.08);
-            background: rgba(79, 70, 229, 0.35);
-            color: #ffffff;
+        .nav-item:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
         }
 
-        .dock-label {
+        .nav-item.active {
+            color: var(--accent-primary);
+            background: rgba(249, 115, 22, 0.15);
+        }
+
+        .nav-tooltip {
             position: absolute;
-            bottom: 50px;
+            bottom: 100%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(8px);
+            padding: 0.375rem 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
             white-space: nowrap;
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            background: rgba(15, 23, 42, 0.9);
-            color: #e2e8f0;
-            border: 1px solid rgba(148, 163, 184, 0.3);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s ease, transform 0.2s ease;
+            transition: all 0.2s ease;
         }
 
-        .dock-item:hover .dock-label {
+        .nav-item:hover .nav-tooltip {
             opacity: 1;
-            transform: translate(-50%, -6px);
+            transform: translateX(-50%) translateY(-8px);
         }
 
-        .dock-item.active {
-            background: rgba(79, 70, 229, 0.6);
-            color: #ffffff;
-            border-color: rgba(99, 102, 241, 0.8);
+        .help-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
         }
 
-        .dock-user {
-            display: inline-flex;
+        .help-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-4px);
+        }
+
+        .help-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.75rem;
+            display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 0 8px 0 6px;
-            height: 40px;
-            border-radius: 999px;
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(148, 163, 184, 0.18);
+            justify-content: center;
+            font-size: 1.25rem;
         }
 
-        .dock-user button {
-            display: inline-flex;
+        .help-link {
+            display: flex;
             align-items: center;
-            gap: 8px;
-            color: #e2e8f0;
+            gap: 0.5rem;
+            color: var(--accent-primary);
+            font-size: 0.875rem;
+            transition: gap 0.2s ease;
         }
 
-        @media (max-width: 640px) {
-            body {
-                padding-bottom: 110px;
-            }
+        .help-link:hover {
+            gap: 0.75rem;
+        }
 
-            .floating-dock {
-                width: calc(100% - 24px);
+        .faq-item {
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .faq-item:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .faq-button {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.02);
+            transition: background 0.2s ease;
+        }
+
+        .faq-button:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .faq-content {
+            padding: 0 1.25rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            font-weight: 600;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+
+        .cta-card {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(251, 146, 60, 0.1));
+            border: 1px solid var(--border-accent);
+        }
+
+        @media (max-width: 768px) {
+            .nav-dock {
+                width: calc(100% - 2rem);
                 justify-content: space-between;
-                padding: 8px;
             }
-
-            .dock-label {
+            
+            .nav-tooltip {
                 display: none;
-            }
-
-            .dock-user {
-                padding-right: 6px;
             }
         }
     </style>
 </head>
-<body class="math-bg min-h-screen" data-mm-bg="none">
-    <div class="hope-animated-bg" aria-hidden="true"></div>
-    <div class="floating-dock" aria-label="Primary">
-        <a href="../index.html" class="dock-item" aria-label="Home">
-            <span class="dock-label">Home</span>
+<body class="antialiased">
+    <div class="hero-glow"></div>
+
+    <!-- Navigation Dock -->
+    <nav class="nav-dock">
+        <a href="index.html" class="nav-item" aria-label="Home">
+            <span class="nav-tooltip">Home</span>
             <i class="fas fa-home"></i>
         </a>
-        <a href="about.html" class="dock-item" aria-label="About">
-            <span class="dock-label">About</span>
+        <a href="about.html" class="nav-item" aria-label="About">
+            <span class="nav-tooltip">About</span>
             <i class="fas fa-info-circle"></i>
         </a>
-        <a href="schedule.html" class="dock-item" aria-label="Schedule">
-            <span class="dock-label">Schedule</span>
+        <a href="schedule.html" class="nav-item" aria-label="Schedule">
+            <span class="nav-tooltip">Schedule</span>
             <i class="fas fa-calendar-alt"></i>
         </a>
-        <a href="dashboard.html" class="dock-item" aria-label="Dashboard">
-            <span class="dock-label">Dashboard</span>
+        <a href="dashboard.html" class="nav-item" aria-label="Dashboard">
+            <span class="nav-tooltip">Dashboard</span>
             <i class="fas fa-chart-line"></i>
         </a>
-        <a href="resources.html" class="dock-item" aria-label="Resources">
-            <span class="dock-label">Resources</span>
-            <i class="fas fa-book"></i>
+        <a href="resources.html" class="nav-item" aria-label="Resources">
+            <span class="nav-tooltip">Resources</span>
+            <i class="fas fa-book-open"></i>
         </a>
-        <a href="community.html" class="dock-item" aria-label="Community">
-            <span class="dock-label">Community</span>
+        <a href="community.html" class="nav-item" aria-label="Community">
+            <span class="nav-tooltip">Community</span>
             <i class="fas fa-users"></i>
         </a>
-        <a href="support.html" class="dock-item active" aria-label="Support">
-            <span class="dock-label">Support</span>
+        <a href="support.html" class="nav-item active" aria-label="Support">
+            <span class="nav-tooltip">Support</span>
             <i class="fas fa-life-ring"></i>
         </a>
-        <a href="auth.html" class="dock-item" aria-label="Sign in" id="nav-sign-in">
-            <span class="dock-label">Sign in</span>
+        <a href="auth.html" class="nav-item" aria-label="Sign In" id="nav-sign-in">
+            <span class="nav-tooltip">Sign In</span>
             <i class="fas fa-sign-in-alt"></i>
         </a>
-        <div class="relative hidden" id="nav-user">
-            <div class="dock-user">
-                <button class="text-sm rounded-full focus:outline-none" id="user-menu" aria-haspopup="true" aria-expanded="false">
-                    <span class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold" id="nav-user-initial">U</span>
-                    <span class="hidden sm:inline text-gray-300" id="nav-user-name">User</span>
-                    <i class="fas fa-chevron-up text-xs text-gray-400"></i>
-                </button>
-            </div>
-            <div class="hidden origin-bottom-right absolute right-0 bottom-14 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-gray-700 focus:outline-none z-50" role="menu" id="user-dropdown">
-                <div class="py-1" role="none">
-                    <a href="auth.html" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem">
-                        <i class="fas fa-id-card mr-2 w-4"></i> Account
-                    </a>
-                    <a href="#" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem" id="nav-sign-out">
-                        <i class="fas fa-sign-out-alt mr-2 w-4"></i> Sign out
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    </nav>
 
-    <!-- Hero Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="text-center">
-            <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">Support Center</h1>
-            <p class="text-xl text-gray-300 max-w-3xl mx-auto">Find answers to common questions or get in touch with our support team.</p>
-            
-            <!-- Search Bar -->
-            <div class="mt-8 max-w-2xl mx-auto">
+    <main class="relative max-w-6xl mx-auto px-6 py-16">
+        <!-- Hero -->
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Support Center</h1>
+            <p class="text-xl text-zinc-400 max-w-2xl mx-auto">
+                Find answers to common questions or get in touch with our team
+            </p>
+
+            <!-- Search -->
+            <div class="max-w-xl mx-auto mt-8">
                 <div class="relative">
-                    <input type="text" placeholder="Search help articles..." class="w-full px-6 py-4 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
-                    <button class="absolute right-2 top-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
-                        <i class="fas fa-search"></i>
-                    </button>
+                    <input type="text" placeholder="Search help articles..." class="form-input pl-12 pr-4">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"></i>
                 </div>
             </div>
         </div>
-        
+
         <!-- Help Categories -->
-        <div class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Getting Started -->
-            <div class="card rounded-xl p-6">
-                <div class="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center mb-4">
-                    <i class="fas fa-rocket text-white text-xl"></i>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
+            <div class="help-card">
+                <div class="help-icon bg-orange-500/20 text-orange-400 mb-4">
+                    <i class="fas fa-rocket"></i>
                 </div>
-                <h3 class="text-xl font-semibold text-white mb-3">Getting Started</h3>
-                <p class="text-gray-300 mb-4">New to MathHub? Learn the basics and make the most of your learning journey.</p>
-                <ul class="space-y-2">
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>Creating your account</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>Navigating the platform</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>Setting up your profile</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                </ul>
+                <h3 class="text-lg font-semibold mb-2">Getting Started</h3>
+                <p class="text-zinc-400 text-sm mb-4">New to MathMaster? Learn the basics and set up your account.</p>
+                <div class="space-y-2">
+                    <a href="#" class="help-link"><span>Creating your account</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="help-link"><span>Setting up your profile</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="help-link"><span>Navigating the platform</span><i class="fas fa-arrow-right"></i></a>
+                </div>
             </div>
-            
-            <!-- Account & Billing -->
-            <div class="card rounded-xl p-6">
-                <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-4">
-                    <i class="fas fa-user-cog text-white text-xl"></i>
+
+            <div class="help-card">
+                <div class="help-icon bg-purple-500/20 text-purple-400 mb-4">
+                    <i class="fas fa-user-cog"></i>
                 </div>
-                <h3 class="text-xl font-semibold text-white mb-3">Account & Billing</h3>
-                <p class="text-gray-300 mb-4">Manage your subscription, update payment methods, and view billing history.</p>
-                <ul class="space-y-2">
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>Updating payment information</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>Cancel or change plan</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>View billing history</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                </ul>
+                <h3 class="text-lg font-semibold mb-2">Account & Settings</h3>
+                <p class="text-zinc-400 text-sm mb-4">Manage your account, preferences, and privacy settings.</p>
+                <div class="space-y-2">
+                    <a href="#" class="help-link"><span>Update your profile</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="help-link"><span>Change password</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="help-link"><span>Notification settings</span><i class="fas fa-arrow-right"></i></a>
+                </div>
             </div>
-            
-            <!-- Technical Support -->
-            <div class="card rounded-xl p-6">
-                <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
-                    <i class="fas fa-laptop-code text-white text-xl"></i>
+
+            <div class="help-card">
+                <div class="help-icon bg-blue-500/20 text-blue-400 mb-4">
+                    <i class="fas fa-laptop-code"></i>
                 </div>
-                <h3 class="text-xl font-semibold text-white mb-3">Technical Support</h3>
-                <p class="text-gray-300 mb-4">Troubleshoot technical issues and get help with platform features.</p>
-                <ul class="space-y-2">
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>System requirements</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>Browser compatibility</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>Report a bug</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                </ul>
+                <h3 class="text-lg font-semibold mb-2">Technical Support</h3>
+                <p class="text-zinc-400 text-sm mb-4">Troubleshoot issues and get help with technical problems.</p>
+                <div class="space-y-2">
+                    <a href="#" class="help-link"><span>Browser compatibility</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="help-link"><span>Report a bug</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="help-link"><span>System requirements</span><i class="fas fa-arrow-right"></i></a>
+                </div>
             </div>
-            
-            <!-- Learning Resources -->
-            <div class="card rounded-xl p-6">
-                <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-4">
-                    <i class="fas fa-graduation-cap text-white text-xl"></i>
+
+            <div class="help-card">
+                <div class="help-icon bg-green-500/20 text-green-400 mb-4">
+                    <i class="fas fa-graduation-cap"></i>
                 </div>
-                <h3 class="text-xl font-semibold text-white mb-3">Learning Resources</h3>
-                <p class="text-gray-300 mb-4">Find tutorials, guides, and resources to enhance your learning experience.</p>
-                <ul class="space-y-2">
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>Video tutorials</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>Practice problems</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>Study guides</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                </ul>
+                <h3 class="text-lg font-semibold mb-2">Learning Resources</h3>
+                <p class="text-zinc-400 text-sm mb-4">Find tutorials and guides to enhance your learning.</p>
+                <div class="space-y-2">
+                    <a href="#" class="help-link"><span>Video tutorials</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="help-link"><span>Practice problems</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="help-link"><span>Study guides</span><i class="fas fa-arrow-right"></i></a>
+                </div>
             </div>
-            
-            <!-- Community & Forums -->
-            <div class="card rounded-xl p-6">
-                <div class="w-12 h-12 bg-yellow-600 rounded-lg flex items-center justify-center mb-4">
-                    <i class="fas fa-users text-white text-xl"></i>
+
+            <div class="help-card">
+                <div class="help-icon bg-yellow-500/20 text-yellow-400 mb-4">
+                    <i class="fas fa-users"></i>
                 </div>
-                <h3 class="text-xl font-semibold text-white mb-3">Community & Forums</h3>
-                <p class="text-gray-300 mb-4">Connect with other learners, ask questions, and share knowledge.</p>
-                <ul class="space-y-2">
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>Community guidelines</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>Discussion forums</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                    <li><a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center">
-                        <span>Study groups</span>
-                        <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                    </a></li>
-                </ul>
+                <h3 class="text-lg font-semibold mb-2">Community</h3>
+                <p class="text-zinc-400 text-sm mb-4">Connect with other learners and share knowledge.</p>
+                <div class="space-y-2">
+                    <a href="#" class="help-link"><span>Community guidelines</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="help-link"><span>Discussion forums</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="help-link"><span>Study groups</span><i class="fas fa-arrow-right"></i></a>
+                </div>
             </div>
-            
-            <!-- Contact Support -->
-            <div class="card rounded-xl p-6 bg-gradient-to-br from-indigo-900 to-indigo-800 border border-indigo-700">
-                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mb-4">
-                    <i class="fas fa-headset text-white text-xl"></i>
+
+            <div class="help-card cta-card">
+                <div class="help-icon bg-white/10 text-white mb-4">
+                    <i class="fas fa-headset"></i>
                 </div>
-                <h3 class="text-xl font-semibold text-white mb-3">Can't find what you need?</h3>
-                <p class="text-indigo-100 mb-6">Our support team is here to help you with any questions or issues.</p>
-                <a href="#" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                <h3 class="text-lg font-semibold mb-2">Can't find what you need?</h3>
+                <p class="text-zinc-300 text-sm mb-4">Our support team is ready to help you with any questions.</p>
+                <a href="#contact" class="btn-primary inline-flex items-center gap-2 text-sm">
                     Contact Support
-                    <i class="fas fa-arrow-right ml-2"></i>
+                    <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
         </div>
-        
+
         <!-- FAQ Section -->
-        <div class="mt-20">
-            <h2 class="text-3xl font-bold text-white text-center mb-12">Frequently Asked Questions</h2>
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h2>
             
-            <div class="max-w-3xl mx-auto space-y-4">
-                <!-- FAQ Item 1 -->
-                <div class="bg-gray-800 bg-opacity-50 rounded-xl overflow-hidden">
-                    <button class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="text-lg font-medium text-white">How do I reset my password?</span>
-                        <i class="fas fa-chevron-down text-indigo-400 transition-transform"></i>
+            <div class="max-w-3xl mx-auto space-y-3">
+                <div class="faq-item">
+                    <button class="faq-button" onclick="this.parentElement.classList.toggle('open'); this.nextElementSibling.classList.toggle('hidden');">
+                        <span class="font-medium">How do I reset my password?</span>
+                        <i class="fas fa-chevron-down text-zinc-500 transition-transform"></i>
                     </button>
-                    <div class="px-6 pb-4 text-gray-300 hidden">
+                    <div class="faq-content hidden">
                         <p>To reset your password, click on the "Forgot Password" link on the login page. Enter your email address, and we'll send you instructions to create a new password.</p>
                     </div>
                 </div>
-                
-                <!-- FAQ Item 2 -->
-                <div class="bg-gray-800 bg-opacity-50 rounded-xl overflow-hidden">
-                    <button class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="text-lg font-medium text-white">What payment methods do you accept?</span>
-                        <i class="fas fa-chevron-down text-indigo-400 transition-transform"></i>
+
+                <div class="faq-item">
+                    <button class="faq-button" onclick="this.parentElement.classList.toggle('open'); this.nextElementSibling.classList.toggle('hidden');">
+                        <span class="font-medium">How do I book a tutoring session?</span>
+                        <i class="fas fa-chevron-down text-zinc-500 transition-transform"></i>
                     </button>
-                    <div class="px-6 pb-4 text-gray-300 hidden">
-                        <p>We accept all major credit cards (Visa, Mastercard, American Express, Discover) and PayPal for subscription payments.</p>
+                    <div class="faq-content hidden">
+                        <p>Go to the Schedule page and click "Book Session". You can browse available tutors, view their profiles, and select a time that works for you.</p>
                     </div>
                 </div>
-                
-                <!-- FAQ Item 3 -->
-                <div class="bg-gray-800 bg-opacity-50 rounded-xl overflow-hidden">
-                    <button class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="text-lg font-medium text-white">Can I download courses for offline viewing?</span>
-                        <i class="fas fa-chevron-down text-indigo-400 transition-transform"></i>
+
+                <div class="faq-item">
+                    <button class="faq-button" onclick="this.parentElement.classList.toggle('open'); this.nextElementSibling.classList.toggle('hidden');">
+                        <span class="font-medium">Is MathMaster free to use?</span>
+                        <i class="fas fa-chevron-down text-zinc-500 transition-transform"></i>
                     </button>
-                    <div class="px-6 pb-4 text-gray-300 hidden">
-                        <p>Yes, our mobile app allows you to download courses and watch them offline. This feature is available for all premium subscribers.</p>
+                    <div class="faq-content hidden">
+                        <p>Yes! MathMaster offers free access to resources, community forums, and study materials. Some premium features like one-on-one tutoring may have associated costs.</p>
                     </div>
                 </div>
-                
-                <!-- FAQ Item 4 -->
-                <div class="bg-gray-800 bg-opacity-50 rounded-xl overflow-hidden">
-                    <button class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="text-lg font-medium text-white">How do I cancel my subscription?</span>
-                        <i class="fas fa-chevron-down text-indigo-400 transition-transform"></i>
+
+                <div class="faq-item">
+                    <button class="faq-button" onclick="this.parentElement.classList.toggle('open'); this.nextElementSibling.classList.toggle('hidden');">
+                        <span class="font-medium">How can I become a tutor?</span>
+                        <i class="fas fa-chevron-down text-zinc-500 transition-transform"></i>
                     </button>
-                    <div class="px-6 pb-4 text-gray-300 hidden">
-                        <p>You can cancel your subscription at any time by going to your Account Settings and selecting "Subscription." Click on "Cancel Subscription" and follow the prompts. Your subscription will remain active until the end of the current billing period.</p>
+                    <div class="faq-content hidden">
+                        <p>If you're interested in becoming a peer tutor, contact our support team with your qualifications. We'll review your application and get back to you within 48 hours.</p>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <!-- Contact Form -->
-        <div class="mt-20 bg-gray-800 rounded-2xl p-8 md:p-12 max-w-4xl mx-auto">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold text-white mb-3">Still need help?</h2>
-                <p class="text-gray-300 max-w-2xl mx-auto">Send us a message and our support team will get back to you as soon as possible.</p>
+        <div id="contact" class="glass-card p-8 md:p-12 max-w-3xl mx-auto">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold mb-2">Still need help?</h2>
+                <p class="text-zinc-400">Send us a message and we'll get back to you within 24 hours.</p>
             </div>
-            
-            <form class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <form class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
-                        <input type="text" id="name" class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                        <label class="block text-sm text-zinc-400 mb-1.5">Full Name</label>
+                        <input type="text" class="form-input" placeholder="Your name">
                     </div>
                     <div>
-                        <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
-                        <input type="email" id="email" class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                        <label class="block text-sm text-zinc-400 mb-1.5">Email</label>
+                        <input type="email" class="form-input" placeholder="you@example.com">
                     </div>
                 </div>
-                
                 <div>
-                    <label for="subject" class="block text-sm font-medium text-gray-300 mb-1">Subject</label>
-                    <input type="text" id="subject" class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    <label class="block text-sm text-zinc-400 mb-1.5">Subject</label>
+                    <input type="text" class="form-input" placeholder="How can we help?">
                 </div>
-                
                 <div>
-                    <label for="message" class="block text-sm font-medium text-gray-300 mb-1">Message</label>
-                    <textarea id="message" rows="5" class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"></textarea>
+                    <label class="block text-sm text-zinc-400 mb-1.5">Message</label>
+                    <textarea rows="5" class="form-input" placeholder="Describe your issue or question..."></textarea>
                 </div>
-                
-                <div class="flex items-center">
-                    <button type="submit" class="px-8 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                <div class="flex items-center justify-between">
+                    <p class="text-zinc-500 text-sm">We'll respond within 24 hours</p>
+                    <button type="submit" class="btn-primary">
                         Send Message
                     </button>
-                    <p class="ml-4 text-sm text-gray-400">We'll get back to you within 24 hours.</p>
                 </div>
             </form>
         </div>
-    </div>
+    </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-12 mt-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-lg font-semibold text-white mb-4">MathMaster</h3>
-                    <p class="text-sm">Empowering students to master mathematics through interactive learning and community support.</p>
-                    <div class="flex space-x-4 mt-4">
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <i class="fab fa-facebook"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <div>
-                    <h4 class="text-sm font-semibold uppercase tracking-wider text-white mb-4">Quick Links</h4>
-                    <ul class="space-y-2">
-                        <li><a href="../index.html" class="hover:text-white transition-colors">Home</a></li>
-                        <li><a href="about.html" class="hover:text-white transition-colors">About Us</a></li>
-                        <li><a href="resources.html" class="hover:text-white transition-colors">Resources</a></li>
-                        <li><a href="community.html" class="hover:text-white transition-colors">Community</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Pricing</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="text-sm font-semibold uppercase tracking-wider text-white mb-4">Support</h4>
-                    <ul class="space-y-2">
-                        <li><a href="support.html" class="hover:text-white transition-colors">Help Center</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">FAQs</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="text-sm font-semibold uppercase tracking-wider text-white mb-4">Newsletter</h4>
-                    <p class="text-sm mb-4">Subscribe to our newsletter for the latest updates and resources.</p>
-                    <form class="space-y-2">
-                        <input type="email" placeholder="Your email address" class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                        <button type="submit" class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                            Subscribe
-                        </button>
-                    </form>
-                </div>
-            </div>
-            
-            <div class="mt-12 pt-8 border-t border-gray-800">
-                <div class="md:flex md:items-center md:justify-between">
-                    <p class="text-sm text-center md:text-left">&copy; 2025 MathMaster. All rights reserved.</p>
-                    <div class="flex justify-center md:justify-end space-x-6 mt-4 md:mt-0">
-                        <a href="#" class="text-sm hover:text-white transition-colors">Privacy Policy</a>
-                        <a href="#" class="text-sm hover:text-white transition-colors">Terms of Service</a>
-                        <a href="#" class="text-sm hover:text-white transition-colors">Cookie Policy</a>
-                    </div>
-                </div>
-            </div>
+    <footer class="py-12 border-t border-zinc-800 mt-16">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <p class="text-zinc-500 text-sm">
+                © 2025 MathMaster. All rights reserved. Built for FBLA Website Design Competition.
+            </p>
         </div>
     </footer>
 
-    <div class="mm-ticker mm-ticker--fixed">
-        <div class="mm-ticker__track">
-            <div class="mm-ticker__item">Tip: <span>Show your work</span></div>
-            <div class="mm-ticker__item">Tip: <span>Check units</span></div>
-            <div class="mm-ticker__item">Tip: <span>Start with definitions</span></div>
-            <div class="mm-ticker__item">Tip: <span>Draw a diagram</span></div>
-            <div class="mm-ticker__item">Tip: <span>Try a simpler example</span></div>
-            <div class="mm-ticker__item">Tip: <span>Show your work</span></div>
-            <div class="mm-ticker__item">Tip: <span>Check units</span></div>
-            <div class="mm-ticker__item">Tip: <span>Start with definitions</span></div>
-            <div class="mm-ticker__item">Tip: <span>Draw a diagram</span></div>
-            <div class="mm-ticker__item">Tip: <span>Try a simpler example</span></div>
-        </div>
-    </div>
-
-    <script defer src="../mm-effects.js"></script>
     <script>
-        // Toggle FAQ items
-        document.querySelectorAll('.bg-gray-800 button').forEach(button => {
-            button.addEventListener('click', () => {
-                const content = button.nextElementSibling;
-                const icon = button.querySelector('i');
-                
-                // Toggle content visibility
-                content.classList.toggle('hidden');
-                content.classList.toggle('block');
-                
-                // Rotate icon
-                icon.classList.toggle('transform');
-                icon.classList.toggle('rotate-180');
-            });
-        });
+        document.addEventListener('DOMContentLoaded', () => {
+            const safeParse = (raw) => {
+                try { return JSON.parse(raw); } catch { return null; }
+            };
 
-        // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        if (mobileMenuButton && mobileMenu) {
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-
-        // User menu toggle
-        const userMenuButton = document.getElementById('user-menu');
-        const userDropdown = document.getElementById('user-dropdown');
-
-        if (userMenuButton && userDropdown) {
-            userMenuButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                userDropdown.classList.toggle('hidden');
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
-                    userDropdown.classList.add('hidden');
-                }
-            });
-        }
-
-        const safeParse = (raw) => {
-            try {
-                return JSON.parse(raw);
-            } catch (e) {
-                return null;
-            }
-        };
-
-        const capitalize = (value) => {
-            const v = (value || '').trim();
-            if (!v) return '';
-            return v.charAt(0).toUpperCase() + v.slice(1);
-        };
-
-        const formatDisplayName = (profile) => {
-            const first = capitalize(profile?.firstName);
-            const last = (profile?.lastName || '').trim();
-            const initial = last ? (last.charAt(0).toUpperCase() + '.') : '';
-            return [first, initial].filter(Boolean).join(' ');
-        };
-
-        const refreshNavbar = () => {
-            const profile = safeParse(localStorage.getItem('mm_profile') || 'null');
-            const session = safeParse(localStorage.getItem('mm_session') || 'null');
-
-            const navUser = document.getElementById('nav-user');
-            const navUserName = document.getElementById('nav-user-name');
-            const navUserInitial = document.getElementById('nav-user-initial');
+            const profile = safeParse(localStorage.getItem('mm_profile'));
+            const session = safeParse(localStorage.getItem('mm_session'));
+            const signedIn = profile && session && session.email === profile.email;
+            
             const navSignIn = document.getElementById('nav-sign-in');
-
-            const signedIn = profile && session && session.email && profile.email && session.email === profile.email;
-
-            if (signedIn) {
-                const displayName = formatDisplayName(profile);
-                if (navUserName) navUserName.textContent = displayName || 'User';
-                if (navUserInitial) {
-                    const first = (profile.firstName || '').trim();
-                    navUserInitial.textContent = first ? first.charAt(0).toUpperCase() : 'U';
-                }
-                if (navUser) navUser.classList.remove('hidden');
-                if (navSignIn) navSignIn.classList.add('hidden');
-            } else {
-                if (navUser) navUser.classList.add('hidden');
-                if (navSignIn) navSignIn.classList.remove('hidden');
+            if (signedIn && navSignIn) {
+                navSignIn.innerHTML = `
+                    <span class="nav-tooltip">Account</span>
+                    <span class="w-7 h-7 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white text-xs font-bold">
+                        ${(profile.firstName || 'U').charAt(0).toUpperCase()}
+                    </span>
+                `;
             }
-        };
-
-        const signOutLink = document.getElementById('nav-sign-out');
-        if (signOutLink) {
-            signOutLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.removeItem('mm_session');
-                refreshNavbar();
-            });
-        }
-
-        refreshNavbar();
+        });
     </script>
 </body>
 </html>

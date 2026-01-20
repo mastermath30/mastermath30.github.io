@@ -1,478 +1,530 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - Math Learning Platform</title>
+    <title>About - MathMaster</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script>
-        // Check for dark mode preference
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="../css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        .dark {
-            --bg-primary: #020617;
-            --bg-secondary: #0f172a;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent: #4f46e5;
-            --accent-hover: #4338ca;
-            --card-bg: rgba(30, 41, 59, 0.5);
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(22, 22, 32, 0.8);
+            --accent-primary: #f97316;
+            --accent-secondary: #fb923c;
+            --accent-glow: rgba(249, 115, 22, 0.4);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(249, 115, 22, 0.3);
         }
-        
-        body.dark {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-        }
-        
-        .math-bg {
-            background-color: var(--bg-primary);
-            background-image:
-                radial-gradient(at 47% 33%, rgba(15, 23, 42, 0.8) 0%, transparent 40%),
-                radial-gradient(at 82% 65%, rgba(30, 41, 59, 0.9) 0%, transparent 55%);
-        }
-        
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+
+        * {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
-            padding-bottom: 120px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 6rem;
         }
 
-        .floating-dock {
+        /* Hero gradient */
+        .hero-gradient {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 50% 0%, rgba(249, 115, 22, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 50%, rgba(251, 146, 60, 0.1), transparent);
+        }
+
+        /* Glass card effect */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Navigation dock */
+        .nav-dock {
             position: fixed;
+            bottom: 1.5rem;
             left: 50%;
-            right: auto;
-            bottom: 0px;
             transform: translateX(-50%);
-            width: max-content;
-            max-width: calc(100% - 32px);
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-            background: rgba(15, 23, 42, 0.75);
-            border: 1px solid rgba(148, 163, 184, 0.25);
-            border-radius: 999px;
-            backdrop-filter: blur(16px);
-            box-shadow: 0 20px 40px rgba(2, 6, 23, 0.35);
-            z-index: 50;
+            gap: 0.5rem;
+            padding: 0.625rem 0.875rem;
+            background: rgba(18, 18, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.8);
+            z-index: 100;
         }
 
-        .dock-item {
+        .nav-item {
             position: relative;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 999px;
-            background: rgba(30, 41, 59, 0.7);
-            color: #e2e8f0;
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 50%;
+            color: var(--text-secondary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .dock-item:hover {
-            transform: translateY(-6px) scale(1.08);
-            background: rgba(79, 70, 229, 0.35);
-            color: #ffffff;
+        .nav-item:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
         }
 
-        .dock-label {
+        .nav-item.active {
+            color: var(--accent-primary);
+            background: rgba(249, 115, 22, 0.15);
+        }
+
+        .nav-tooltip {
             position: absolute;
-            bottom: 50px;
+            bottom: 100%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(8px);
+            padding: 0.375rem 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
             white-space: nowrap;
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            background: rgba(15, 23, 42, 0.9);
-            color: #e2e8f0;
-            border: 1px solid rgba(148, 163, 184, 0.3);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s ease, transform 0.2s ease;
+            transition: all 0.2s ease;
         }
 
-        .dock-item:hover .dock-label {
+        .nav-item:hover .nav-tooltip {
             opacity: 1;
-            transform: translate(-50%, -6px);
+            transform: translateX(-50%) translateY(-8px);
         }
 
-        .dock-item.active {
-            background: rgba(79, 70, 229, 0.6);
-            color: #ffffff;
-            border-color: rgba(99, 102, 241, 0.8);
-        }
-
-        .dock-user {
+        /* Section label */
+        .section-label {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 0 8px 0 6px;
-            height: 40px;
-            border-radius: 999px;
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(148, 163, 184, 0.18);
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--accent-primary);
         }
 
-        .dock-user button {
+        /* Stat card */
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Step card */
+        .step-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-4px);
+        }
+
+        .step-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            opacity: 0.3;
+        }
+
+        /* Team card */
+        .team-card {
+            text-align: center;
+        }
+
+        .team-avatar {
+            width: 6rem;
+            height: 6rem;
+            border-radius: 1.5rem;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(251, 146, 60, 0.1));
+            border-radius: 1.5rem;
+            border: 1px solid var(--border-accent);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            font-weight: 600;
+            padding: 0.875rem 2rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            color: #e2e8f0;
+            gap: 0.5rem;
         }
 
-        @media (max-width: 640px) {
-            body {
-                padding-bottom: 110px;
-            }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
 
-            .floating-dock {
-                width: calc(100% - 24px);
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            font-weight: 500;
+            padding: 0.875rem 2rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .nav-dock {
+                width: calc(100% - 2rem);
                 justify-content: space-between;
-                padding: 8px;
             }
-
-            .dock-label {
+            
+            .nav-tooltip {
                 display: none;
-            }
-
-            .dock-user {
-                padding-right: 6px;
             }
         }
     </style>
 </head>
- <body class="math-bg min-h-screen" data-mm-bg="numbers" data-mm-bg-style="drift" data-mm-bg-direction="right" data-mm-bg-opacity="0.22" data-mm-bg-density="0.7">
-     <div class="floating-dock" aria-label="Primary">
-         <a href="../index.html" class="dock-item" aria-label="Home">
-             <span class="dock-label">Home</span>
-             <i class="fas fa-home"></i>
-         </a>
-         <a href="about.html" class="dock-item active" aria-label="About">
-             <span class="dock-label">About</span>
-             <i class="fas fa-info-circle"></i>
-         </a>
-         <a href="schedule.html" class="dock-item" aria-label="Schedule">
-             <span class="dock-label">Schedule</span>
-             <i class="fas fa-calendar-alt"></i>
-         </a>
-         <a href="dashboard.html" class="dock-item" aria-label="Dashboard">
-             <span class="dock-label">Dashboard</span>
-             <i class="fas fa-chart-line"></i>
-         </a>
-         <a href="resources.html" class="dock-item" aria-label="Resources">
-             <span class="dock-label">Resources</span>
-             <i class="fas fa-book"></i>
-         </a>
-         <a href="community.html" class="dock-item" aria-label="Community">
-             <span class="dock-label">Community</span>
-             <i class="fas fa-users"></i>
-         </a>
-         <a href="support.html" class="dock-item" aria-label="Support">
-             <span class="dock-label">Support</span>
-             <i class="fas fa-life-ring"></i>
-         </a>
-         <a href="auth.html" class="dock-item" aria-label="Sign in" id="nav-sign-in">
-             <span class="dock-label">Sign in</span>
-             <i class="fas fa-sign-in-alt"></i>
-         </a>
-         <div class="relative hidden" id="nav-user">
-             <div class="dock-user">
-                 <button class="text-sm rounded-full focus:outline-none" id="user-menu" aria-haspopup="true" aria-expanded="false">
-                     <span class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold" id="nav-user-initial">U</span>
-                     <span class="hidden sm:inline text-gray-300" id="nav-user-name">User</span>
-                     <i class="fas fa-chevron-up text-xs text-gray-400"></i>
-                 </button>
-             </div>
-             <div class="hidden origin-bottom-right absolute right-0 bottom-14 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-gray-700 focus:outline-none z-50" role="menu" id="user-dropdown">
-                 <div class="py-1" role="none">
-                     <a href="auth.html" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem">
-                         <i class="fas fa-id-card mr-2 w-4"></i> Account
-                     </a>
-                     <a href="#" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem" id="nav-sign-out">
-                         <i class="fas fa-sign-out-alt mr-2 w-4"></i> Sign out
-                     </a>
-                 </div>
-             </div>
-         </div>
-     </div>
+<body class="antialiased">
+    <!-- Navigation Dock -->
+    <nav class="nav-dock">
+        <a href="index.html" class="nav-item" aria-label="Home">
+            <span class="nav-tooltip">Home</span>
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="about.html" class="nav-item active" aria-label="About">
+            <span class="nav-tooltip">About</span>
+            <i class="fas fa-info-circle"></i>
+        </a>
+        <a href="schedule.html" class="nav-item" aria-label="Schedule">
+            <span class="nav-tooltip">Schedule</span>
+            <i class="fas fa-calendar-alt"></i>
+        </a>
+        <a href="dashboard.html" class="nav-item" aria-label="Dashboard">
+            <span class="nav-tooltip">Dashboard</span>
+            <i class="fas fa-chart-line"></i>
+        </a>
+        <a href="resources.html" class="nav-item" aria-label="Resources">
+            <span class="nav-tooltip">Resources</span>
+            <i class="fas fa-book-open"></i>
+        </a>
+        <a href="community.html" class="nav-item" aria-label="Community">
+            <span class="nav-tooltip">Community</span>
+            <i class="fas fa-users"></i>
+        </a>
+        <a href="support.html" class="nav-item" aria-label="Support">
+            <span class="nav-tooltip">Support</span>
+            <i class="fas fa-life-ring"></i>
+        </a>
+        <a href="auth.html" class="nav-item" aria-label="Sign In" id="nav-sign-in">
+            <span class="nav-tooltip">Sign In</span>
+            <i class="fas fa-sign-in-alt"></i>
+        </a>
+    </nav>
 
     <!-- Hero Section -->
-    <header class="relative overflow-hidden py-20">
-        <div class="absolute inset-0">
-            <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/40 via-gray-950 to-gray-950"></div>
-            <div class="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.35)_0%,transparent_35%),radial-gradient(circle_at_70%_70%,rgba(168,85,247,0.25)_0%,transparent_40%)]"></div>
-        </div>
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="max-w-3xl">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-indigo-600/20 text-indigo-200 border border-indigo-500/30">Our Story</span>
-                <h1 class="text-4xl md:text-5xl font-bold mt-4 text-white">About MathMaster</h1>
-                <p class="text-lg md:text-xl text-gray-200 mt-4">We make math feel learnable again — with clear practice, strong explanations, and a community that helps you when you're stuck.</p>
-                <div class="mt-8 flex flex-col sm:flex-row gap-3">
-                    <a href="auth.html#signup" class="inline-flex items-center justify-center px-6 py-3 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white font-semibold">
-                        Get Started
-                        <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
-                    <a href="community.html" class="inline-flex items-center justify-center px-6 py-3 rounded-md bg-gray-900/40 border border-gray-700 hover:bg-gray-900/60 text-gray-200 font-semibold">
-                        Visit the Forum
-                        <i class="fas fa-comments ml-2"></i>
-                    </a>
-                </div>
+    <header class="relative py-24 overflow-hidden">
+        <div class="hero-gradient"></div>
+        <div class="relative max-w-4xl mx-auto px-6 text-center">
+            <span class="section-label mb-6">
+                <i class="fas fa-heart"></i>
+                Our Story
+            </span>
+            <h1 class="text-4xl md:text-6xl font-bold mt-6 mb-6">
+                About <span class="bg-gradient-to-r from-orange-400 to-amber-500 bg-clip-text text-transparent">MathMaster</span>
+            </h1>
+            <p class="text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+                We make math feel learnable again — with clear practice, strong explanations, and a community that helps you when you're stuck.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mt-10">
+                <a href="auth.html" class="btn-primary">
+                    <i class="fas fa-rocket"></i>
+                    Get Started
+                </a>
+                <a href="community.html" class="btn-ghost">
+                    <i class="fas fa-comments"></i>
+                    Visit the Forum
+                </a>
             </div>
         </div>
     </header>
 
-    <section class="py-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="card p-5">
-                    <div class="text-sm text-gray-300">Students supported</div>
-                    <div class="mt-1 text-3xl font-bold text-white">10K+</div>
-                    <div class="mt-1 text-sm text-gray-400">Active learners improving weekly</div>
+    <!-- Stats Section -->
+    <section class="py-12">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="glass-card grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-zinc-800">
+                <div class="stat-card">
+                    <div class="stat-value">10K+</div>
+                    <p class="text-zinc-400 mt-2">Active Learners</p>
+                    <p class="text-zinc-500 text-sm mt-1">Improving weekly</p>
                 </div>
-                <div class="card p-5">
-                    <div class="text-sm text-gray-300">Lessons & practice</div>
-                    <div class="mt-1 text-3xl font-bold text-white">500+</div>
-                    <div class="mt-1 text-sm text-gray-400">Guided explanations + problems</div>
+                <div class="stat-card">
+                    <div class="stat-value">500+</div>
+                    <p class="text-zinc-400 mt-2">Lessons & Resources</p>
+                    <p class="text-zinc-500 text-sm mt-1">Guided explanations</p>
                 </div>
-                <div class="card p-5">
-                    <div class="text-sm text-gray-300">Community help</div>
-                    <div class="mt-1 text-3xl font-bold text-white">24/7</div>
-                    <div class="mt-1 text-sm text-gray-400">Ask questions anytime</div>
+                <div class="stat-card">
+                    <div class="stat-value">24/7</div>
+                    <p class="text-zinc-400 mt-2">Community Help</p>
+                    <p class="text-zinc-500 text-sm mt-1">Ask anytime</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Mission Section -->
-    <section class="py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="lg:text-center">
-                <h2 class="text-3xl font-bold text-white mb-6">Our Mission</h2>
-                <p class="text-xl text-gray-300 max-w-4xl mx-auto">
-                    MathMaster was founded on the belief that everyone deserves access to quality math education. 
-                    We're building a community where students can learn from each other, share knowledge, and grow 
-                    together in their mathematical journey.
-                </p>
-            </div>
+    <section class="py-20">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <span class="section-label mb-6">
+                <i class="fas fa-bullseye"></i>
+                Our Mission
+            </span>
+            <h2 class="text-3xl md:text-4xl font-bold mt-6 mb-6">
+                Making Math Accessible to Everyone
+            </h2>
+            <p class="text-lg text-zinc-400 leading-relaxed">
+                MathMaster was founded on the belief that everyone deserves access to quality math education. 
+                We're building a community where students can learn from each other, share knowledge, and grow 
+                together in their mathematical journey. Whether you're struggling with basic algebra or diving 
+                into calculus, we're here to help you succeed.
+            </p>
         </div>
     </section>
 
     <!-- How It Works -->
-    <section class="py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center text-white mb-12">How It Works</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="card p-6">
-                    <div class="text-indigo-400 text-4xl mb-4">1</div>
-                    <h3 class="text-xl font-semibold text-white mb-3">Join the Community</h3>
-                    <p class="text-gray-300">Create your free account and set up your student or tutor profile.</p>
+    <section class="py-20 bg-gradient-to-b from-transparent via-orange-500/5 to-transparent">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="section-label mb-6">
+                    <i class="fas fa-route"></i>
+                    Getting Started
+                </span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-6">
+                    How It Works
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <h3 class="text-xl font-semibold mt-2 mb-3">Join the Community</h3>
+                    <p class="text-zinc-400">Create your free account and set up your student profile. Tell us about your learning goals.</p>
                 </div>
-                <div class="card p-6">
-                    <div class="text-indigo-400 text-4xl mb-4">2</div>
-                    <h3 class="text-xl font-semibold text-white mb-3">Connect & Learn</h3>
-                    <p class="text-gray-300">Join study groups, attend live sessions, or access learning resources.</p>
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <h3 class="text-xl font-semibold mt-2 mb-3">Connect & Learn</h3>
+                    <p class="text-zinc-400">Access resources, join study groups, attend live sessions, and ask questions in the forum.</p>
                 </div>
-                <div class="card p-6">
-                    <div class="text-indigo-400 text-4xl mb-4">3</div>
-                    <h3 class="text-xl font-semibold text-white mb-3">Share Knowledge</h3>
-                    <p class="text-gray-300">Help others by answering questions or becoming a peer tutor.</p>
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <h3 class="text-xl font-semibold mt-2 mb-3">Track & Succeed</h3>
+                    <p class="text-zinc-400">Monitor your progress on the dashboard, earn achievements, and watch your skills grow.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Team Section -->
-    <section class="py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center text-white mb-12">Our Team</h2>
+    <section class="py-20">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="section-label mb-6">
+                    <i class="fas fa-users"></i>
+                    Meet the Team
+                </span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-6">
+                    The People Behind MathMaster
+                </h2>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="text-center">
-                    <div class="h-40 w-40 mx-auto rounded-full bg-gray-700 mb-4 overflow-hidden">
-                        <img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20128%20128'%3E%3Crect%20width='128'%20height='128'%20fill='%23374151'/%3E%3Ccircle%20cx='64'%20cy='50'%20r='24'%20fill='%239ca3af'/%3E%3Cpath%20d='M24%20116c8-22%2024-34%2040-34s32%2012%2040%2034'%20fill='%239ca3af'/%3E%3C/svg%3E" alt="Team Member" class="h-full w-full object-cover">
+                <div class="team-card">
+                    <div class="team-avatar bg-gradient-to-br from-orange-400 to-amber-500 text-white">
+                        SJ
                     </div>
-                    <h3 class="text-xl font-semibold text-white">Dr. Sarah Johnson</h3>
-                    <p class="text-indigo-400 mb-2">Founder & Lead Educator</p>
-                    <p class="text-gray-300">PhD in Mathematics with 10+ years of teaching experience</p>
+                    <h3 class="text-xl font-semibold">Dr. Sarah Johnson</h3>
+                    <p class="text-orange-400 text-sm mb-2">Founder & Lead Educator</p>
+                    <p class="text-zinc-400 text-sm">PhD in Mathematics with 10+ years of teaching experience at top universities.</p>
                 </div>
-                <div class="text-center">
-                    <div class="h-40 w-40 mx-auto rounded-full bg-gray-700 mb-4 overflow-hidden">
-                        <img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20128%20128'%3E%3Crect%20width='128'%20height='128'%20fill='%23374151'/%3E%3Ccircle%20cx='64'%20cy='50'%20r='24'%20fill='%239ca3af'/%3E%3Cpath%20d='M24%20116c8-22%2024-34%2040-34s32%2012%2040%2034'%20fill='%239ca3af'/%3E%3C/svg%3E" alt="Team Member" class="h-full w-full object-cover">
+
+                <div class="team-card">
+                    <div class="team-avatar bg-gradient-to-br from-blue-400 to-cyan-500 text-white">
+                        MC
                     </div>
-                    <h3 class="text-xl font-semibold text-white">Michael Chen</h3>
-                    <p class="text-indigo-400 mb-2">Head of Technology</p>
-                    <p class="text-gray-300">Software Engineer & Education Technology Specialist</p>
+                    <h3 class="text-xl font-semibold">Michael Chen</h3>
+                    <p class="text-orange-400 text-sm mb-2">Head of Technology</p>
+                    <p class="text-zinc-400 text-sm">Software Engineer & Education Technology Specialist. Built platforms for millions of users.</p>
                 </div>
-                <div class="text-center">
-                    <div class="h-40 w-40 mx-auto rounded-full bg-gray-700 mb-4 overflow-hidden">
-                        <img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20128%20128'%3E%3Crect%20width='128'%20height='128'%20fill='%23374151'/%3E%3Ccircle%20cx='64'%20cy='50'%20r='24'%20fill='%239ca3af'/%3E%3Cpath%20d='M24%20116c8-22%2024-34%2040-34s32%2012%2040%2034'%20fill='%239ca3af'/%3E%3C/svg%3E" alt="Team Member" class="h-full w-full object-cover">
+
+                <div class="team-card">
+                    <div class="team-avatar bg-gradient-to-br from-purple-400 to-pink-500 text-white">
+                        PP
                     </div>
-                    <h3 class="text-xl font-semibold text-white">Priya Patel</h3>
-                    <p class="text-indigo-400 mb-2">Community Manager</p>
-                    <p class="text-gray-300">Expert in building and nurturing learning communities</p>
+                    <h3 class="text-xl font-semibold">Priya Patel</h3>
+                    <p class="text-orange-400 text-sm mb-2">Community Manager</p>
+                    <p class="text-zinc-400 text-sm">Expert in building and nurturing learning communities. Passionate about student success.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Call to Action -->
-     <section class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white py-16">
-         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-             <h2 class="text-3xl font-bold mb-6">Join Our Community</h2>
-             <p class="text-xl mb-8 max-w-3xl mx-auto text-indigo-100">Become part of a growing community of learners and educators.</p>
-             <a href="auth.html#signup" class="inline-block px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-700 hover:bg-indigo-600 md:py-4 md:text-lg md:px-10 transition-colors">
-                 Get Started Today
-             </a>
-         </div>
-     </section>
+    <!-- Values Section -->
+    <section class="py-20">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="section-label mb-6">
+                    <i class="fas fa-star"></i>
+                    What We Believe
+                </span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-6">
+                    Our Core Values
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-card p-6">
+                    <div class="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-400 text-xl mb-4">
+                        <i class="fas fa-universal-access"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">Accessibility</h3>
+                    <p class="text-zinc-400 text-sm">Quality education should be available to everyone, regardless of background or location.</p>
+                </div>
+
+                <div class="glass-card p-6">
+                    <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center text-green-400 text-xl mb-4">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">Community</h3>
+                    <p class="text-zinc-400 text-sm">Learning is better together. We foster collaboration and peer support.</p>
+                </div>
+
+                <div class="glass-card p-6">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-xl mb-4">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">Clarity</h3>
+                    <p class="text-zinc-400 text-sm">Complex concepts deserve clear explanations. No jargon, just understanding.</p>
+                </div>
+
+                <div class="glass-card p-6">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 text-xl mb-4">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">Growth</h3>
+                    <p class="text-zinc-400 text-sm">Every student can improve. We celebrate progress, not perfection.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="cta-section p-10 md:p-16 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                    Ready to Join Our Community?
+                </h2>
+                <p class="text-zinc-400 text-lg mb-8 max-w-xl mx-auto">
+                    Become part of a growing community of learners and educators who are passionate about mathematics.
+                </p>
+                <a href="auth.html" class="btn-primary">
+                    <i class="fas fa-rocket"></i>
+                    Get Started Today
+                </a>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-12 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                 <div>
-                     <h3 class="text-lg font-semibold mb-4">MathMaster</h3>
-                     <p class="text-gray-400">Empowering students to master mathematics through personalized learning experiences.</p>
-                 </div>
-                <div>
-                    <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Quick Links</h4>
-                    <ul class="space-y-2">
-                        <li><a href="about.html" class="text-gray-400 hover:text-white">About Us</a></li>
-                        <li><a href="schedule.html" class="text-gray-400 hover:text-white">Schedule</a></li>
-                        <li><a href="resources.html" class="text-gray-400 hover:text-white">Resources</a></li>
-                        <li><a href="community.html" class="text-gray-400 hover:text-white">Community</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-sm font-semibold uppercase tracking-wider mb-4">Support</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Help Center</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Connect With Us</h4>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-8 pt-8 border-t border-gray-700">
-                <p class="text-center text-gray-400 text-sm">&copy; 2023 MathMaster. All rights reserved.</p>
-            </div>
+    <footer class="py-12 border-t border-zinc-800">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <p class="text-zinc-500 text-sm">
+                © 2025 MathMaster. All rights reserved. Built for FBLA Website Design Competition.
+            </p>
         </div>
     </footer>
 
-     <script defer src="../mm-effects.js"></script>
-     <script>
-         document.addEventListener('DOMContentLoaded', () => {
-             const mobileMenuButton = document.getElementById('mobile-menu-button');
-             const mobileMenu = document.getElementById('mobile-menu');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Auth state
+            const safeParse = (raw) => {
+                try { return JSON.parse(raw); } catch { return null; }
+            };
 
-             if (mobileMenuButton && mobileMenu) {
-                 mobileMenuButton.addEventListener('click', () => {
-                     mobileMenu.classList.toggle('hidden');
-                 });
-             }
-
-             const userMenuButton = document.getElementById('user-menu');
-             const userDropdown = document.getElementById('user-dropdown');
-
-             if (userMenuButton && userDropdown) {
-                 userMenuButton.addEventListener('click', (e) => {
-                     e.stopPropagation();
-                     userDropdown.classList.toggle('hidden');
-                 });
-
-                 document.addEventListener('click', (e) => {
-                     if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
-                         userDropdown.classList.add('hidden');
-                     }
-                 });
-             }
-
-             const safeParse = (raw) => {
-                 try {
-                     return JSON.parse(raw);
-                 } catch (e) {
-                     return null;
-                 }
-             };
-
-             const capitalize = (value) => {
-                 const v = (value || '').trim();
-                 if (!v) return '';
-                 return v.charAt(0).toUpperCase() + v.slice(1);
-             };
-
-             const formatDisplayName = (profile) => {
-                 const first = capitalize(profile?.firstName);
-                 const last = (profile?.lastName || '').trim();
-                 const initial = last ? (last.charAt(0).toUpperCase() + '.') : '';
-                 return [first, initial].filter(Boolean).join(' ');
-             };
-
-             const refreshNavbar = () => {
-                 const profile = safeParse(localStorage.getItem('mm_profile') || 'null');
-                 const session = safeParse(localStorage.getItem('mm_session') || 'null');
-
-                 const navUser = document.getElementById('nav-user');
-                 const navUserName = document.getElementById('nav-user-name');
-                 const navUserInitial = document.getElementById('nav-user-initial');
-                 const navSignIn = document.getElementById('nav-sign-in');
-
-                 const signedIn = profile && session && session.email && profile.email && session.email === profile.email;
-
-                 if (signedIn) {
-                     const displayName = formatDisplayName(profile);
-                     if (navUserName) navUserName.textContent = displayName || 'User';
-                     if (navUserInitial) {
-                         const first = (profile.firstName || '').trim();
-                         navUserInitial.textContent = first ? first.charAt(0).toUpperCase() : 'U';
-                     }
-                     if (navUser) navUser.classList.remove('hidden');
-                     if (navSignIn) navSignIn.classList.add('hidden');
-                 } else {
-                     if (navUser) navUser.classList.add('hidden');
-                     if (navSignIn) navSignIn.classList.remove('hidden');
-                 }
-             };
-
-             const signOutLink = document.getElementById('nav-sign-out');
-             if (signOutLink) {
-                 signOutLink.addEventListener('click', (e) => {
-                     e.preventDefault();
-                     localStorage.removeItem('mm_session');
-                     refreshNavbar();
-                 });
-             }
-
-             refreshNavbar();
-         });
-     </script>
- </body>
- </html>
+            const profile = safeParse(localStorage.getItem('mm_profile'));
+            const session = safeParse(localStorage.getItem('mm_session'));
+            const signedIn = profile && session && session.email === profile.email;
+            
+            const navSignIn = document.getElementById('nav-sign-in');
+            if (signedIn && navSignIn) {
+                navSignIn.innerHTML = `
+                    <span class="nav-tooltip">Account</span>
+                    <span class="w-7 h-7 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white text-xs font-bold">
+                        ${(profile.firstName || 'U').charAt(0).toUpperCase()}
+                    </span>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

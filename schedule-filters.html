@@ -1,236 +1,229 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schedule Filters - Math Learning Platform</title>
+    <title>Schedule Filters - MathMaster</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script>
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="../css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        .dark {
-            --bg-primary: #020617;
-            --bg-secondary: #0f172a;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent: #4f46e5;
-            --accent-hover: #4338ca;
-            --card-bg: rgba(30, 41, 59, 0.5);
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(22, 22, 32, 0.8);
+            --accent-primary: #f97316;
+            --accent-secondary: #fb923c;
+            --accent-glow: rgba(249, 115, 22, 0.4);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(249, 115, 22, 0.3);
         }
 
-        body.dark {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-        }
-
-        .math-bg {
-            background-color: var(--bg-primary);
-            background-image:
-                radial-gradient(at 47% 33%, rgba(15, 23, 42, 0.8) 0%, transparent 40%),
-                radial-gradient(at 82% 65%, rgba(30, 41, 59, 0.9) 0%, transparent 55%);
-        }
-
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        * {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
-            padding-bottom: 120px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 6rem;
         }
 
-        .floating-dock {
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1.25rem;
+        }
+
+        .nav-dock {
             position: fixed;
+            bottom: 1.5rem;
             left: 50%;
-            right: auto;
-            bottom: 0px;
             transform: translateX(-50%);
-            width: max-content;
-            max-width: calc(100% - 32px);
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-            background: rgba(15, 23, 42, 0.75);
-            border: 1px solid rgba(148, 163, 184, 0.25);
-            border-radius: 999px;
-            backdrop-filter: blur(16px);
-            box-shadow: 0 20px 40px rgba(2, 6, 23, 0.35);
-            z-index: 50;
+            gap: 0.5rem;
+            padding: 0.625rem 0.875rem;
+            background: rgba(18, 18, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.8);
+            z-index: 100;
         }
 
-        .dock-item {
+        .nav-item {
             position: relative;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 999px;
-            background: rgba(30, 41, 59, 0.7);
-            color: #e2e8f0;
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 50%;
+            color: var(--text-secondary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .dock-item:hover {
-            transform: translateY(-6px) scale(1.08);
-            background: rgba(79, 70, 229, 0.35);
-            color: #ffffff;
+        .nav-item:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
         }
 
-        .dock-label {
+        .nav-item.active {
+            color: var(--accent-primary);
+            background: rgba(249, 115, 22, 0.15);
+        }
+
+        .nav-tooltip {
             position: absolute;
-            bottom: 50px;
+            bottom: 100%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(8px);
+            padding: 0.375rem 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
             white-space: nowrap;
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            background: rgba(15, 23, 42, 0.9);
-            color: #e2e8f0;
-            border: 1px solid rgba(148, 163, 184, 0.3);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s ease, transform 0.2s ease;
+            transition: all 0.2s ease;
         }
 
-        .dock-item:hover .dock-label {
+        .nav-item:hover .nav-tooltip {
             opacity: 1;
-            transform: translate(-50%, -6px);
+            transform: translateX(-50%) translateY(-8px);
         }
 
-        .dock-item.active {
-            background: rgba(79, 70, 229, 0.6);
-            color: #ffffff;
-            border-color: rgba(99, 102, 241, 0.8);
+        .header-gradient {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(251, 146, 60, 0.05));
+            border-bottom: 1px solid var(--border-subtle);
         }
 
-        .dock-user {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 0 8px 0 6px;
-            height: 40px;
-            border-radius: 999px;
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(148, 163, 184, 0.18);
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
         }
 
-        .dock-user button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #e2e8f0;
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        @media (max-width: 640px) {
-            body {
-                padding-bottom: 110px;
-            }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            font-weight: 600;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.625rem;
+            transition: all 0.3s ease;
+        }
 
-            .floating-dock {
-                width: calc(100% - 24px);
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.625rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .nav-dock {
+                width: calc(100% - 2rem);
                 justify-content: space-between;
-                padding: 8px;
             }
-
-            .dock-label {
+            
+            .nav-tooltip {
                 display: none;
-            }
-
-            .dock-user {
-                padding-right: 6px;
             }
         }
     </style>
 </head>
-<body class="math-bg min-h-screen" data-mm-bg="numbers" data-mm-bg-style="drift" data-mm-bg-direction="right" data-mm-bg-opacity="0.18" data-mm-bg-density="0.7">
-    <div class="floating-dock" aria-label="Primary">
-        <a href="../index.html" class="dock-item" aria-label="Home">
-            <span class="dock-label">Home</span>
+<body class="antialiased">
+    <!-- Navigation Dock -->
+    <nav class="nav-dock">
+        <a href="index.html" class="nav-item" aria-label="Home">
+            <span class="nav-tooltip">Home</span>
             <i class="fas fa-home"></i>
         </a>
-        <a href="about.html" class="dock-item" aria-label="About">
-            <span class="dock-label">About</span>
+        <a href="about.html" class="nav-item" aria-label="About">
+            <span class="nav-tooltip">About</span>
             <i class="fas fa-info-circle"></i>
         </a>
-        <a href="schedule.html" class="dock-item active" aria-label="Schedule">
-            <span class="dock-label">Schedule</span>
+        <a href="schedule.html" class="nav-item active" aria-label="Schedule">
+            <span class="nav-tooltip">Schedule</span>
             <i class="fas fa-calendar-alt"></i>
         </a>
-        <a href="dashboard.html" class="dock-item" aria-label="Dashboard">
-            <span class="dock-label">Dashboard</span>
+        <a href="dashboard.html" class="nav-item" aria-label="Dashboard">
+            <span class="nav-tooltip">Dashboard</span>
             <i class="fas fa-chart-line"></i>
         </a>
-        <a href="resources.html" class="dock-item" aria-label="Resources">
-            <span class="dock-label">Resources</span>
-            <i class="fas fa-book"></i>
+        <a href="resources.html" class="nav-item" aria-label="Resources">
+            <span class="nav-tooltip">Resources</span>
+            <i class="fas fa-book-open"></i>
         </a>
-        <a href="community.html" class="dock-item" aria-label="Community">
-            <span class="dock-label">Community</span>
+        <a href="community.html" class="nav-item" aria-label="Community">
+            <span class="nav-tooltip">Community</span>
             <i class="fas fa-users"></i>
         </a>
-        <a href="support.html" class="dock-item" aria-label="Support">
-            <span class="dock-label">Support</span>
+        <a href="support.html" class="nav-item" aria-label="Support">
+            <span class="nav-tooltip">Support</span>
             <i class="fas fa-life-ring"></i>
         </a>
-        <a href="auth.html" class="dock-item" aria-label="Sign in" id="nav-sign-in">
-            <span class="dock-label">Sign in</span>
+        <a href="auth.html" class="nav-item" aria-label="Sign In" id="nav-sign-in">
+            <span class="nav-tooltip">Sign In</span>
             <i class="fas fa-sign-in-alt"></i>
         </a>
-        <div class="relative hidden" id="nav-user">
-            <div class="dock-user">
-                <button class="text-sm rounded-full focus:outline-none" id="user-menu" aria-haspopup="true" aria-expanded="false">
-                    <span class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold" id="nav-user-initial">U</span>
-                    <span class="hidden sm:inline text-gray-300" id="nav-user-name">User</span>
-                    <i class="fas fa-chevron-up text-xs text-gray-400"></i>
-                </button>
-            </div>
-            <div class="hidden origin-bottom-right absolute right-0 bottom-14 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-gray-700 focus:outline-none z-50" role="menu" id="user-dropdown">
-                <div class="py-1" role="none">
-                    <a href="auth.html" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem">
-                        <i class="fas fa-id-card mr-2 w-4"></i> Account
-                    </a>
-                    <a href="#" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem" id="nav-sign-out">
-                        <i class="fas fa-sign-out-alt mr-2 w-4"></i> Sign out
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    </nav>
 
-    <header class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white shadow-lg">
-        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            <div class="md:flex md:items-center md:justify-between">
-                <div class="flex-1 min-w-0">
-                    <h1 class="text-3xl font-bold">Schedule Filters</h1>
-                    <p class="mt-2 text-indigo-100">Set your preferences for tutor sessions.</p>
+    <!-- Header -->
+    <header class="header-gradient">
+        <div class="max-w-3xl mx-auto px-6 py-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">Schedule Filters</h1>
+                    <p class="text-zinc-400 text-sm mt-1">Set your preferences for tutor sessions</p>
                 </div>
-                <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
-                    <a href="schedule.html" class="inline-flex items-center px-4 py-2 border border-indigo-300 rounded-md shadow-sm text-sm font-medium text-white bg-indigo-700 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
-                        <i class="fas fa-arrow-left mr-2"></i> Back to Schedule
-                    </a>
-                </div>
+                <a href="schedule.html" class="btn-secondary text-sm">
+                    <i class="fas fa-arrow-left mr-2"></i>Back
+                </a>
             </div>
         </div>
     </header>
 
-    <main class="max-w-3xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div class="card rounded-lg p-6">
-            <form id="filters-form" class="space-y-6">
+    <!-- Main Content -->
+    <main class="max-w-3xl mx-auto px-6 py-8">
+        <div class="glass-card p-6">
+            <form id="filters-form" class="space-y-5">
                 <div>
-                    <label class="block text-sm font-medium text-gray-200 mb-2" for="filter-subject">Subject</label>
-                    <select id="filter-subject" class="w-full rounded-md bg-gray-900 border border-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label class="block text-sm text-zinc-400 mb-1.5" for="filter-subject">Subject</label>
+                    <select id="filter-subject" class="form-input">
                         <option value="">All subjects</option>
                         <option value="Mathematics">Mathematics</option>
                         <option value="Calculus">Calculus</option>
@@ -243,8 +236,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-200 mb-2" for="filter-tutor">Tutor</label>
-                    <select id="filter-tutor" class="w-full rounded-md bg-gray-900 border border-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label class="block text-sm text-zinc-400 mb-1.5" for="filter-tutor">Tutor</label>
+                    <select id="filter-tutor" class="form-input">
                         <option value="">All tutors</option>
                         <option value="Dr. Sarah Johnson">Dr. Sarah Johnson</option>
                         <option value="Priya Patel">Priya Patel</option>
@@ -256,21 +249,21 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-200 mb-2" for="filter-view">Calendar Default View</label>
-                    <select id="filter-view" class="w-full rounded-md bg-gray-900 border border-gray-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label class="block text-sm text-zinc-400 mb-1.5" for="filter-view">Calendar Default View</label>
+                    <select id="filter-view" class="form-input">
                         <option value="dayGridMonth">Month</option>
                         <option value="timeGridWeek">Week</option>
                         <option value="timeGridDay">Day</option>
                     </select>
                 </div>
 
-                <div class="flex items-center justify-between">
-                    <p class="text-sm text-gray-300" id="status"></p>
-                    <div class="flex space-x-3">
-                        <button type="button" id="clear" class="inline-flex items-center px-4 py-2 border border-gray-600 rounded-md shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600">
+                <div class="flex items-center justify-between pt-2">
+                    <p class="text-green-400 text-sm" id="status"></p>
+                    <div class="flex gap-3">
+                        <button type="button" id="clear" class="btn-secondary text-sm">
                             Clear
                         </button>
-                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                        <button type="submit" class="btn-primary text-sm">
                             Save
                         </button>
                     </div>
@@ -278,96 +271,30 @@
             </form>
         </div>
 
-        <div class="mt-6 text-sm text-gray-300">
+        <p class="text-zinc-500 text-sm mt-4 text-center">
             These filters are saved locally in your browser.
-        </div>
+        </p>
     </main>
 
-    <script defer src="../mm-effects.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-
-            if (mobileMenuButton && mobileMenu) {
-                mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
-                });
-            }
-
-            const userMenuButton = document.getElementById('user-menu');
-            const userDropdown = document.getElementById('user-dropdown');
-
-            if (userMenuButton && userDropdown) {
-                userMenuButton.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    userDropdown.classList.toggle('hidden');
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
-                        userDropdown.classList.add('hidden');
-                    }
-                });
-            }
-
             const safeParse = (raw) => {
-                try {
-                    return JSON.parse(raw);
-                } catch (e) {
-                    return null;
-                }
+                try { return JSON.parse(raw); } catch { return null; }
             };
 
-            const capitalize = (value) => {
-                const v = (value || '').trim();
-                if (!v) return '';
-                return v.charAt(0).toUpperCase() + v.slice(1);
-            };
-
-            const formatDisplayName = (profile) => {
-                const first = capitalize(profile?.firstName);
-                const last = (profile?.lastName || '').trim();
-                const initial = last ? (last.charAt(0).toUpperCase() + '.') : '';
-                return [first, initial].filter(Boolean).join(' ');
-            };
-
-            const refreshNavbar = () => {
-                const profile = safeParse(localStorage.getItem('mm_profile') || 'null');
-                const session = safeParse(localStorage.getItem('mm_session') || 'null');
-
-                const navUser = document.getElementById('nav-user');
-                const navUserName = document.getElementById('nav-user-name');
-                const navUserInitial = document.getElementById('nav-user-initial');
-                const navSignIn = document.getElementById('nav-sign-in');
-
-                const signedIn = profile && session && session.email && profile.email && session.email === profile.email;
-
-                if (signedIn) {
-                    const displayName = formatDisplayName(profile);
-                    if (navUserName) navUserName.textContent = displayName || 'User';
-                    if (navUserInitial) {
-                        const first = (profile.firstName || '').trim();
-                        navUserInitial.textContent = first ? first.charAt(0).toUpperCase() : 'U';
-                    }
-                    if (navUser) navUser.classList.remove('hidden');
-                    if (navSignIn) navSignIn.classList.add('hidden');
-                } else {
-                    if (navUser) navUser.classList.add('hidden');
-                    if (navSignIn) navSignIn.classList.remove('hidden');
-                }
-            };
-
-            const signOutLink = document.getElementById('nav-sign-out');
-            if (signOutLink) {
-                signOutLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    localStorage.removeItem('mm_session');
-                    refreshNavbar();
-                });
+            const profile = safeParse(localStorage.getItem('mm_profile'));
+            const session = safeParse(localStorage.getItem('mm_session'));
+            const signedIn = profile && session && session.email === profile.email;
+            
+            const navSignIn = document.getElementById('nav-sign-in');
+            if (signedIn && navSignIn) {
+                navSignIn.innerHTML = `
+                    <span class="nav-tooltip">Account</span>
+                    <span class="w-7 h-7 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white text-xs font-bold">
+                        ${(profile.firstName || 'U').charAt(0).toUpperCase()}
+                    </span>
+                `;
             }
-
-            refreshNavbar();
 
             const form = document.getElementById('filters-form');
             const clear = document.getElementById('clear');
@@ -378,7 +305,7 @@
             const viewEl = document.getElementById('filter-view');
 
             const load = () => {
-                const prefs = safeParse(localStorage.getItem('mm_schedule_filters') || 'null') || {};
+                const prefs = safeParse(localStorage.getItem('mm_schedule_filters')) || {};
                 if (subjectEl) subjectEl.value = prefs.subject || '';
                 if (tutorEl) tutorEl.value = prefs.tutor || '';
                 if (viewEl) viewEl.value = prefs.view || 'dayGridMonth';

@@ -1,417 +1,632 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MathMaster - Master Mathematics Together</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="css/styles.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-dark: #4338ca;
-            --secondary: #10b981;
-            --dark: #0f172a;
-            --darker: #020617;
-            --light: #f8fafc;
-            --gray: #94a3b8;
-            --card-bg: rgba(30, 41, 59, 0.5);
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(22, 22, 32, 0.8);
+            --accent-primary: #f97316;
+            --accent-secondary: #fb923c;
+            --accent-glow: rgba(249, 115, 22, 0.4);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(249, 115, 22, 0.3);
         }
+
+        * {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
         body {
-            background-color: var(--darker);
-            color: var(--light);
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
-            background-image: 
-                radial-gradient(at 47% 33%, rgba(15, 23, 42, 0.8) 0%, transparent 40%),
-                radial-gradient(at 82% 65%, rgba(30, 41, 59, 0.9) 0%, transparent 55%);
+            overflow-x: hidden;
         }
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+
+        /* Animated gradient background */
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(249, 115, 22, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(251, 146, 60, 0.1), transparent),
+                radial-gradient(ellipse 50% 30% at 20% 80%, rgba(249, 115, 22, 0.08), transparent);
+            animation: pulseGlow 8s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Grid pattern overlay */
+        .grid-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+        }
+
+        /* Floating math symbols */
+        .math-float {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            color: rgba(249, 115, 22, 0.15);
+            font-size: 2rem;
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(-10px) rotate(-3deg); }
+            75% { transform: translateY(-25px) rotate(2deg); }
+        }
+
+        /* Glass card effect */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1.25rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-accent);
+        }
+
+        /* Glow button */
+        .btn-glow {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            font-weight: 600;
+            padding: 0.875rem 2rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-glow::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px var(--accent-glow), 0 10px 30px -10px rgba(249, 115, 22, 0.5);
+        }
+
+        .btn-glow:hover::before {
+            opacity: 1;
+        }
+
+        .btn-glow span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Secondary button */
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            font-weight: 500;
+            padding: 0.875rem 2rem;
             border-radius: 0.75rem;
             transition: all 0.3s ease;
         }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            transition: all 0.3s ease;
-        }
-        .btn-secondary:hover {
-            background: rgba(79, 70, 229, 0.1);
-            transform: translateY(-2px);
-        }
-        .math-formula {
-            color: #60a5fa;
-            font-style: italic;
+
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
-        body {
-            padding-bottom: 120px;
-        }
-
-        .floating-dock {
+        /* Navigation dock */
+        .nav-dock {
             position: fixed;
+            bottom: 1.5rem;
             left: 50%;
-            right: auto;
-            bottom: 0px;
             transform: translateX(-50%);
-            width: max-content;
-            max-width: calc(100% - 32px);
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-            background: rgba(15, 23, 42, 0.75);
-            border: 1px solid rgba(148, 163, 184, 0.25);
-            border-radius: 999px;
-            backdrop-filter: blur(16px);
-            box-shadow: 0 20px 40px rgba(2, 6, 23, 0.35);
-            z-index: 50;
+            gap: 0.5rem;
+            padding: 0.625rem 0.875rem;
+            background: rgba(18, 18, 26, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.8);
+            z-index: 100;
         }
 
-        .dock-item {
+        .nav-item {
             position: relative;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 999px;
-            background: rgba(30, 41, 59, 0.7);
-            color: #e2e8f0;
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 50%;
+            color: var(--text-secondary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .dock-item:hover {
-            transform: translateY(-6px) scale(1.08);
-            background: rgba(79, 70, 229, 0.35);
-            color: #ffffff;
+        .nav-item:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
         }
 
-        .dock-label {
+        .nav-item.active {
+            color: var(--accent-primary);
+            background: rgba(249, 115, 22, 0.15);
+        }
+
+        .nav-tooltip {
             position: absolute;
-            bottom: 50px;
+            bottom: 100%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(8px);
+            padding: 0.375rem 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
             white-space: nowrap;
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            background: rgba(15, 23, 42, 0.9);
-            color: #e2e8f0;
-            border: 1px solid rgba(148, 163, 184, 0.3);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s ease, transform 0.2s ease;
+            transition: all 0.2s ease;
         }
 
-        .dock-item:hover .dock-label {
+        .nav-item:hover .nav-tooltip {
             opacity: 1;
-            transform: translate(-50%, -6px);
+            transform: translateX(-50%) translateY(-8px);
         }
 
-        .dock-item.active {
-            background: rgba(79, 70, 229, 0.6);
-            color: #ffffff;
-            border-color: rgba(99, 102, 241, 0.8);
+        /* Stats counter animation */
+        .stat-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .dock-user {
+        /* Feature icon */
+        .feature-icon {
+            width: 3.5rem;
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(249, 115, 22, 0.05));
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            color: var(--accent-primary);
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover .feature-icon {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* Section label */
+        .section-label {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 0 8px 0 6px;
-            height: 40px;
-            border-radius: 999px;
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(148, 163, 184, 0.18);
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--accent-primary);
         }
 
-        .dock-user button {
-            display: inline-flex;
+        /* Timeline */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary), transparent);
+            transform: translateX(-50%);
+        }
+
+        .timeline-dot {
+            width: 3rem;
+            height: 3rem;
+            display: flex;
             align-items: center;
-            gap: 8px;
-            color: #e2e8f0;
+            justify-content: center;
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-primary);
+            border-radius: 50%;
+            font-weight: 700;
+            color: var(--accent-primary);
+            z-index: 1;
         }
 
-        @media (max-width: 640px) {
-            body {
-                padding-bottom: 110px;
-            }
+        /* Testimonial card */
+        .testimonial-card {
+            background: linear-gradient(135deg, var(--bg-card), rgba(249, 115, 22, 0.03));
+        }
 
-            .floating-dock {
-                width: calc(100% - 24px);
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        /* Ticker */
+        .ticker-wrap {
+            overflow: hidden;
+            background: rgba(249, 115, 22, 0.05);
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0.875rem 0;
+        }
+
+        .ticker {
+            display: flex;
+            animation: ticker 40s linear infinite;
+        }
+
+        .ticker-item {
+            flex-shrink: 0;
+            padding: 0 2rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .ticker-item span {
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-dock {
+                width: calc(100% - 2rem);
                 justify-content: space-between;
-                padding: 8px;
             }
-
-            .dock-label {
+            
+            .nav-tooltip {
                 display: none;
             }
+        }
 
-            .dock-user {
-                padding-right: 6px;
+        /* Scroll animations */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
     </style>
 </head>
-<body class="antialiased" data-mm-bg="home" data-mm-bg-style="fly" data-mm-bg-direction="left" data-mm-bg-opacity="0.26" data-mm-bg-density="1.1">
-    <div class="floating-dock" aria-label="Primary">
-        <a href="../index.html" class="dock-item active" aria-label="Home">
-            <span class="dock-label">Home</span>
+<body class="antialiased">
+    <!-- Navigation Dock -->
+    <nav class="nav-dock">
+        <a href="index.html" class="nav-item active" aria-label="Home">
+            <span class="nav-tooltip">Home</span>
             <i class="fas fa-home"></i>
         </a>
-        <a href="about.html" class="dock-item" aria-label="About">
-            <span class="dock-label">About</span>
+        <a href="about.html" class="nav-item" aria-label="About">
+            <span class="nav-tooltip">About</span>
             <i class="fas fa-info-circle"></i>
         </a>
-        <a href="schedule.html" class="dock-item" aria-label="Schedule">
-            <span class="dock-label">Schedule</span>
+        <a href="schedule.html" class="nav-item" aria-label="Schedule">
+            <span class="nav-tooltip">Schedule</span>
             <i class="fas fa-calendar-alt"></i>
         </a>
-        <a href="dashboard.html" class="dock-item" aria-label="Dashboard">
-            <span class="dock-label">Dashboard</span>
+        <a href="dashboard.html" class="nav-item" aria-label="Dashboard">
+            <span class="nav-tooltip">Dashboard</span>
             <i class="fas fa-chart-line"></i>
         </a>
-        <a href="resources.html" class="dock-item" aria-label="Resources">
-            <span class="dock-label">Resources</span>
-            <i class="fas fa-book"></i>
+        <a href="resources.html" class="nav-item" aria-label="Resources">
+            <span class="nav-tooltip">Resources</span>
+            <i class="fas fa-book-open"></i>
         </a>
-        <a href="community.html" class="dock-item" aria-label="Community">
-            <span class="dock-label">Community</span>
+        <a href="community.html" class="nav-item" aria-label="Community">
+            <span class="nav-tooltip">Community</span>
             <i class="fas fa-users"></i>
         </a>
-        <a href="support.html" class="dock-item" aria-label="Support">
-            <span class="dock-label">Support</span>
+        <a href="support.html" class="nav-item" aria-label="Support">
+            <span class="nav-tooltip">Support</span>
             <i class="fas fa-life-ring"></i>
         </a>
-        <a href="auth.html" class="dock-item" aria-label="Sign in" id="nav-sign-in">
-            <span class="dock-label">Sign in</span>
+        <a href="auth.html" class="nav-item" aria-label="Sign In" id="nav-sign-in">
+            <span class="nav-tooltip">Sign In</span>
             <i class="fas fa-sign-in-alt"></i>
         </a>
-        <div class="relative hidden" id="nav-user">
-            <div class="dock-user">
-                <button class="text-sm rounded-full focus:outline-none" id="user-menu" aria-haspopup="true" aria-expanded="false">
-                    <span class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold" id="nav-user-initial">U</span>
-                    <span class="hidden sm:inline text-gray-300" id="nav-user-name">User</span>
-                    <i class="fas fa-chevron-up text-xs text-gray-400"></i>
-                </button>
-            </div>
-            <div class="hidden origin-bottom-right absolute right-0 bottom-14 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-gray-700 focus:outline-none z-50" role="menu" id="user-dropdown">
-                <div class="py-1" role="none">
-                    <a href="auth.html" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem">
-                        <i class="fas fa-id-card mr-2 w-4"></i> Account
-                    </a>
-                    <a href="#" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem" id="nav-sign-out">
-                        <i class="fas fa-sign-out-alt mr-2 w-4"></i> Sign out
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    </nav>
 
     <!-- Hero Section -->
-    <header class="relative overflow-hidden py-24 md:py-32">
-        <div class="absolute inset-0 z-0">
-            <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/50 to-purple-900/50"></div>
-            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==')]"></div>
-        </div>
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
-                Master Mathematics with Confidence
+    <header class="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <div class="hero-bg"></div>
+        <div class="grid-pattern"></div>
+        
+        <!-- Floating math symbols -->
+        <div class="math-float" style="top: 15%; left: 10%; animation-delay: 0s;">∫</div>
+        <div class="math-float" style="top: 25%; right: 15%; animation-delay: 2s;">π</div>
+        <div class="math-float" style="bottom: 30%; left: 8%; animation-delay: 4s;">∑</div>
+        <div class="math-float" style="bottom: 20%; right: 10%; animation-delay: 6s;">√</div>
+        <div class="math-float" style="top: 50%; left: 5%; animation-delay: 8s;">∞</div>
+        
+        <div class="relative z-10 max-w-6xl mx-auto px-6 text-center py-32">
+            <div class="fade-up">
+                <span class="section-label mb-6">
+                    <i class="fas fa-graduation-cap"></i>
+                    Student Learning Hub
+                </span>
+            </div>
+            
+            <h1 class="fade-up delay-100 text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                Master Mathematics<br>
+                <span class="bg-gradient-to-r from-orange-400 via-orange-500 to-amber-500 bg-clip-text text-transparent">
+                    With Confidence
+                </span>
             </h1>
-            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-gray-300">
-                Unlock the beauty of numbers and equations with our interactive learning platform.
-                <span class="math-formula block mt-2">\( \int_{a}^{b} f(x)\,dx = F(b) - F(a) \)</span>
+            
+            <p class="fade-up delay-200 text-xl md:text-2xl text-zinc-400 mb-4 max-w-3xl mx-auto leading-relaxed">
+                An interactive learning platform created by students, for students.
+                Unlock the beauty of numbers through peer tutoring and collaboration.
             </p>
-            <div class="space-y-4 sm:space-y-0 sm:space-x-4">
-                <a href="#features" class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg">
-                    <i class="fas fa-rocket mr-2"></i> Start Learning Now
+            
+            <p class="fade-up delay-200 text-lg text-zinc-500 mb-10 font-mono">
+                \( \int_{a}^{b} f(x)\,dx = F(b) - F(a) \)
+            </p>
+            
+            <div class="fade-up delay-300 flex flex-col sm:flex-row gap-4 justify-center mb-16">
+                <a href="auth.html" class="btn-glow">
+                    <span class="flex items-center gap-2">
+                        <i class="fas fa-rocket"></i>
+                        Start Learning Now
+                    </span>
                 </a>
-                <a href="#how-it-works" class="inline-flex items-center px-8 py-3 border border-gray-600 text-base font-medium rounded-md text-gray-200 bg-gray-800/50 hover:bg-gray-700/50 md:py-4 md:text-lg md:px-10 transition-all duration-300">
-                    <i class="fas fa-list-ol mr-2"></i> Steps to Success
+                <a href="#features" class="btn-ghost flex items-center gap-2">
+                    <i class="fas fa-play-circle"></i>
+                    See How It Works
                 </a>
             </div>
             
-            <div class="mt-16 grid grid-cols-2 gap-8 text-left md:grid-cols-4">
+            <!-- Stats -->
+            <div class="fade-up delay-400 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 max-w-4xl mx-auto">
                 <div class="text-center">
-                    <div class="text-3xl font-bold text-indigo-400"><span data-mm-count-to="12450" data-mm-count-duration="1400">0</span>+</div>
-                    <div class="text-sm text-gray-400">Students taught</div>
+                    <div class="stat-number text-4xl md:text-5xl">12K+</div>
+                    <div class="text-zinc-500 text-sm mt-1">Students Helped</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold text-purple-400"><span data-mm-count-to="320" data-mm-count-duration="1200">0</span>+</div>
-                    <div class="text-sm text-gray-400">Tutors helping</div>
+                    <div class="stat-number text-4xl md:text-5xl">320+</div>
+                    <div class="text-zinc-500 text-sm mt-1">Peer Tutors</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold text-pink-400">98%</div>
-                    <div class="text-sm text-gray-400">Success Rate</div>
+                    <div class="stat-number text-4xl md:text-5xl">98%</div>
+                    <div class="text-zinc-500 text-sm mt-1">Success Rate</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold text-blue-400">24/7</div>
-                    <div class="text-sm text-gray-400">Support</div>
+                    <div class="stat-number text-4xl md:text-5xl">24/7</div>
+                    <div class="text-zinc-500 text-sm mt-1">Support</div>
                 </div>
             </div>
-            <div class="mt-3 text-xs text-gray-500">All figures shown are for display.</div>
+            
+            <p class="text-xs text-zinc-600 mt-6">*Sample figures for demonstration purposes</p>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-32 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-zinc-500">
+            <span class="text-xs font-medium tracking-wider uppercase">Scroll</span>
+            <i class="fas fa-chevron-down animate-bounce"></i>
         </div>
     </header>
 
     <!-- Features Section -->
-    <section id="features" class="py-20 relative">
-        <div class="absolute inset-0 -z-10 bg-gradient-to-b from-gray-900 to-gray-950 opacity-90"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="features" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16">
-                <span class="inline-block px-3 py-1 text-sm font-semibold text-indigo-200 bg-indigo-700/20 border border-indigo-400/30 rounded-full mb-4">Why Choose MathMaster?</span>
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Master Math with Our Proven Approach</h2>
-                <div class="w-24 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto"></div>
+                <span class="section-label mb-4">
+                    <i class="fas fa-star"></i>
+                    Why Choose MathMaster?
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold mt-6 mb-4">
+                    Learn Smarter, Not Harder
+                </h2>
+                <p class="text-zinc-400 text-lg max-w-2xl mx-auto">
+                    Our platform combines the best of peer learning with powerful tools to help you succeed in mathematics.
+                </p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="card p-6 group">
-                    <div class="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-6 text-indigo-400 group-hover:bg-indigo-500/20 transition-colors">
-                        <i class="fas fa-brain text-2xl"></i>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Feature 1 -->
+                <div class="glass-card p-6">
+                    <div class="feature-icon mb-5">
+                        <i class="fas fa-brain"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">Interactive Learning</h3>
-                    <p class="text-gray-300 text-sm leading-relaxed">Engage with interactive lessons and problem-solving exercises that make abstract concepts tangible and intuitive.</p>
-                    <a href="resources.html" class="mt-4 inline-flex items-center text-indigo-400 text-sm font-medium">
-                        <span>Learn more</span>
-                        <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+                    <h3 class="text-xl font-semibold mb-3">Interactive Learning</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed mb-4">
+                        Engage with step-by-step lessons and practice problems that adapt to your learning pace.
+                    </p>
+                    <a href="resources.html" class="inline-flex items-center gap-2 text-orange-400 text-sm font-medium hover:gap-3 transition-all">
+                        Explore Resources
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
                 
-                <div class="card p-6 group">
-                    <div class="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-6 text-purple-400 group-hover:bg-purple-500/20 transition-colors">
-                        <i class="fas fa-chart-line text-2xl"></i>
+                <!-- Feature 2 -->
+                <div class="glass-card p-6">
+                    <div class="feature-icon mb-5">
+                        <i class="fas fa-chart-line"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">Personalized Progress</h3>
-                    <p class="text-gray-300 text-sm leading-relaxed">AI-powered recommendations and adaptive learning paths tailored to your strengths and areas for improvement.</p>
-                    <a href="dashboard.html" class="mt-4 inline-flex items-center text-purple-400 text-sm font-medium">
-                        <span>Track progress</span>
-                        <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+                    <h3 class="text-xl font-semibold mb-3">Track Progress</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed mb-4">
+                        Monitor your learning journey with detailed analytics and personalized goal tracking.
+                    </p>
+                    <a href="dashboard.html" class="inline-flex items-center gap-2 text-orange-400 text-sm font-medium hover:gap-3 transition-all">
+                        View Dashboard
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
                 
-                <div class="card p-6 group">
-                    <div class="w-16 h-16 bg-pink-500/10 rounded-2xl flex items-center justify-center mb-6 text-pink-400 group-hover:bg-pink-500/20 transition-colors">
-                        <i class="fas fa-users text-2xl"></i>
+                <!-- Feature 3 -->
+                <div class="glass-card p-6">
+                    <div class="feature-icon mb-5">
+                        <i class="fas fa-users"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">Expert Community</h3>
-                    <p class="text-gray-300 text-sm leading-relaxed">Connect with math enthusiasts, tutors, and experts for guidance, discussions, and collaborative learning.</p>
-                    <a href="community.html" class="mt-4 inline-flex items-center text-pink-400 text-sm font-medium">
-                        <span>Join community</span>
-                        <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+                    <h3 class="text-xl font-semibold mb-3">Peer Tutoring</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed mb-4">
+                        Connect with experienced peer tutors for live sessions and personalized help.
+                    </p>
+                    <a href="schedule.html" class="inline-flex items-center gap-2 text-orange-400 text-sm font-medium hover:gap-3 transition-all">
+                        Book a Session
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
                 
-                <div class="card p-6 group">
-                    <div class="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6 text-blue-400 group-hover:bg-blue-500/20 transition-colors">
-                        <i class="fas fa-trophy text-2xl"></i>
+                <!-- Feature 4 -->
+                <div class="glass-card p-6">
+                    <div class="feature-icon mb-5">
+                        <i class="fas fa-comments"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">Real-world Applications</h3>
-                    <p class="text-gray-300 text-sm leading-relaxed">See how mathematical concepts apply to real-world scenarios across various fields and industries.</p>
-                    <a href="schedule.html" class="mt-4 inline-flex items-center text-blue-400 text-sm font-medium">
-                        <span>Explore</span>
-                        <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+                    <h3 class="text-xl font-semibold mb-3">Community Forum</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed mb-4">
+                        Ask questions, share solutions, and learn together with our supportive community.
+                    </p>
+                    <a href="community.html" class="inline-flex items-center gap-2 text-orange-400 text-sm font-medium hover:gap-3 transition-all">
+                        Join Discussion
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
-            </div>
-            
-            <div class="mt-16 text-center">
-                <a href="auth.html" class="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium shadow-lg hover:shadow-xl hover:opacity-90 transition-all">
-                    <span>Start Your Math Journey Today</span>
-                    <i class="fas fa-arrow-right"></i>
-                </a>
             </div>
         </div>
     </section>
 
-    <!-- How It Works Section -->
-    <section id="how-it-works" class="py-20 bg-gradient-to-br from-gray-950 to-gray-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- How It Works -->
+    <section class="py-24 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-orange-500/5 to-transparent"></div>
+        
+        <div class="max-w-6xl mx-auto px-6 relative">
             <div class="text-center mb-16">
-                <span class="inline-block px-3 py-1 text-sm font-medium text-green-400 bg-green-900/30 rounded-full mb-4">Our Process</span>
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">How MathMaster Works</h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">A simple yet powerful approach to mastering mathematics at your own pace</p>
-                <div class="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto mt-4"></div>
+                <span class="section-label mb-4">
+                    <i class="fas fa-route"></i>
+                    Your Learning Journey
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold mt-6 mb-4">
+                    How MathMaster Works
+                </h2>
+                <p class="text-zinc-400 text-lg max-w-2xl mx-auto">
+                    Three simple steps to transform your math skills
+                </p>
             </div>
             
             <div class="relative">
-                <!-- Timeline -->
-                <div class="hidden lg:block absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-green-500 via-blue-500 to-purple-500 -ml-0.5"></div>
+                <!-- Timeline line (hidden on mobile) -->
+                <div class="timeline-line hidden lg:block"></div>
                 
-                <!-- Step 1 -->
-                <div class="relative mb-16 lg:flex lg:items-center lg:mb-24">
-                    <div class="lg:w-1/2 lg:pr-12 mb-8 lg:mb-0 text-right">
-                        <div class="inline-block p-1 rounded-full bg-gradient-to-r from-green-500 to-blue-500">
-                            <div class="bg-gray-900 p-2 rounded-full">
-                                <div class="w-16 h-16 rounded-full bg-green-900/30 flex items-center justify-center text-green-400 text-2xl">
-                                    <i class="fas fa-user-plus"></i>
+                <div class="space-y-12 lg:space-y-24">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col lg:flex-row items-center gap-8">
+                        <div class="lg:w-1/2 lg:pr-16 lg:text-right">
+                            <div class="glass-card p-8 inline-block text-left">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-bold">Create Your Profile</h3>
                                 </div>
+                                <p class="text-zinc-400 leading-relaxed">
+                                    Sign up for free and tell us about your learning goals. Our system will personalize your experience based on your current level and objectives.
+                                </p>
                             </div>
                         </div>
-                        <h3 class="text-2xl font-bold text-white mt-4">1. Create Your Profile</h3>
-                        <p class="text-gray-400 mt-2">Sign up and take our assessment to identify your current math level and learning style.</p>
+                        <div class="timeline-dot text-xl">1</div>
+                        <div class="lg:w-1/2 lg:pl-16"></div>
                     </div>
-                    <div class="hidden lg:block lg:w-1/2"></div>
-                    <div class="lg:absolute lg:left-1/2 lg:top-1/2 lg:transform lg:-translate-y-1/2">
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center text-white font-bold">1</div>
-                    </div>
-                </div>
-                
-                <!-- Step 2 -->
-                <div class="relative mb-16 lg:flex lg:items-center lg:mb-24">
-                    <div class="hidden lg:block lg:w-1/2"></div>
-                    <div class="lg:w-1/2 lg:pl-12">
-                        <div class="inline-block p-1 rounded-full bg-gradient-to-r from-blue-500 to-purple-500">
-                            <div class="bg-gray-900 p-2 rounded-full">
-                                <div class="w-16 h-16 rounded-full bg-blue-900/30 flex items-center justify-center text-blue-400 text-2xl">
-                                    <i class="fas fa-route"></i>
+                    
+                    <!-- Step 2 -->
+                    <div class="flex flex-col lg:flex-row items-center gap-8">
+                        <div class="lg:w-1/2 lg:pr-16 order-2 lg:order-1"></div>
+                        <div class="timeline-dot text-xl order-1 lg:order-2">2</div>
+                        <div class="lg:w-1/2 lg:pl-16 order-3">
+                            <div class="glass-card p-8 inline-block text-left">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white">
+                                        <i class="fas fa-book-reader"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-bold">Learn & Practice</h3>
                                 </div>
+                                <p class="text-zinc-400 leading-relaxed">
+                                    Access interactive lessons, video tutorials, and practice problems. Book sessions with peer tutors when you need extra help.
+                                </p>
                             </div>
                         </div>
-                        <h3 class="text-2xl font-bold text-white mt-4">2. Follow Your Path</h3>
-                        <p class="text-gray-400 mt-2">Get a personalized learning path with interactive lessons and practice problems tailored to your goals.</p>
                     </div>
-                    <div class="lg:absolute lg:left-1/2 lg:top-1/2 lg:transform lg:-translate-y-1/2">
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">2</div>
-                    </div>
-                </div>
-                
-                <!-- Step 3 -->
-                <div class="relative lg:flex lg:items-center">
-                    <div class="lg:w-1/2 lg:pr-12 mb-8 lg:mb-0 text-right">
-                        <div class="inline-block p-1 rounded-full bg-gradient-to-r from-purple-500 to-pink-500">
-                            <div class="bg-gray-900 p-2 rounded-full">
-                                <div class="w-16 h-16 rounded-full bg-purple-900/30 flex items-center justify-center text-purple-400 text-2xl">
-                                    <i class="fas fa-trophy"></i>
+                    
+                    <!-- Step 3 -->
+                    <div class="flex flex-col lg:flex-row items-center gap-8">
+                        <div class="lg:w-1/2 lg:pr-16 lg:text-right">
+                            <div class="glass-card p-8 inline-block text-left">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white">
+                                        <i class="fas fa-trophy"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-bold">Track & Succeed</h3>
                                 </div>
+                                <p class="text-zinc-400 leading-relaxed">
+                                    Monitor your progress on the dashboard, earn achievements, and watch your math skills grow over time.
+                                </p>
                             </div>
                         </div>
-                        <h3 class="text-2xl font-bold text-white mt-4">3. Track & Succeed</h3>
-                        <p class="text-gray-400 mt-2">Monitor your progress, earn achievements, and master mathematical concepts with our comprehensive tools.</p>
-                    </div>
-                    <div class="hidden lg:block lg:w-1/2"></div>
-                    <div class="lg:absolute lg:left-1/2 lg:top-1/2 lg:transform lg:-translate-y-1/2">
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">3</div>
+                        <div class="timeline-dot text-xl">3</div>
+                        <div class="lg:w-1/2 lg:pl-16"></div>
                     </div>
                 </div>
             </div>
@@ -419,275 +634,232 @@
     </section>
 
     <!-- Testimonials -->
-    <section class="py-20 relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/20 to-purple-900/20 -z-10"></div>
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAyKSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==')] -z-10"></div>
-        
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="py-24">
+        <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16">
-                <span class="inline-block px-3 py-1 text-sm font-medium text-pink-400 bg-pink-900/30 rounded-full mb-4">Success Stories</span>
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">What Our Students Say</h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">Join thousands of students who have transformed their math skills with MathMaster</p>
+                <span class="section-label mb-4">
+                    <i class="fas fa-quote-left"></i>
+                    Success Stories
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold mt-6 mb-4">
+                    What Students Say
+                </h2>
+                <p class="text-zinc-400 text-lg max-w-2xl mx-auto">
+                    Join thousands of students who have transformed their math skills
+                </p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Testimonial 1 -->
-                <div class="card p-6 group">
-                    <div class="flex items-center mb-6">
-                        <div class="relative">
-                            <div class="w-16 h-16 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 p-0.5">
-                                <div class="w-full h-full rounded-full bg-gray-800 p-1">
-                                    <img class="w-full h-full rounded-full object-cover" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20128%20128'%3E%3Crect%20width='128'%20height='128'%20fill='%23374151'/%3E%3Ccircle%20cx='64'%20cy='50'%20r='24'%20fill='%239ca3af'/%3E%3Cpath%20d='M24%20116c8-22%2024-34%2040-34s32%2012%2040%2034'%20fill='%239ca3af'/%3E%3C/svg%3E" alt="">
-                                </div>
-                            </div>
-                            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs">
-                                <i class="fas fa-quote-left"></i>
-                            </div>
+                <div class="glass-card testimonial-card p-6">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white font-bold text-lg">
+                            SJ
                         </div>
-                        <div class="ml-4">
-                            <h4 class="font-semibold text-white">Sarah Johnson</h4>
-                            <p class="text-sm text-indigo-300">Calculus Student</p>
-                            <div class="flex mt-1 text-yellow-400">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
+                        <div>
+                            <h4 class="font-semibold">Sarah Johnson</h4>
+                            <p class="text-sm text-zinc-500">Calculus Student</p>
                         </div>
                     </div>
-                    <p class="text-gray-400 text-sm leading-relaxed">"MathMaster completely changed my perspective on calculus. The interactive lessons made complex concepts like \(\lim_{x \to a} f(x) = L\) so much more intuitive. I aced my final exam thanks to this platform!"</p>
+                    <div class="flex gap-1 text-orange-400 mb-3">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-zinc-400 text-sm leading-relaxed">
+                        "MathMaster completely changed my perspective on calculus. The interactive lessons made limits and derivatives so much more intuitive. I aced my final exam!"
+                    </p>
                 </div>
                 
                 <!-- Testimonial 2 -->
-                <div class="card p-6 group">
-                    <div class="flex items-center mb-6">
-                        <div class="relative">
-                            <div class="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 p-0.5">
-                                <div class="w-full h-full rounded-full bg-gray-800 p-1">
-                                    <img class="w-full h-full rounded-full object-cover" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20128%20128'%3E%3Crect%20width='128'%20height='128'%20fill='%23374151'/%3E%3Ccircle%20cx='64'%20cy='50'%20r='24'%20fill='%239ca3af'/%3E%3Cpath%20d='M24%20116c8-22%2024-34%2040-34s32%2012%2040%2034'%20fill='%239ca3af'/%3E%3C/svg%3E" alt="">
-                                </div>
-                            </div>
-                            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs">
-                                <i class="fas fa-quote-left"></i>
-                            </div>
+                <div class="glass-card testimonial-card p-6">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center text-white font-bold text-lg">
+                            MC
                         </div>
-                        <div class="ml-4">
-                            <h4 class="font-semibold text-white">Michael Chen</h4>
-                            <p class="text-sm text-blue-300">Engineering Major</p>
-                            <div class="flex mt-1 text-yellow-400">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                            </div>
+                        <div>
+                            <h4 class="font-semibold">Michael Chen</h4>
+                            <p class="text-sm text-zinc-500">Engineering Major</p>
                         </div>
                     </div>
-                    <p class="text-gray-400 text-sm leading-relaxed">"The linear algebra course was a game-changer for my engineering studies. The visualizations helped me understand matrix operations and vector spaces in ways my textbook never could."</p>
+                    <div class="flex gap-1 text-orange-400 mb-3">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="text-zinc-400 text-sm leading-relaxed">
+                        "The linear algebra course was a game-changer for my engineering studies. The visualizations helped me understand matrix operations and vector spaces perfectly."
+                    </p>
                 </div>
                 
                 <!-- Testimonial 3 -->
-                <div class="card p-6 group">
-                    <div class="flex items-center mb-6">
-                        <div class="relative">
-                            <div class="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 p-0.5">
-                                <div class="w-full h-full rounded-full bg-gray-800 p-1">
-                                    <img class="w-full h-full rounded-full object-cover" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20128%20128'%3E%3Crect%20width='128'%20height='128'%20fill='%23374151'/%3E%3Ccircle%20cx='64'%20cy='50'%20r='24'%20fill='%239ca3af'/%3E%3Cpath%20d='M24%20116c8-22%2024-34%2040-34s32%2012%2040%2034'%20fill='%239ca3af'/%3E%3C/svg%3E" alt="">
-                                </div>
-                            </div>
-                            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs">
-                                <i class="fas fa-quote-left"></i>
-                            </div>
+                <div class="glass-card testimonial-card p-6">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
+                            ER
                         </div>
-                        <div class="ml-4">
-                            <h4 class="font-semibold text-white">Emily Rodriguez</h4>
-                            <p class="text-sm text-purple-300">High School Senior</p>
-                            <div class="flex mt-1 text-yellow-400">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                            </div>
+                        <div>
+                            <h4 class="font-semibold">Emily Rodriguez</h4>
+                            <p class="text-sm text-zinc-500">High School Senior</p>
                         </div>
                     </div>
-                    <p class="text-gray-400 text-sm leading-relaxed">"I used to hate math, but MathMaster's approach made it fun and engaging. The step-by-step solutions helped me understand where I was going wrong with quadratic equations. My SAT math score improved by 150 points!"</p>
+                    <div class="flex gap-1 text-orange-400 mb-3">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-zinc-400 text-sm leading-relaxed">
+                        "I used to struggle with math, but MathMaster's step-by-step approach made everything click. My SAT math score improved by 150 points!"
+                    </p>
                 </div>
-            </div>
-            
-            <div class="mt-12 text-center">
-                <a href="community.html" class="inline-flex px-6 py-3 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:opacity-90 transition-opacity">
-                    Read More Success Stories
-                </a>
             </div>
         </div>
     </section>
 
-    <section class="py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="mm-ticker rounded-2xl">
-                <div class="mm-ticker__track">
-                    <div class="mm-ticker__item">"Aced my final exam in 6 weeks." <span>— Sarah J.</span></div>
-                    <div class="mm-ticker__item">"Explained matrices better than my textbook." <span>— Michael C.</span></div>
-                    <div class="mm-ticker__item">"My SAT math score jumped 150 points." <span>— Emily R.</span></div>
-                    <div class="mm-ticker__item">"Best tutoring platform I've used." <span>— Priya P.</span></div>
-                    <div class="mm-ticker__item">"Clear steps, no confusion." <span>— Noah T.</span></div>
-                    <div class="mm-ticker__item">"Helped me love calculus." <span>— Aaliyah M.</span></div>
-                    <div class="mm-ticker__item">"Aced my final exam in 6 weeks." <span>— Sarah J.</span></div>
-                    <div class="mm-ticker__item">"Explained matrices better than my textbook." <span>— Michael C.</span></div>
-                    <div class="mm-ticker__item">"My SAT math score jumped 150 points." <span>— Emily R.</span></div>
-                    <div class="mm-ticker__item">"Best tutoring platform I've used." <span>— Priya P.</span></div>
-                    <div class="mm-ticker__item">"Clear steps, no confusion." <span>— Noah T.</span></div>
-                    <div class="mm-ticker__item">"Helped me love calculus." <span>— Aaliyah M.</span></div>
+    <!-- Ticker -->
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <div class="ticker-item">"Aced my final exam in 6 weeks." <span>— Sarah J.</span></div>
+            <div class="ticker-item">"Explained matrices better than my textbook." <span>— Michael C.</span></div>
+            <div class="ticker-item">"My SAT math score jumped 150 points." <span>— Emily R.</span></div>
+            <div class="ticker-item">"Best tutoring platform I've used." <span>— Priya P.</span></div>
+            <div class="ticker-item">"Clear steps, no confusion." <span>— Noah T.</span></div>
+            <div class="ticker-item">"Helped me love calculus." <span>— Aaliyah M.</span></div>
+            <div class="ticker-item">"Aced my final exam in 6 weeks." <span>— Sarah J.</span></div>
+            <div class="ticker-item">"Explained matrices better than my textbook." <span>— Michael C.</span></div>
+            <div class="ticker-item">"My SAT math score jumped 150 points." <span>— Emily R.</span></div>
+            <div class="ticker-item">"Best tutoring platform I've used." <span>— Priya P.</span></div>
+            <div class="ticker-item">"Clear steps, no confusion." <span>— Noah T.</span></div>
+            <div class="ticker-item">"Helped me love calculus." <span>— Aaliyah M.</span></div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <section class="py-24">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="glass-card p-10 md:p-16 text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-amber-500/10"></div>
+                <div class="relative">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                        Ready to Master Math?
+                    </h2>
+                    <p class="text-zinc-400 text-lg mb-8 max-w-xl mx-auto">
+                        Join thousands of students who are already improving their math skills with MathMaster.
+                    </p>
+                    <a href="auth.html" class="btn-glow inline-block">
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-rocket"></i>
+                            Get Started Free
+                        </span>
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <section class="py-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="card px-6 py-5">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                        <div class="text-sm font-semibold text-gray-200">Trusted by teams at</div>
-                        <div class="text-xs text-gray-400 mt-1">Pearson, McGraw Hill, Coursera, edX, Chegg, Duolingo, Khan Academy, Udemy</div>
+    <footer class="py-16 pb-32">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-2 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white font-bold">
+                            M
+                        </div>
+                        <span class="text-xl font-bold">MathMaster</span>
                     </div>
-                    <div class="text-xs text-gray-500 md:text-right">For display only.</div>
+                    <p class="text-zinc-500 text-sm">
+                        Empowering students to master mathematics through peer learning and collaboration.
+                    </p>
                 </div>
-            </div>
-        </div>
-    </section>
-    <footer class="bg-gray-800 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                
                 <div>
-                    <h3 class="text-lg font-semibold mb-4">MathMaster</h3>
-                    <p class="text-gray-400">Empowering students to master mathematics through personalized learning experiences.</p>
-                </div>
-                <div>
-                    <h4 class="text-sm font-semibold uppercase tracking-wider mb-4">Quick Links</h4>
-                    <ul class="space-y-2">
-                        <li><a href="index.html" class="text-gray-400 hover:text-white">Home</a></li>
-                        <li><a href="pages/about.html" class="text-gray-400 hover:text-white">About</a></li>
-                        <li><a href="pages/schedule.html" class="text-gray-400 hover:text-white">Schedule</a></li>
-                        <li><a href="pages/resources.html" class="text-gray-400 hover:text-white">Resources</a></li>
-                        <li><a href="pages/community.html" class="text-gray-400 hover:text-white">Community</a></li>
-                        <li><a href="pages/support.html" class="text-gray-400 hover:text-white">Support</a></li>
+                    <h4 class="font-semibold text-sm uppercase tracking-wider text-zinc-400 mb-4">Platform</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="dashboard.html" class="text-zinc-500 hover:text-orange-400 transition-colors">Dashboard</a></li>
+                        <li><a href="schedule.html" class="text-zinc-500 hover:text-orange-400 transition-colors">Schedule</a></li>
+                        <li><a href="resources.html" class="text-zinc-500 hover:text-orange-400 transition-colors">Resources</a></li>
+                        <li><a href="community.html" class="text-zinc-500 hover:text-orange-400 transition-colors">Community</a></li>
                     </ul>
                 </div>
+                
                 <div>
-                    <h4 class="text-sm font-semibold uppercase tracking-wider mb-4">Support</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Help Center</a></li>
+                    <h4 class="font-semibold text-sm uppercase tracking-wider text-zinc-400 mb-4">Company</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="about.html" class="text-zinc-500 hover:text-orange-400 transition-colors">About Us</a></li>
+                        <li><a href="support.html" class="text-zinc-500 hover:text-orange-400 transition-colors">Support</a></li>
+                        <li><a href="#" class="text-zinc-500 hover:text-orange-400 transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="text-zinc-500 hover:text-orange-400 transition-colors">Terms of Service</a></li>
                     </ul>
                 </div>
+                
                 <div>
-                    <h4 class="text-sm font-semibold uppercase tracking-wider mb-4">Connect</h4>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin text-xl"></i></a>
+                    <h4 class="font-semibold text-sm uppercase tracking-wider text-zinc-400 mb-4">Connect</h4>
+                    <div class="flex gap-3">
+                        <a href="#" class="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-orange-500/20 hover:text-orange-400 flex items-center justify-center text-zinc-500 transition-all">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-orange-500/20 hover:text-orange-400 flex items-center justify-center text-zinc-500 transition-all">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-orange-500/20 hover:text-orange-400 flex items-center justify-center text-zinc-500 transition-all">
+                            <i class="fab fa-youtube"></i>
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="mt-12 pt-8 border-t border-gray-700">
-                <p class="text-center text-gray-400 text-sm">&copy; 2025 MathMaster. All rights reserved.</p>
+            
+            <div class="border-t border-zinc-800 pt-8">
+                <p class="text-center text-zinc-600 text-sm">
+                    © 2025 MathMaster. All rights reserved. Built for FBLA Website Design Competition.
+                </p>
             </div>
         </div>
     </footer>
 
-    <script defer src="../mm-effects.js"></script>
     <script>
+        // Navigation active state
         document.addEventListener('DOMContentLoaded', () => {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-
-            if (mobileMenuButton && mobileMenu) {
-                mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
-                });
-            }
-
-            const userMenuButton = document.getElementById('user-menu');
-            const userDropdown = document.getElementById('user-dropdown');
-
-            if (userMenuButton && userDropdown) {
-                userMenuButton.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    userDropdown.classList.toggle('hidden');
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
-                        userDropdown.classList.add('hidden');
-                    }
-                });
-            }
-
-            const safeParse = (raw) => {
-                try {
-                    return JSON.parse(raw);
-                } catch (e) {
-                    return null;
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            document.querySelectorAll('.nav-item').forEach(item => {
+                const href = item.getAttribute('href');
+                if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
                 }
-            };
+            });
 
-            const capitalize = (value) => {
-                const v = (value || '').trim();
-                if (!v) return '';
-                return v.charAt(0).toUpperCase() + v.slice(1);
-            };
-
-            const formatDisplayName = (profile) => {
-                const first = capitalize(profile?.firstName);
-                const last = (profile?.lastName || '').trim();
-                const initial = last ? (last.charAt(0).toUpperCase() + '.') : '';
-                return [first, initial].filter(Boolean).join(' ');
+            // Auth state management
+            const safeParse = (raw) => {
+                try { return JSON.parse(raw); } catch { return null; }
             };
 
             const refreshNavbar = () => {
-                const profile = safeParse(localStorage.getItem('mm_profile') || 'null');
-                const session = safeParse(localStorage.getItem('mm_session') || 'null');
-
-                const navUser = document.getElementById('nav-user');
-                const navUserName = document.getElementById('nav-user-name');
-                const navUserInitial = document.getElementById('nav-user-initial');
+                const profile = safeParse(localStorage.getItem('mm_profile'));
+                const session = safeParse(localStorage.getItem('mm_session'));
+                const signedIn = profile && session && session.email === profile.email;
+                
                 const navSignIn = document.getElementById('nav-sign-in');
-
-                const signedIn = profile && session && session.email && profile.email && session.email === profile.email;
-
-                if (signedIn) {
-                    const displayName = formatDisplayName(profile);
-                    if (navUserName) navUserName.textContent = displayName || 'User';
-                    if (navUserInitial) {
-                        const first = (profile.firstName || '').trim();
-                        navUserInitial.textContent = first ? first.charAt(0).toUpperCase() : 'U';
-                    }
-                    if (navUser) navUser.classList.remove('hidden');
-                    if (navSignIn) navSignIn.classList.add('hidden');
-                } else {
-                    if (navUser) navUser.classList.add('hidden');
-                    if (navSignIn) navSignIn.classList.remove('hidden');
+                if (signedIn && navSignIn) {
+                    navSignIn.innerHTML = `
+                        <span class="nav-tooltip">Account</span>
+                        <span class="w-7 h-7 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white text-xs font-bold">
+                            ${(profile.firstName || 'U').charAt(0).toUpperCase()}
+                        </span>
+                    `;
                 }
             };
-
-            const signOutLink = document.getElementById('nav-sign-out');
-            if (signOutLink) {
-                signOutLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    localStorage.removeItem('mm_session');
-                    refreshNavbar();
-                });
-            }
 
             refreshNavbar();
         });
     </script>
-
 </body>
 </html>
+

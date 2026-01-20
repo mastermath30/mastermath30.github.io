@@ -1,493 +1,707 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resources - Math Learning Platform</title>
+    <title>Resources - MathMaster</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script>
-        // Check for dark mode preference
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="../css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        .dark {
-            --bg-primary: #020617;
-            --bg-secondary: #0f172a;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent: #4f46e5;
-            --accent-hover: #4338ca;
-            --card-bg: rgba(30, 41, 59, 0.5);
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(22, 22, 32, 0.8);
+            --accent-primary: #f97316;
+            --accent-secondary: #fb923c;
+            --accent-glow: rgba(249, 115, 22, 0.4);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(249, 115, 22, 0.3);
         }
-        
-        body.dark {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-        }
-        
-        .math-bg {
-            background-color: var(--bg-primary);
-            background-image: 
-                radial-gradient(at 47% 33%, rgba(15, 23, 42, 0.8) 0%, transparent 40%),
-                radial-gradient(at 82% 65%, rgba(30, 41, 59, 0.9) 0%, transparent 55%);
-        }
-        
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+
+        * {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
-            padding-bottom: 120px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 6rem;
         }
 
-        .floating-dock {
+        /* Glass card effect */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Navigation dock */
+        .nav-dock {
             position: fixed;
+            bottom: 1.5rem;
             left: 50%;
-            right: auto;
-            bottom: 0px;
             transform: translateX(-50%);
-            width: max-content;
-            max-width: calc(100% - 32px);
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-            background: rgba(15, 23, 42, 0.75);
-            border: 1px solid rgba(148, 163, 184, 0.25);
-            border-radius: 999px;
-            backdrop-filter: blur(16px);
-            box-shadow: 0 20px 40px rgba(2, 6, 23, 0.35);
-            z-index: 50;
+            gap: 0.5rem;
+            padding: 0.625rem 0.875rem;
+            background: rgba(18, 18, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.8);
+            z-index: 100;
         }
 
-        .dock-item {
+        .nav-item {
             position: relative;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 999px;
-            background: rgba(30, 41, 59, 0.7);
-            color: #e2e8f0;
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 50%;
+            color: var(--text-secondary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .dock-item:hover {
-            transform: translateY(-6px) scale(1.08);
-            background: rgba(79, 70, 229, 0.35);
-            color: #ffffff;
+        .nav-item:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
         }
 
-        .dock-label {
+        .nav-item.active {
+            color: var(--accent-primary);
+            background: rgba(249, 115, 22, 0.15);
+        }
+
+        .nav-tooltip {
             position: absolute;
-            bottom: 50px;
+            bottom: 100%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(8px);
+            padding: 0.375rem 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
             white-space: nowrap;
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            background: rgba(15, 23, 42, 0.9);
-            color: #e2e8f0;
-            border: 1px solid rgba(148, 163, 184, 0.3);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s ease, transform 0.2s ease;
+            transition: all 0.2s ease;
         }
 
-        .dock-item:hover .dock-label {
+        .nav-item:hover .nav-tooltip {
             opacity: 1;
-            transform: translate(-50%, -6px);
+            transform: translateX(-50%) translateY(-8px);
         }
 
-        .dock-item.active {
-            background: rgba(79, 70, 229, 0.6);
-            color: #ffffff;
-            border-color: rgba(99, 102, 241, 0.8);
+        /* Header gradient */
+        .header-gradient {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(251, 146, 60, 0.05));
+            border-bottom: 1px solid var(--border-subtle);
         }
 
-        .dock-user {
+        /* Section label */
+        .section-label {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 0 8px 0 6px;
-            height: 40px;
-            border-radius: 999px;
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(148, 163, 184, 0.18);
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--accent-primary);
         }
 
-        .dock-user button {
+        /* Category card */
+        .category-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .category-icon {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover .category-icon {
+            transform: scale(1.1);
+        }
+
+        /* Resource item */
+        .resource-item {
+            display: block;
+            padding: 1rem 1.25rem;
+            border-radius: 0.75rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.2s ease;
+        }
+
+        .resource-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-accent);
+        }
+
+        /* Tab system */
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.625rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .tab-button:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+        }
+
+        /* Quiz card */
+        .quiz-card {
+            background: linear-gradient(135deg, var(--bg-card), rgba(249, 115, 22, 0.05));
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-2px);
+        }
+
+        /* Video card */
+        .video-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-thumbnail {
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(251, 146, 60, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .play-button {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover .play-button {
+            background: var(--accent-primary);
+            transform: scale(1.1);
+        }
+
+        /* Download button */
+        .download-btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            color: #e2e8f0;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
         }
 
-        @media (max-width: 640px) {
-            body {
-                padding-bottom: 110px;
-            }
+        .download-btn:hover {
+            background: rgba(249, 115, 22, 0.1);
+            border-color: var(--border-accent);
+            color: var(--accent-primary);
+        }
 
-            .floating-dock {
-                width: calc(100% - 24px);
+        /* Ticker */
+        .ticker-wrap {
+            overflow: hidden;
+            background: rgba(249, 115, 22, 0.05);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0.75rem 0;
+        }
+
+        .ticker {
+            display: flex;
+            animation: ticker 30s linear infinite;
+        }
+
+        .ticker-item {
+            flex-shrink: 0;
+            padding: 0 2rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .ticker-item span {
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @media (max-width: 768px) {
+            .nav-dock {
+                width: calc(100% - 2rem);
                 justify-content: space-between;
-                padding: 8px;
             }
-
-            .dock-label {
+            
+            .nav-tooltip {
                 display: none;
-            }
-
-            .dock-user {
-                padding-right: 6px;
             }
         }
     </style>
 </head>
-<body class="math-bg min-h-screen" data-mm-bg="numbers" data-mm-bg-style="drift" data-mm-bg-direction="left" data-mm-bg-opacity="0.22" data-mm-bg-density="0.9">
-    <div class="floating-dock" aria-label="Primary">
-        <a href="../index.html" class="dock-item" aria-label="Home">
-            <span class="dock-label">Home</span>
+<body class="antialiased">
+    <!-- Navigation Dock -->
+    <nav class="nav-dock">
+        <a href="index.html" class="nav-item" aria-label="Home">
+            <span class="nav-tooltip">Home</span>
             <i class="fas fa-home"></i>
         </a>
-        <a href="about.html" class="dock-item" aria-label="About">
-            <span class="dock-label">About</span>
+        <a href="about.html" class="nav-item" aria-label="About">
+            <span class="nav-tooltip">About</span>
             <i class="fas fa-info-circle"></i>
         </a>
-        <a href="schedule.html" class="dock-item" aria-label="Schedule">
-            <span class="dock-label">Schedule</span>
+        <a href="schedule.html" class="nav-item" aria-label="Schedule">
+            <span class="nav-tooltip">Schedule</span>
             <i class="fas fa-calendar-alt"></i>
         </a>
-        <a href="dashboard.html" class="dock-item" aria-label="Dashboard">
-            <span class="dock-label">Dashboard</span>
+        <a href="dashboard.html" class="nav-item" aria-label="Dashboard">
+            <span class="nav-tooltip">Dashboard</span>
             <i class="fas fa-chart-line"></i>
         </a>
-        <a href="resources.html" class="dock-item active" aria-label="Resources">
-            <span class="dock-label">Resources</span>
-            <i class="fas fa-book"></i>
+        <a href="resources.html" class="nav-item active" aria-label="Resources">
+            <span class="nav-tooltip">Resources</span>
+            <i class="fas fa-book-open"></i>
         </a>
-        <a href="community.html" class="dock-item" aria-label="Community">
-            <span class="dock-label">Community</span>
+        <a href="community.html" class="nav-item" aria-label="Community">
+            <span class="nav-tooltip">Community</span>
             <i class="fas fa-users"></i>
         </a>
-        <a href="support.html" class="dock-item" aria-label="Support">
-            <span class="dock-label">Support</span>
+        <a href="support.html" class="nav-item" aria-label="Support">
+            <span class="nav-tooltip">Support</span>
             <i class="fas fa-life-ring"></i>
         </a>
-        <a href="auth.html" class="dock-item" aria-label="Sign in" id="nav-sign-in">
-            <span class="dock-label">Sign in</span>
+        <a href="auth.html" class="nav-item" aria-label="Sign In" id="nav-sign-in">
+            <span class="nav-tooltip">Sign In</span>
             <i class="fas fa-sign-in-alt"></i>
         </a>
-        <div class="relative hidden" id="nav-user">
-            <div class="dock-user">
-                <button class="text-sm rounded-full focus:outline-none" id="user-menu" aria-haspopup="true" aria-expanded="false">
-                    <span class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold" id="nav-user-initial">U</span>
-                    <span class="hidden sm:inline text-gray-300" id="nav-user-name">User</span>
-                    <i class="fas fa-chevron-up text-xs text-gray-400"></i>
-                </button>
-            </div>
-            <div class="hidden origin-bottom-right absolute right-0 bottom-14 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-gray-700 focus:outline-none z-50" role="menu" id="user-dropdown">
-                <div class="py-1" role="none">
-                    <a href="auth.html" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem">
-                        <i class="fas fa-id-card mr-2 w-4"></i> Account
-                    </a>
-                    <a href="#" class="text-gray-300 hover:bg-gray-700 block px-4 py-2 text-sm" role="menuitem" id="nav-sign-out">
-                        <i class="fas fa-sign-out-alt mr-2 w-4"></i> Sign out
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    </nav>
 
-    <!-- Page Header -->
-    <header class="bg-gray-800 border-b border-gray-700">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <h1 class="text-3xl font-bold text-white">Learning Resources</h1>
-            <p class="mt-1 text-gray-300">Access study materials, practice problems, and more</p>
+    <!-- Header -->
+    <header class="header-gradient">
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <span class="section-label mb-3">
+                <i class="fas fa-book-open"></i>
+                Learning Hub
+            </span>
+            <h1 class="text-3xl font-bold mt-3">Resources</h1>
+            <p class="text-zinc-400 mt-1">Access lessons, videos, quizzes, and downloadable materials</p>
         </div>
     </header>
 
-    <div class="mm-ticker">
-        <div class="mm-ticker__track">
-            <div class="mm-ticker__item"><span>Algebra</span> worksheets</div>
-            <div class="mm-ticker__item"><span>Geometry</span> proofs</div>
-            <div class="mm-ticker__item"><span>Trig</span> identities</div>
-            <div class="mm-ticker__item"><span>Calculus</span> practice</div>
-            <div class="mm-ticker__item"><span>Statistics</span> drills</div>
-            <div class="mm-ticker__item"><span>Linear Algebra</span> notes</div>
-            <div class="mm-ticker__item"><span>Algebra</span> worksheets</div>
-            <div class="mm-ticker__item"><span>Geometry</span> proofs</div>
-            <div class="mm-ticker__item"><span>Trig</span> identities</div>
-            <div class="mm-ticker__item"><span>Calculus</span> practice</div>
-            <div class="mm-ticker__item"><span>Statistics</span> drills</div>
-            <div class="mm-ticker__item"><span>Linear Algebra</span> notes</div>
+    <!-- Ticker -->
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <div class="ticker-item"><span>Algebra</span> worksheets</div>
+            <div class="ticker-item"><span>Geometry</span> proofs</div>
+            <div class="ticker-item"><span>Trig</span> identities</div>
+            <div class="ticker-item"><span>Calculus</span> practice</div>
+            <div class="ticker-item"><span>Statistics</span> drills</div>
+            <div class="ticker-item"><span>Linear Algebra</span> notes</div>
+            <div class="ticker-item"><span>Algebra</span> worksheets</div>
+            <div class="ticker-item"><span>Geometry</span> proofs</div>
+            <div class="ticker-item"><span>Trig</span> identities</div>
+            <div class="ticker-item"><span>Calculus</span> practice</div>
+            <div class="ticker-item"><span>Statistics</span> drills</div>
+            <div class="ticker-item"><span>Linear Algebra</span> notes</div>
         </div>
     </div>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="px-4 py-6 sm:px-0">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Resource Cards -->
-                <div class="card p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="flex-shrink-0 bg-indigo-600 rounded-md p-3">
-                            <i class="fas fa-book text-white text-xl"></i>
-                        </div>
-                        <h3 class="ml-3 text-lg font-medium text-white">Textbooks</h3>
-                    </div>
-                    <p class="text-gray-300">Access our collection of recommended textbooks and study guides.</p>
-                    <div class="mt-4">
-                        <a href="#textbooks" class="text-indigo-400 hover:text-indigo-300 text-sm font-medium">View Resources <i class="fas fa-arrow-right ml-1"></i></a>
-                    </div>
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Quick Access Categories -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+            <a href="#lessons" class="category-card">
+                <div class="category-icon bg-orange-500/20 text-orange-400 mb-4">
+                    <i class="fas fa-book"></i>
                 </div>
+                <h3 class="text-lg font-semibold mb-2">Lessons & Guides</h3>
+                <p class="text-zinc-400 text-sm">Step-by-step tutorials and study guides for every topic.</p>
+            </a>
 
-                <div class="card p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="flex-shrink-0 bg-green-600 rounded-md p-3">
-                            <i class="fas fa-tasks text-white text-xl"></i>
-                        </div>
-                        <h3 class="ml-3 text-lg font-medium text-white">Practice Problems</h3>
-                    </div>
-                    <p class="text-gray-300">Practice with our extensive collection of math problems and solutions.</p>
-                    <div class="mt-4">
-                        <a href="#practice" class="text-indigo-400 hover:text-indigo-300 text-sm font-medium">Start Practicing <i class="fas fa-arrow-right ml-1"></i></a>
-                    </div>
+            <a href="#practice" class="category-card">
+                <div class="category-icon bg-green-500/20 text-green-400 mb-4">
+                    <i class="fas fa-tasks"></i>
                 </div>
+                <h3 class="text-lg font-semibold mb-2">Practice Problems</h3>
+                <p class="text-zinc-400 text-sm">Hundreds of problems with detailed solutions.</p>
+            </a>
 
-                <div class="card p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="flex-shrink-0 bg-purple-600 rounded-md p-3">
-                            <i class="fas fa-video text-white text-xl"></i>
-                        </div>
-                        <h3 class="ml-3 text-lg font-medium text-white">Video Lessons</h3>
-                    </div>
-                    <p class="text-gray-300">Watch video tutorials explaining key concepts and problem-solving techniques.</p>
-                    <div class="mt-4">
-                        <a href="#videos" class="text-indigo-400 hover:text-indigo-300 text-sm font-medium">Watch Videos <i class="fas fa-arrow-right ml-1"></i></a>
-                    </div>
+            <a href="#videos" class="category-card">
+                <div class="category-icon bg-purple-500/20 text-purple-400 mb-4">
+                    <i class="fas fa-play-circle"></i>
                 </div>
-            </div>
-
-            <div class="mt-10 space-y-8">
-                <section id="textbooks" class="card p-6">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-bold text-white">Textbooks & Study Guides</h2>
-                        <a href="#" class="text-sm text-gray-300 hover:text-white" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;">Back to top</a>
-                    </div>
-                    <p class="mt-2 text-gray-300">Free, high-quality textbooks you can use right away.</p>
-                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a class="block p-4 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700" href="https://openstax.org/subjects/math" target="_blank" rel="noopener noreferrer">
-                            <div class="flex items-center justify-between">
-                                <span class="text-white font-semibold">OpenStax Math</span>
-                                <i class="fas fa-external-link-alt text-gray-400 text-sm"></i>
-                            </div>
-                            <p class="mt-1 text-sm text-gray-300">Free textbooks for Algebra, Precalculus, Calculus, Statistics, and more.</p>
-                        </a>
-                        <a class="block p-4 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700" href="https://tutorial.math.lamar.edu/" target="_blank" rel="noopener noreferrer">
-                            <div class="flex items-center justify-between">
-                                <span class="text-white font-semibold">Paul's Online Math Notes</span>
-                                <i class="fas fa-external-link-alt text-gray-400 text-sm"></i>
-                            </div>
-                            <p class="mt-1 text-sm text-gray-300">Clear explanations + tons of worked examples for Calculus and Algebra.</p>
-                        </a>
-                    </div>
-                </section>
-
-                <section id="practice" class="card p-6">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-bold text-white">Practice Problems</h2>
-                        <a href="#" class="text-sm text-gray-300 hover:text-white" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;">Back to top</a>
-                    </div>
-                    <p class="mt-2 text-gray-300">Practice by topic and check solutions as you go.</p>
-                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a class="block p-4 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700" href="https://www.khanacademy.org/math" target="_blank" rel="noopener noreferrer">
-                            <div class="flex items-center justify-between">
-                                <span class="text-white font-semibold">Khan Academy Practice</span>
-                                <i class="fas fa-external-link-alt text-gray-400 text-sm"></i>
-                            </div>
-                            <p class="mt-1 text-sm text-gray-300">Skill-based practice for every level from arithmetic to calculus.</p>
-                        </a>
-                        <a class="block p-4 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700" href="https://artofproblemsolving.com/" target="_blank" rel="noopener noreferrer">
-                            <div class="flex items-center justify-between">
-                                <span class="text-white font-semibold">Art of Problem Solving</span>
-                                <i class="fas fa-external-link-alt text-gray-400 text-sm"></i>
-                            </div>
-                            <p class="mt-1 text-sm text-gray-300">Challenge problems and deep explanations (great for competitions too).</p>
-                        </a>
-                    </div>
-                </section>
-
-                <section id="videos" class="card p-6">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-bold text-white">Video Lessons</h2>
-                        <a href="#" class="text-sm text-gray-300 hover:text-white" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;">Back to top</a>
-                    </div>
-                    <p class="mt-2 text-gray-300">Short videos to learn concepts quickly and visually.</p>
-                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a class="block p-4 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700" href="https://www.3blue1brown.com/" target="_blank" rel="noopener noreferrer">
-                            <div class="flex items-center justify-between">
-                                <span class="text-white font-semibold">3Blue1Brown</span>
-                                <i class="fas fa-external-link-alt text-gray-400 text-sm"></i>
-                            </div>
-                            <p class="mt-1 text-sm text-gray-300">High-quality visual explanations (linear algebra, calculus, and more).</p>
-                        </a>
-                        <a class="block p-4 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700" href="https://www.youtube.com/@khanacademy" target="_blank" rel="noopener noreferrer">
-                            <div class="flex items-center justify-between">
-                                <span class="text-white font-semibold">Khan Academy Videos</span>
-                                <i class="fas fa-external-link-alt text-gray-400 text-sm"></i>
-                            </div>
-                            <p class="mt-1 text-sm text-gray-300">Guided walkthroughs and lessons across most math subjects.</p>
-                        </a>
-                    </div>
-                </section>
-            </div>
+                <h3 class="text-lg font-semibold mb-2">Video Lessons</h3>
+                <p class="text-zinc-400 text-sm">Watch expert explanations and walkthroughs.</p>
+            </a>
         </div>
+
+        <!-- Lessons Section -->
+        <section id="lessons" class="mb-12">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">Lessons & Study Guides</h2>
+                    <p class="text-zinc-500 text-sm mt-1">Free, high-quality resources to help you learn</p>
+                </div>
+                <a href="#" class="text-orange-400 text-sm font-medium hover:underline">View all</a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="https://openstax.org/subjects/math" target="_blank" rel="noopener" class="resource-item">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-400 flex-shrink-0">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-semibold">OpenStax Mathematics</h4>
+                                <i class="fas fa-external-link-alt text-zinc-500 text-sm"></i>
+                            </div>
+                            <p class="text-zinc-400 text-sm mt-1">Free textbooks for Algebra, Precalculus, Calculus, Statistics, and more.</p>
+                            <div class="flex gap-2 mt-2">
+                                <span class="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">Algebra</span>
+                                <span class="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">Calculus</span>
+                                <span class="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">Statistics</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="https://tutorial.math.lamar.edu/" target="_blank" rel="noopener" class="resource-item">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 flex-shrink-0">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-semibold">Paul's Online Math Notes</h4>
+                                <i class="fas fa-external-link-alt text-zinc-500 text-sm"></i>
+                            </div>
+                            <p class="text-zinc-400 text-sm mt-1">Clear explanations with tons of worked examples for Calculus and Algebra.</p>
+                            <div class="flex gap-2 mt-2">
+                                <span class="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">Calculus</span>
+                                <span class="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">Algebra</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Practice Section -->
+        <section id="practice" class="mb-12">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">Practice Problems</h2>
+                    <p class="text-zinc-500 text-sm mt-1">Test your knowledge and improve your skills</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <a href="https://www.khanacademy.org/math" target="_blank" rel="noopener" class="resource-item">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400 flex-shrink-0">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-semibold">Khan Academy Practice</h4>
+                                <i class="fas fa-external-link-alt text-zinc-500 text-sm"></i>
+                            </div>
+                            <p class="text-zinc-400 text-sm mt-1">Skill-based practice for every level from arithmetic to calculus.</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="https://artofproblemsolving.com/" target="_blank" rel="noopener" class="resource-item">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 flex-shrink-0">
+                            <i class="fas fa-puzzle-piece"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-semibold">Art of Problem Solving</h4>
+                                <i class="fas fa-external-link-alt text-zinc-500 text-sm"></i>
+                            </div>
+                            <p class="text-zinc-400 text-sm mt-1">Challenge problems and deep explanations for competitions.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Interactive Quizzes -->
+            <h3 class="text-lg font-semibold mb-4">Interactive Quizzes</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="quiz-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-400">
+                            <i class="fas fa-square-root-alt"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Algebra Basics</h4>
+                            <p class="text-zinc-500 text-xs">15 questions • 20 min</p>
+                        </div>
+                    </div>
+                    <p class="text-zinc-400 text-sm mb-4">Test your understanding of equations, expressions, and inequalities.</p>
+                    <button class="w-full py-2 rounded-lg bg-orange-500/20 text-orange-400 font-medium hover:bg-orange-500/30 transition-colors">
+                        Start Quiz
+                    </button>
+                </div>
+
+                <div class="quiz-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400">
+                            <i class="fas fa-shapes"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Geometry Proofs</h4>
+                            <p class="text-zinc-500 text-xs">10 questions • 15 min</p>
+                        </div>
+                    </div>
+                    <p class="text-zinc-400 text-sm mb-4">Practice writing and understanding geometric proofs.</p>
+                    <button class="w-full py-2 rounded-lg bg-green-500/20 text-green-400 font-medium hover:bg-green-500/30 transition-colors">
+                        Start Quiz
+                    </button>
+                </div>
+
+                <div class="quiz-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Calculus: Derivatives</h4>
+                            <p class="text-zinc-500 text-xs">20 questions • 30 min</p>
+                        </div>
+                    </div>
+                    <p class="text-zinc-400 text-sm mb-4">Master the fundamentals of differentiation and derivative rules.</p>
+                    <button class="w-full py-2 rounded-lg bg-blue-500/20 text-blue-400 font-medium hover:bg-blue-500/30 transition-colors">
+                        Start Quiz
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Videos Section -->
+        <section id="videos" class="mb-12">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">Video Lessons</h2>
+                    <p class="text-zinc-500 text-sm mt-1">Visual explanations to help concepts click</p>
+                </div>
+                <a href="#" class="text-orange-400 text-sm font-medium hover:underline">View all</a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <a href="https://www.3blue1brown.com/" target="_blank" rel="noopener" class="video-card">
+                    <div class="video-thumbnail">
+                        <div class="play-button">
+                            <i class="fas fa-play ml-1"></i>
+                        </div>
+                        <span class="absolute bottom-2 right-2 text-xs bg-black/60 px-2 py-1 rounded">3Blue1Brown</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-semibold mb-1">Essence of Linear Algebra</h4>
+                        <p class="text-zinc-400 text-sm">Beautiful visual explanations of linear algebra concepts.</p>
+                    </div>
+                </a>
+
+                <a href="https://www.youtube.com/@khanacademy" target="_blank" rel="noopener" class="video-card">
+                    <div class="video-thumbnail">
+                        <div class="play-button">
+                            <i class="fas fa-play ml-1"></i>
+                        </div>
+                        <span class="absolute bottom-2 right-2 text-xs bg-black/60 px-2 py-1 rounded">Khan Academy</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-semibold mb-1">Calculus Fundamentals</h4>
+                        <p class="text-zinc-400 text-sm">Step-by-step calculus lessons from basics to advanced.</p>
+                    </div>
+                </a>
+
+                <a href="https://www.youtube.com/@patrickjmt" target="_blank" rel="noopener" class="video-card">
+                    <div class="video-thumbnail">
+                        <div class="play-button">
+                            <i class="fas fa-play ml-1"></i>
+                        </div>
+                        <span class="absolute bottom-2 right-2 text-xs bg-black/60 px-2 py-1 rounded">PatrickJMT</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-semibold mb-1">Quick Math Tutorials</h4>
+                        <p class="text-zinc-400 text-sm">Short, focused videos on specific math topics.</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Downloads Section -->
+        <section id="downloads" class="glass-card p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-xl font-bold">Downloadable Materials</h2>
+                    <p class="text-zinc-500 text-sm mt-1">Reference sheets, formula guides, and worksheets</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-4 rounded-lg bg-zinc-900/50 border border-zinc-800">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i class="fas fa-file-pdf text-red-400 text-xl"></i>
+                        <span class="font-medium">Algebra Formula Sheet</span>
+                    </div>
+                    <p class="text-zinc-500 text-sm mb-3">All essential formulas in one place</p>
+                    <button class="download-btn w-full justify-center">
+                        <i class="fas fa-download"></i>
+                        Download PDF
+                    </button>
+                </div>
+
+                <div class="p-4 rounded-lg bg-zinc-900/50 border border-zinc-800">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i class="fas fa-file-pdf text-red-400 text-xl"></i>
+                        <span class="font-medium">Trig Identities Cheat Sheet</span>
+                    </div>
+                    <p class="text-zinc-500 text-sm mb-3">Quick reference for all trig identities</p>
+                    <button class="download-btn w-full justify-center">
+                        <i class="fas fa-download"></i>
+                        Download PDF
+                    </button>
+                </div>
+
+                <div class="p-4 rounded-lg bg-zinc-900/50 border border-zinc-800">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i class="fas fa-file-pdf text-red-400 text-xl"></i>
+                        <span class="font-medium">Calculus Reference Guide</span>
+                    </div>
+                    <p class="text-zinc-500 text-sm mb-3">Derivatives and integrals reference</p>
+                    <button class="download-btn w-full justify-center">
+                        <i class="fas fa-download"></i>
+                        Download PDF
+                    </button>
+                </div>
+
+                <div class="p-4 rounded-lg bg-zinc-900/50 border border-zinc-800">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i class="fas fa-file-pdf text-red-400 text-xl"></i>
+                        <span class="font-medium">Practice Worksheet Pack</span>
+                    </div>
+                    <p class="text-zinc-500 text-sm mb-3">50+ problems with solutions</p>
+                    <button class="download-btn w-full justify-center">
+                        <i class="fas fa-download"></i>
+                        Download PDF
+                    </button>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-12 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">MathMaster</h3>
-                    <p class="text-gray-400">Empowering students to master mathematics through personalized learning experiences.</p>
-                </div>
-                <div>
-                    <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Quick Links</h4>
-                    <ul class="space-y-2">
-                        <li><a href="about.html" class="text-gray-400 hover:text-white">About Us</a></li>
-                        <li><a href="schedule.html" class="text-gray-400 hover:text-white">Schedule</a></li>
-                        <li><a href="resources.html" class="text-gray-400 hover:text-white">Resources</a></li>
-                        <li><a href="community.html" class="text-gray-400 hover:text-white">Community</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Support</h4>
-                    <ul class="space-y-2">
-                        <li><a href="support.html" class="text-gray-400 hover:text-white">Help Center</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Connect With Us</h4>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-8 pt-8 border-t border-gray-700">
-                <p class="text-center text-gray-400 text-sm">&copy; 2023 MathMaster. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script defer src="../mm-effects.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-
-            if (mobileMenuButton && mobileMenu) {
-                mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
-                });
-            }
-
-            const userMenuButton = document.getElementById('user-menu');
-            const userDropdown = document.getElementById('user-dropdown');
-
-            if (userMenuButton && userDropdown) {
-                userMenuButton.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    userDropdown.classList.toggle('hidden');
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
-                        userDropdown.classList.add('hidden');
-                    }
-                });
-            }
-
+            // Auth state
             const safeParse = (raw) => {
-                try {
-                    return JSON.parse(raw);
-                } catch (e) {
-                    return null;
-                }
+                try { return JSON.parse(raw); } catch { return null; }
             };
 
-            const capitalize = (value) => {
-                const v = (value || '').trim();
-                if (!v) return '';
-                return v.charAt(0).toUpperCase() + v.slice(1);
-            };
-
-            const formatDisplayName = (profile) => {
-                const first = capitalize(profile?.firstName);
-                const last = (profile?.lastName || '').trim();
-                const initial = last ? (last.charAt(0).toUpperCase() + '.') : '';
-                return [first, initial].filter(Boolean).join(' ');
-            };
-
-            const refreshNavbar = () => {
-                const profile = safeParse(localStorage.getItem('mm_profile') || 'null');
-                const session = safeParse(localStorage.getItem('mm_session') || 'null');
-
-                const navUser = document.getElementById('nav-user');
-                const navUserName = document.getElementById('nav-user-name');
-                const navUserInitial = document.getElementById('nav-user-initial');
-                const navSignIn = document.getElementById('nav-sign-in');
-
-                const signedIn = profile && session && session.email && profile.email && session.email === profile.email;
-
-                if (signedIn) {
-                    const displayName = formatDisplayName(profile);
-                    if (navUserName) navUserName.textContent = displayName || 'User';
-                    if (navUserInitial) {
-                        const first = (profile.firstName || '').trim();
-                        navUserInitial.textContent = first ? first.charAt(0).toUpperCase() : 'U';
-                    }
-                    if (navUser) navUser.classList.remove('hidden');
-                    if (navSignIn) navSignIn.classList.add('hidden');
-                } else {
-                    if (navUser) navUser.classList.add('hidden');
-                    if (navSignIn) navSignIn.classList.remove('hidden');
-                }
-            };
-
-            const signOutLink = document.getElementById('nav-sign-out');
-            if (signOutLink) {
-                signOutLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    localStorage.removeItem('mm_session');
-                    refreshNavbar();
-                });
+            const profile = safeParse(localStorage.getItem('mm_profile'));
+            const session = safeParse(localStorage.getItem('mm_session'));
+            const signedIn = profile && session && session.email === profile.email;
+            
+            const navSignIn = document.getElementById('nav-sign-in');
+            if (signedIn && navSignIn) {
+                navSignIn.innerHTML = `
+                    <span class="nav-tooltip">Account</span>
+                    <span class="w-7 h-7 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white text-xs font-bold">
+                        ${(profile.firstName || 'U').charAt(0).toUpperCase()}
+                    </span>
+                `;
             }
 
-            refreshNavbar();
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
         });
     </script>
 </body>
