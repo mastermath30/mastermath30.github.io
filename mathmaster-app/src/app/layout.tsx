@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} antialiased min-h-screen bg-[#fafafa]`}>
         <Navbar />
-        <main className="pb-24">
+        <main className="pt-16">
           {children}
         </main>
       </body>
