@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { SectionLabel } from "@/components/SectionLabel";
@@ -25,10 +28,10 @@ import {
 } from "lucide-react";
 
 const stats = [
-  { value: "12K+", label: "Students Helped" },
-  { value: "320+", label: "Peer Tutors" },
-  { value: "98%", label: "Success Rate" },
-  { value: "24/7", label: "Support" },
+  { value: 12, label: "Students Helped", format: (v: number) => `${Math.round(v)}K+` },
+  { value: 320, label: "Peer Tutors", format: (v: number) => `${Math.round(v)}+` },
+  { value: 98, label: "Success Rate", format: (v: number) => `${Math.round(v)}%` },
+  { value: 24, label: "Support", format: (v: number) => `${Math.round(v)}/7`, isStatic: true },
 ];
 
 const features = [
@@ -70,21 +73,39 @@ const steps = [
   {
     icon: UserPlus,
     title: "Create Your Profile",
-    description: "Sign up for free and tell us about your learning goals. Our system will personalize your experience based on your current level and objectives.",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop",
+    description: "Sign up for free and share your goals. We tailor a simple plan to match your level.",
+    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=300&h=200&fit=crop",
   },
   {
     icon: BookOpen,
     title: "Learn & Practice",
     description: "Access interactive lessons, video tutorials, and practice problems. Book sessions with peer tutors when you need extra help.",
-    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=300&h=200&fit=crop",
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=200&fit=crop",
   },
   {
     icon: Trophy,
     title: "Track & Succeed",
     description: "Monitor your progress on the dashboard, earn achievements, and watch your math skills grow over time.",
-    image: "https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?w=300&h=200&fit=crop",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=300&h=200&fit=crop",
   },
+];
+
+const trustedLogos = [
+  { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/MIT_logo.svg/2560px-MIT_logo.svg.png", alt: "MIT", width: 80, height: 40 },
+  { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Stanford_University_seal_2003.svg/1200px-Stanford_University_seal_2003.svg.png", alt: "Stanford", width: 40, height: 40 },
+  { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Harvard_University_logo.svg/2560px-Harvard_University_logo.svg.png", alt: "Harvard", width: 120, height: 40 },
+  { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Berkeley_wordmark.svg/2560px-Berkeley_wordmark.svg.png", alt: "Berkeley", width: 100, height: 40 },
+  { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Khan_Academy_logo.svg/2560px-Khan_Academy_logo.svg.png", alt: "Khan Academy", width: 120, height: 40 },
+  { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Art_of_Problem_Solving_logo.png/1200px-Art_of_Problem_Solving_logo.png", alt: "Art of Problem Solving", width: 120, height: 40 },
+];
+
+const movingCards = [
+  { icon: Zap, title: "Daily Practice", value: "1.2K", description: "Problems solved today" },
+  { icon: Users, title: "Live Sessions", value: "48", description: "Tutoring rooms open" },
+  { icon: Star, title: "Student Rating", value: "4.9", description: "Average course score" },
+  { icon: TrendingUp, title: "Weekly Growth", value: "32%", description: "Active learners up" },
+  { icon: BookOpen, title: "New Lessons", value: "14", description: "Added this month" },
+  { icon: Rocket, title: "Goal Streaks", value: "7 days", description: "Average consistency" },
 ];
 
 const testimonials = [
@@ -118,6 +139,27 @@ const testimonials = [
 ];
 
 export default function Home() {
+  const [statValues, setStatValues] = useState(() =>
+    stats.map((stat) => (stat.isStatic ? stat.value : 0))
+  );
+
+  useEffect(() => {
+    let raf = 0;
+    const start = performance.now();
+    const duration = 1200;
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      setStatValues(stats.map((stat) => (stat.isStatic ? stat.value : stat.value * progress)));
+      if (progress < 1) {
+        raf = requestAnimationFrame(tick);
+      }
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -196,9 +238,11 @@ export default function Home() {
 
               {/* Stats inline */}
               <div className="flex flex-wrap gap-6 justify-center lg:justify-start">
-                {stats.map((stat) => (
+                {stats.map((stat, index) => (
                   <div key={stat.label} className="text-center">
-                    <div className="text-2xl font-bold gradient-text font-mono">{stat.value}</div>
+                    <div className="text-2xl font-bold gradient-text font-mono">
+                      {stat.format(statValues[index])}
+                    </div>
                     <div className="text-slate-500 text-xs">{stat.label}</div>
                   </div>
                 ))}
@@ -274,11 +318,52 @@ export default function Home() {
       <section className="py-12 bg-white border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-6">
           <p className="text-center text-slate-400 text-sm mb-8">Trusted by students from top institutions</p>
-          <div className="flex flex-wrap justify-center items-center gap-12 opacity-50 grayscale">
-            <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/MIT_logo.svg/2560px-MIT_logo.svg.png" alt="MIT" width={80} height={40} className="h-8 w-auto object-contain" />
-            <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Stanford_University_seal_2003.svg/1200px-Stanford_University_seal_2003.svg.png" alt="Stanford" width={40} height={40} className="h-10 w-auto object-contain" />
-            <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Harvard_University_logo.svg/2560px-Harvard_University_logo.svg.png" alt="Harvard" width={120} height={40} className="h-8 w-auto object-contain" />
-            <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Berkeley_wordmark.svg/2560px-Berkeley_wordmark.svg.png" alt="Berkeley" width={100} height={40} className="h-6 w-auto object-contain" />
+          <div className="flex flex-wrap justify-center items-center gap-12 opacity-60 grayscale">
+            {trustedLogos.map((logo) => (
+              <Image
+                key={logo.alt}
+                src={logo.src}
+                alt={logo.alt}
+                width={logo.width}
+                height={logo.height}
+                className="h-8 w-auto object-contain"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Infinite Moving Cards */}
+      <section className="py-12 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-8">
+            <SectionLabel icon={Sparkles} className="mb-4">
+              Live Momentum
+            </SectionLabel>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
+              Learning Never Stops
+            </h2>
+            <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+              Real-time highlights from students who keep MathMaster moving forward.
+            </p>
+          </div>
+          <div className="relative overflow-hidden marquee-fade">
+            <div className="marquee-track animate-marquee">
+              {[...movingCards, ...movingCards].map((card, index) => (
+                <Card key={`${card.title}-${index}`} className="min-w-[240px]">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center text-violet-600">
+                      <card.icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">{card.title}</p>
+                      <p className="text-xs text-slate-500">{card.description}</p>
+                    </div>
+                  </div>
+                  <p className="text-2xl font-bold gradient-text font-mono">{card.value}</p>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -367,9 +452,9 @@ export default function Home() {
                 {index < steps.length - 1 && (
                   <div className="hidden md:block absolute top-24 left-[60%] w-full h-0.5 bg-gradient-to-r from-violet-300 to-transparent" />
                 )}
-                <Card variant="gradient" className="relative overflow-hidden">
+                <Card variant="gradient" className="relative overflow-visible pt-8 h-full">
                   {/* Step number badge */}
-                  <div className="absolute -top-3 -left-3 w-10 h-10 bg-gradient-to-br from-violet-600 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg z-10">
+                  <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-violet-600 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg z-10">
                     {index + 1}
                   </div>
                   {/* Image */}
@@ -481,8 +566,9 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-purple-500 flex items-center justify-center text-white font-bold">
-                  M
+                <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-purple-500 flex items-center justify-center text-white font-bold">
+                  <span className="relative z-10">MM</span>
+                  <span className="absolute inset-1 rounded-lg bg-white/10" />
                 </div>
                 <span className="text-xl font-bold">MathMaster</span>
               </div>

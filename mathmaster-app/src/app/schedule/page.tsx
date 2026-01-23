@@ -35,7 +35,7 @@ const sessions = [
     tutor: "Dr. Sarah Johnson",
     status: "confirmed",
     color: "violet",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&h=60&fit=crop",
+    image: "https://images.unsplash.com/photo-1545235617-9465d2a55698?w=60&h=60&fit=crop",
   },
   {
     icon: Infinity,
@@ -44,7 +44,7 @@ const sessions = [
     tutor: "Priya Patel",
     status: "pending",
     color: "purple",
-    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=60&h=60&fit=crop",
+    image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=60&h=60&fit=crop",
   },
   {
     icon: Calculator,
@@ -53,7 +53,7 @@ const sessions = [
     tutor: "Michael Chen",
     status: "confirmed",
     color: "blue",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop",
+    image: "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=60&h=60&fit=crop",
   },
 ];
 
@@ -65,7 +65,7 @@ const tutors = [
     rating: 4.9,
     reviews: 128,
     price: 45,
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop",
+    image: "https://images.unsplash.com/photo-1545235617-9465d2a55698?w=200&h=200&fit=crop",
     available: true,
   },
   {
@@ -75,7 +75,7 @@ const tutors = [
     rating: 4.8,
     reviews: 96,
     price: 35,
-    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&h=200&fit=crop",
+    image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&h=200&fit=crop",
     available: true,
   },
   {
@@ -85,7 +85,7 @@ const tutors = [
     rating: 4.7,
     reviews: 84,
     price: 40,
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
+    image: "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=200&h=200&fit=crop",
     available: false,
   },
 ];
@@ -97,7 +97,7 @@ const studyGroups = [
     description: "Weekly review sessions covering AP Calculus BC topics. Great for exam prep!",
     members: 8,
     maxMembers: 12,
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=200&fit=crop",
+    image: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=400&h=200&fit=crop",
   },
   {
     title: "SAT Math Prep",
@@ -105,7 +105,7 @@ const studyGroups = [
     description: "Practice SAT math problems together and share test-taking strategies.",
     members: 14,
     maxMembers: 20,
-    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=200&fit=crop",
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=200&fit=crop",
   },
 ];
 
@@ -193,7 +193,7 @@ export default function SchedulePage() {
         {/* Background */}
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1920&h=400&fit=crop"
+            src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1920&h=400&fit=crop"
             alt="Tutoring session"
             fill
             className="object-cover"
@@ -212,12 +212,10 @@ export default function SchedulePage() {
               <h1 className="text-4xl md:text-5xl font-bold mb-2">Schedule</h1>
               <p className="text-purple-200 text-lg mb-4">
                 Manage your study sessions and tutoring appointments.
+                <span className="block text-purple-100 text-base mt-2 font-mono">
+                  Next session in: {countdown}
+                </span>
               </p>
-              <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/10 backdrop-blur rounded-xl">
-                <Clock className="w-5 h-5 text-purple-400" />
-                <span className="text-purple-200">Next session in:</span>
-                <span className="font-mono text-2xl font-bold text-white">{countdown}</span>
-              </div>
             </div>
             
             <div className="flex gap-3">

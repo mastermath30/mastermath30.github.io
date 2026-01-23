@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { SectionLabel } from "@/components/SectionLabel";
@@ -92,6 +95,14 @@ const practice = [
 const quizzes = [
   {
     icon: SquareRadical,
+    title: "Algebra Start Quiz",
+    time: "10 questions • 12 min",
+    description: "Quick checkpoint to place you at the right starting level.",
+    color: "violet",
+    difficulty: "Starter",
+  },
+  {
+    icon: SquareRadical,
     title: "Algebra Basics",
     time: "15 questions • 20 min",
     description: "Test your understanding of equations, expressions, and inequalities.",
@@ -150,7 +161,56 @@ const downloads = [
   { title: "Practice Worksheet Pack", description: "50+ problems with solutions", icon: "📝" },
 ];
 
+const partnerLogos = [
+  { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Khan_Academy_logo.svg/2560px-Khan_Academy_logo.svg.png", alt: "Khan Academy", width: 140, height: 40 },
+  { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Art_of_Problem_Solving_logo.png/1200px-Art_of_Problem_Solving_logo.png", alt: "Art of Problem Solving", width: 140, height: 40 },
+  { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/OpenStax_logo.svg/2560px-OpenStax_logo.svg.png", alt: "OpenStax", width: 120, height: 40 },
+  { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Desmos_logo.svg/2560px-Desmos_logo.svg.png", alt: "Desmos", width: 120, height: 40 },
+];
+
+const diffLanguages = [
+  {
+    id: "javascript",
+    label: "JavaScript",
+    before: ["const total = (nums) => {", "  let sum = 0;", "  nums.forEach((n) => (sum += n));", "  return sum;", "};"],
+    after: ["const total = (nums) => {", "  return nums.reduce((sum, n) => sum + n, 0);", "};"],
+  },
+  {
+    id: "python",
+    label: "Python",
+    before: ["def total(nums):", "    result = 0", "    for n in nums:", "        result += n", "    return result"],
+    after: ["def total(nums):", "    return sum(nums)"],
+  },
+  {
+    id: "java",
+    label: "Java",
+    before: ["int total(int[] nums) {", "  int sum = 0;", "  for (int n : nums) {", "    sum += n;", "  }", "  return sum;", "}"],
+    after: ["int total(int[] nums) {", "  return java.util.Arrays.stream(nums).sum();", "}"],
+  },
+  {
+    id: "cpp",
+    label: "C++",
+    before: ["int total(const vector<int>& nums) {", "  int sum = 0;", "  for (int n : nums) {", "    sum += n;", "  }", "  return sum;", "}"],
+    after: ["int total(const vector<int>& nums) {", "  return std::accumulate(nums.begin(), nums.end(), 0);", "}"],
+  },
+  {
+    id: "typescript",
+    label: "TypeScript",
+    before: ["const total = (nums: number[]) => {", "  let sum = 0;", "  nums.forEach((n) => (sum += n));", "  return sum;", "};"],
+    after: ["const total = (nums: number[]) => nums.reduce((sum, n) => sum + n, 0);"],
+  },
+  {
+    id: "swift",
+    label: "Swift",
+    before: ["func total(_ nums: [Int]) -> Int {", "  var sum = 0", "  for n in nums {", "    sum += n", "  }", "  return sum", "}"],
+    after: ["func total(_ nums: [Int]) -> Int {", "  return nums.reduce(0, +)", "}"],
+  },
+];
+
 export default function ResourcesPage() {
+  const [selectedLang, setSelectedLang] = useState(diffLanguages[0]?.id ?? "javascript");
+  const currentLang = diffLanguages.find((lang) => lang.id === selectedLang) ?? diffLanguages[0];
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero Header */}
@@ -214,6 +274,30 @@ export default function ResourcesPage() {
             </Link>
           ))}
         </div>
+
+        {/* Partner Logos */}
+        <section className="mb-12">
+          <div className="text-center mb-6">
+            <SectionLabel icon={Sparkles} className="mb-3">
+              Trusted Learning Partners
+            </SectionLabel>
+            <p className="text-slate-500 text-sm">
+              We collaborate with top learning platforms to bring you the best resources.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center items-center gap-10 opacity-70 grayscale">
+            {partnerLogos.map((logo) => (
+              <Image
+                key={logo.alt}
+                src={logo.src}
+                alt={logo.alt}
+                width={logo.width}
+                height={logo.height}
+                className="h-8 w-auto object-contain"
+              />
+            ))}
+          </div>
+        </section>
 
         {/* Lessons Section */}
         <section id="lessons" className="mb-12">
@@ -338,6 +422,90 @@ export default function ResourcesPage() {
                 </Button>
               </Card>
             ))}
+          </div>
+        </section>
+
+        {/* Code Comparison Lab */}
+        <section id="code-lab" className="mb-12">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900">Code Comparison Lab</h2>
+              <p className="text-slate-500 text-sm">
+                Compare the same solution across multiple languages and understand how the logic flows.
+              </p>
+            </div>
+            <select
+              value={selectedLang}
+              onChange={(e) => setSelectedLang(e.target.value)}
+              className="px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-500"
+            >
+              {diffLanguages.map((lang) => (
+                <option key={lang.id} value={lang.id}>
+                  {lang.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <Card className="diff-panel p-0 overflow-hidden">
+              <div className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-300 bg-slate-900/60">
+                Before
+              </div>
+              <div className="p-4 space-y-2 text-xs whitespace-pre">
+                {currentLang.before.map((line) => (
+                  <div key={line} className="diff-line-remove px-3 py-1 rounded-md">
+                    - {line}
+                  </div>
+                ))}
+              </div>
+            </Card>
+            <Card className="diff-panel p-0 overflow-hidden">
+              <div className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-300 bg-slate-900/60">
+                After
+              </div>
+              <div className="p-4 space-y-2 text-xs whitespace-pre">
+                {currentLang.after.map((line) => (
+                  <div key={line} className="diff-line-add px-3 py-1 rounded-md">
+                    + {line}
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <Card className="h-full">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center text-violet-600">
+                  <Puzzle className="w-5 h-5" />
+                </div>
+                <h3 className="font-semibold text-slate-900">Logic First</h3>
+              </div>
+              <p className="text-slate-500 text-sm">
+                The same algorithm reads differently across languages, but the structure stays consistent.
+              </p>
+            </Card>
+            <Card className="h-full">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <h3 className="font-semibold text-slate-900">Readable Patterns</h3>
+              </div>
+              <p className="text-slate-500 text-sm">
+                We break down steps so you can spot improvements, edge cases, and cleaner syntax.
+              </p>
+            </Card>
+            <Card className="h-full">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
+                  <GraduationCap className="w-5 h-5" />
+                </div>
+                <h3 className="font-semibold text-slate-900">Know the System</h3>
+              </div>
+              <p className="text-slate-500 text-sm">
+                Learn how each feature connects, so troubleshooting and enhancements are faster.
+              </p>
+            </Card>
           </div>
         </section>
 

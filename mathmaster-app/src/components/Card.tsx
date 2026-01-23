@@ -13,7 +13,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={clsx(
-          "rounded-2xl transition-all duration-300",
+          "rounded-2xl transition-all duration-300 h-full flex flex-col",
           {
             "bg-white border border-slate-200 shadow-sm": variant === "default",
             "bg-transparent border border-slate-200": variant === "outline",

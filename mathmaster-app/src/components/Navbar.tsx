@@ -13,6 +13,9 @@ import {
   LogIn,
   Menu,
   X,
+  Sun,
+  Moon,
+  Palette,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
@@ -27,12 +30,23 @@ const navItems = [
   { href: "/support", label: "Support" },
 ];
 
+const accentOptions = [
+  { value: "violet", label: "Violet", className: "bg-violet-500" },
+  { value: "blue", label: "Blue", className: "bg-blue-500" },
+  { value: "emerald", label: "Emerald", className: "bg-emerald-500" },
+  { value: "rose", label: "Rose", className: "bg-rose-500" },
+  { value: "orange", label: "Orange", className: "bg-orange-500" },
+];
+
 export function Navbar() {
   const pathname = usePathname();
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [userInitial, setUserInitial] = useState("U");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [accent, setAccent] = useState("violet");
+  const [showPalette, setShowPalette] = useState(false);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -62,19 +76,45 @@ export function Navbar() {
     };
   }, []);
 
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("mm_theme");
+    const savedAccent = localStorage.getItem("mm_accent");
+    if (savedTheme === "light" || savedTheme === "dark") {
+      setTheme(savedTheme);
+    }
+    if (savedAccent) {
+      setAccent(savedAccent);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem("mm_theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.dataset.accent = accent;
+    localStorage.setItem("mm_accent", accent);
+  }, [accent]);
+
   return (
-    <nav className={clsx(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-      scrolled 
-        ? "bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-lg shadow-slate-200/20" 
-        : "bg-white/80 backdrop-blur-xl border-b border-slate-200/50"
-    )}>
+    <nav
+      className={clsx(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-xl border-b",
+        scrolled ? "shadow-lg shadow-slate-200/20" : ""
+      )}
+      style={{
+        backgroundColor: scrolled ? "color-mix(in srgb, var(--background) 94%, transparent)" : "color-mix(in srgb, var(--background) 86%, transparent)",
+        borderColor: "color-mix(in srgb, var(--border) 70%, transparent)",
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-purple-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-violet-500/30 group-hover:scale-110 transition-transform">
-              M
+            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-purple-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-violet-500/30 group-hover:scale-110 transition-transform">
+              <span className="relative z-10">MM</span>
+              <span className="absolute inset-1 rounded-lg bg-white/10" />
             </div>
             <span className="text-xl font-bold text-slate-900 hidden sm:block">
               Math<span className="gradient-text">Master</span>
@@ -107,6 +147,44 @@ export function Navbar() {
 
           {/* Right side - Auth button */}
           <div className="flex items-center gap-3">
+            <div className="relative hidden sm:flex items-center gap-2">
+              <button
+                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+                className="p-2 rounded-lg border border-slate-200/60 bg-white/70 hover:bg-white/90 text-slate-600 hover:text-slate-900 transition-colors"
+                aria-label="Toggle theme"
+              >
+                {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+              </button>
+              <button
+                onClick={() => setShowPalette((prev) => !prev)}
+                className="p-2 rounded-lg border border-slate-200/60 bg-white/70 hover:bg-white/90 text-slate-600 hover:text-slate-900 transition-colors"
+                aria-label="Choose accent color"
+              >
+                <Palette className="w-4 h-4" />
+              </button>
+              {showPalette && (
+                <div className="absolute right-0 top-12 w-44 p-3 rounded-xl bg-white border border-slate-200 shadow-xl">
+                  <p className="text-xs font-semibold text-slate-500 mb-2">Accent Color</p>
+                  <div className="flex flex-wrap gap-2">
+                    {accentOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          setAccent(option.value);
+                          setShowPalette(false);
+                        }}
+                        className={clsx(
+                          "w-7 h-7 rounded-full border-2 transition-transform",
+                          option.className,
+                          accent === option.value ? "border-slate-900 scale-110" : "border-white"
+                        )}
+                        aria-label={option.label}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
             <Link
               href="/auth"
               className={clsx(

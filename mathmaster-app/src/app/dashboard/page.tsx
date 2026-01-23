@@ -64,7 +64,7 @@ const activities = [
   { icon: CalendarCheck, title: "Session Booked: Calculus Review", time: "Yesterday", details: "Monday, 2:00 PM - 3:30 PM with Michael Chen", color: "green" },
 ];
 
-const goals = [
+const initialGoals = [
   { title: "Complete Calculus Module", status: "in_progress", progress: 75, label: "75%" },
   { title: "Solve 50 Practice Problems", status: "needs_work", progress: 30, label: "15/50" },
   { title: "Attend 3 Study Sessions", status: "completed", progress: 100, label: "3/3" },
@@ -73,6 +73,10 @@ const goals = [
 export default function DashboardPage() {
   const [userName, setUserName] = useState("Student");
   const [mounted, setMounted] = useState(false);
+  const [goals, setGoals] = useState(initialGoals);
+  const [showGoalForm, setShowGoalForm] = useState(false);
+  const [newGoalTitle, setNewGoalTitle] = useState("");
+  const [newGoalTarget, setNewGoalTarget] = useState("");
 
   useEffect(() => {
     setMounted(true);
@@ -85,6 +89,39 @@ export default function DashboardPage() {
       // Ignore
     }
   }, []);
+
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("mm_goals") || "null");
+      if (Array.isArray(stored) && stored.length > 0) {
+        setGoals(stored);
+      }
+    } catch {
+      // Ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("mm_goals", JSON.stringify(goals));
+  }, [goals]);
+
+  const handleAddGoal = () => {
+    if (!newGoalTitle.trim()) {
+      return;
+    }
+    const targetValue = Number(newGoalTarget);
+    const hasTarget = Number.isFinite(targetValue) && targetValue > 0;
+    const newGoal = {
+      title: newGoalTitle.trim(),
+      status: "in_progress",
+      progress: 0,
+      label: hasTarget ? `0/${targetValue}` : "0%",
+    };
+    setGoals((prev) => [newGoal, ...prev]);
+    setNewGoalTitle("");
+    setNewGoalTarget("");
+    setShowGoalForm(false);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -138,12 +175,16 @@ export default function DashboardPage() {
             </div>
             
             <div className="flex gap-3">
-              <Link href="/dashboard">
-                <Button className="bg-white text-violet-600 hover:bg-violet-50 shadow-lg">
-                  <Plus className="w-4 h-4" />
-                  New Goal
-                </Button>
-              </Link>
+              <Button
+                className="bg-white text-violet-600 hover:bg-violet-50 shadow-lg"
+                onClick={() => {
+                  setShowGoalForm(true);
+                  document.getElementById("study-goals")?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                <Plus className="w-4 h-4" />
+                New Goal
+              </Button>
               <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
                 <BarChart3 className="w-4 h-4" />
                 Analytics
@@ -376,7 +417,7 @@ export default function DashboardPage() {
           </Card>
 
           {/* Study Goals */}
-          <Card padding="none" className="overflow-hidden">
+          <Card padding="none" className="overflow-hidden" id="study-goals">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-green-50 to-emerald-50">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
@@ -387,11 +428,30 @@ export default function DashboardPage() {
                   <CardDescription>Track your learning objectives</CardDescription>
                 </div>
               </div>
-              <Button size="sm">
+              <Button size="sm" onClick={() => setShowGoalForm((prev) => !prev)}>
                 <Plus className="w-4 h-4" />
                 Add Goal
               </Button>
             </div>
+            {showGoalForm && (
+              <div className="p-4 border-b border-slate-100 bg-white">
+                <div className="flex flex-col md:flex-row gap-3">
+                  <input
+                    className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    placeholder="Goal title (e.g., Finish Algebra Unit)"
+                    value={newGoalTitle}
+                    onChange={(e) => setNewGoalTitle(e.target.value)}
+                  />
+                  <input
+                    className="w-full md:w-40 px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    placeholder="Target (optional)"
+                    value={newGoalTarget}
+                    onChange={(e) => setNewGoalTarget(e.target.value)}
+                  />
+                  <Button onClick={handleAddGoal}>Save Goal</Button>
+                </div>
+              </div>
+            )}
             <div className="divide-y divide-slate-100">
               {goals.map((goal) => (
                 <div key={goal.title} className="p-4">

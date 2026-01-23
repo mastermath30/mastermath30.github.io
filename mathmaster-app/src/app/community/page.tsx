@@ -174,7 +174,7 @@ export default function CommunityPage() {
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-green-900/95 via-emerald-800/90 to-teal-900/95" />
+          <div className="absolute inset-0 bg-gradient-to-r from-violet-900/95 via-purple-800/90 to-indigo-900/95" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-6 py-16">
@@ -184,7 +184,7 @@ export default function CommunityPage() {
               Discussion Forum
             </div>
             <h1 className="text-5xl font-bold text-white mb-4">Community</h1>
-            <p className="text-green-200 text-xl">
+            <p className="text-violet-200 text-xl">
               Connect with fellow math enthusiasts, ask questions, and help others learn.
             </p>
           </div>
@@ -204,11 +204,11 @@ export default function CommunityPage() {
           {/* Forum Section */}
           <div className="lg:col-span-2">
             <Card padding="none" className="overflow-hidden">
-              <div className="p-6 border-b border-slate-100 bg-gradient-to-r from-green-50 to-emerald-50">
+              <div className="p-6 border-b border-slate-100 bg-gradient-to-r from-violet-50 to-purple-50">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-                      <Sparkles className="w-5 h-5 text-green-600" />
+                    <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center">
+                      <Sparkles className="w-5 h-5 text-violet-600" />
                     </div>
                     <div>
                       <CardTitle>Math Help Forum</CardTitle>
@@ -224,7 +224,7 @@ export default function CommunityPage() {
                 {/* Post Form */}
                 <div id="ask" className="p-5 rounded-xl bg-white border border-slate-200 shadow-sm">
                   <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                    <HelpCircle className="w-5 h-5 text-green-500" />
+                    <HelpCircle className="w-5 h-5 text-violet-500" />
                     Ask a Question
                   </h3>
                   <form onSubmit={handleSubmit} className="space-y-4">
@@ -274,7 +274,7 @@ export default function CommunityPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-3">
-                              <h4 className="font-semibold text-slate-900 hover:text-green-600 cursor-pointer transition-colors">{post.title}</h4>
+                              <h4 className="font-semibold text-slate-900 hover:text-violet-600 cursor-pointer transition-colors">{post.title}</h4>
                               <span className="text-slate-400 text-xs shrink-0">
                                 {formatTimeAgo(post.createdAt)}
                               </span>
@@ -315,7 +315,7 @@ export default function CommunityPage() {
                   </div>
                 </div>
                 <div className="p-4 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-green-500">
+                  <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center text-violet-500">
                     <MessageCircle className="w-6 h-6" />
                   </div>
                   <div>

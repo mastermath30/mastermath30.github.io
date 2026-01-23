@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 
-const inter = Inter({
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-geist-sans",
+  variable: "--font-sans",
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
@@ -20,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} antialiased min-h-screen bg-[#fafafa]`}>
+    <html lang="en" data-theme="light" data-accent="violet" suppressHydrationWarning>
+      <body className={`${plusJakarta.variable} ${jetBrainsMono.variable} antialiased min-h-screen bg-[var(--background)] text-[var(--foreground)]`}>
         <Navbar />
         <main className="pt-16">
           {children}

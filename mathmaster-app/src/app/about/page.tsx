@@ -25,8 +25,8 @@ const stats = [
 ];
 
 const steps = [
-  { number: "01", title: "Join the Community", description: "Create your free account and set up your student profile. Tell us about your learning goals.", image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=250&fit=crop" },
-  { number: "02", title: "Connect & Learn", description: "Access resources, join study groups, attend live sessions, and ask questions in the forum.", image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=250&fit=crop" },
+  { number: "01", title: "Join the Community", description: "Create your free account and set up your student profile. Tell us about your learning goals.", image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop" },
+  { number: "02", title: "Connect & Learn", description: "Access resources, join study groups, attend live sessions, and ask questions in the forum.", image: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400&h=250&fit=crop" },
   { number: "03", title: "Track & Succeed", description: "Monitor your progress on the dashboard, earn achievements, and watch your skills grow.", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop" },
 ];
 
@@ -34,6 +34,7 @@ const team = [
   { name: "Dr. Sarah Johnson", role: "Founder & Lead Educator", initials: "SJ", bio: "PhD in Mathematics with 10+ years of teaching experience at top universities.", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop" },
   { name: "Michael Chen", role: "Head of Technology", initials: "MC", bio: "Software Engineer & Education Technology Specialist. Built platforms for millions of users.", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop" },
   { name: "Priya Patel", role: "Community Manager", initials: "PP", bio: "Expert in building and nurturing learning communities. Passionate about student success.", image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&h=200&fit=crop" },
+  { name: "Ayaan Oberoi", role: "Student Product Designer", initials: "AO", bio: "Focused on aligning visuals, usability, and growth to make MathMaster feel effortless.", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop" },
 ];
 
 const values = [
@@ -183,10 +184,6 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {steps.map((step, index) => (
               <div key={step.number} className="relative">
-                {/* Connector */}
-                {index < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-32 left-[60%] w-full h-0.5 bg-gradient-to-r from-violet-300 to-transparent z-0" />
-                )}
                 <Card className="relative overflow-hidden" padding="none">
                   <div className="relative h-48">
                     <Image
@@ -196,7 +193,7 @@ export default function AboutPage() {
                       className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent" />
-                    <div className="absolute top-4 left-4 text-5xl font-bold text-white/30 font-mono">
+                    <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-slate-900/60 text-white text-3xl font-bold font-mono backdrop-blur">
                       {step.number}
                     </div>
                   </div>
