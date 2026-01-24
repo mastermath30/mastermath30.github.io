@@ -4,6 +4,8 @@ import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { SectionLabel } from "@/components/SectionLabel";
 import { Avatar } from "@/components/Avatar";
+import { AnimatedNumberClient } from "@/components/AnimatedNumberClient";
+import { TestimonialsScroll } from "@/components/TestimonialsScroll";
 import {
   GraduationCap,
   Rocket,
@@ -25,10 +27,10 @@ import {
 } from "lucide-react";
 
 const stats = [
-  { value: "12K+", label: "Students Helped" },
-  { value: "320+", label: "Peer Tutors" },
-  { value: "98%", label: "Success Rate" },
-  { value: "24/7", label: "Support" },
+  { value: 12000, label: "Students Helped" },
+  { value: 320, label: "Peer Tutors" },
+  { value: 98, label: "Success Rate" },
+  { value: 24, label: "Support" },
 ];
 
 const features = [
@@ -87,36 +89,6 @@ const steps = [
   },
 ];
 
-const testimonials = [
-  {
-    name: "Sarah Johnson",
-    role: "Calculus Student",
-    initials: "SJ",
-    gradient: "violet" as const,
-    rating: 5,
-    text: "MathMaster completely changed my perspective on calculus. The interactive lessons made limits and derivatives so much more intuitive. I aced my final exam!",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-  },
-  {
-    name: "Michael Chen",
-    role: "Engineering Major",
-    initials: "MC",
-    gradient: "blue" as const,
-    rating: 4.5,
-    text: "The linear algebra course was a game-changer for my engineering studies. The visualizations helped me understand matrix operations and vector spaces perfectly.",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
-  },
-  {
-    name: "Emily Rodriguez",
-    role: "High School Senior",
-    initials: "ER",
-    gradient: "purple" as const,
-    rating: 5,
-    text: "I used to struggle with math, but MathMaster's step-by-step approach made everything click. My SAT math score improved by 150 points!",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-  },
-];
-
 export default function Home() {
   return (
     <div className="min-h-screen">
@@ -151,12 +123,6 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left content */}
             <div className="text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur border border-violet-200 rounded-full text-sm font-medium text-violet-600 mb-6 shadow-lg">
-                <Sparkles className="w-4 h-4" />
-                Student Learning Hub
-                <span className="px-2 py-0.5 bg-violet-600 text-white text-xs rounded-full">New</span>
-              </div>
-
               <h1 className="text-5xl md:text-7xl font-bold text-slate-900 mb-6 leading-tight">
                 Master Mathematics
                 <br />
@@ -198,7 +164,9 @@ export default function Home() {
               <div className="flex flex-wrap gap-6 justify-center lg:justify-start">
                 {stats.map((stat) => (
                   <div key={stat.label} className="text-center">
-                    <div className="text-2xl font-bold gradient-text font-mono">{stat.value}</div>
+                    <div className="text-2xl font-bold gradient-text font-mono">
+                      <AnimatedNumberClient value={stat.value} duration={900} label={stat.label} />
+                    </div>
                     <div className="text-slate-500 text-xs">{stat.label}</div>
                   </div>
                 ))}
@@ -395,55 +363,23 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-white dark:bg-slate-950 relative overflow-hidden">
+        {/* Background gradient orbs (theme-tinted) */}
+        <div className="absolute top-20 left-10 w-72 h-72 rounded-full blur-3xl bg-white/10 dark:bg-black/20" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full blur-3xl bg-white/10 dark:bg-black/20" />
+        
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <SectionLabel icon={Quote} className="mb-4">
-              Success Stories
-            </SectionLabel>
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mt-6 mb-4">
+          <div className="text-center mb-12">
+      
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mt-6 mb-4">
               What Students Say
             </h2>
-            <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-              Join thousands of students who have transformed their math skills
+            <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl mx-auto">
+              See what our students have to say about us.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial) => (
-              <Card key={testimonial.name} className="relative overflow-hidden">
-                {/* Quote mark */}
-                <div className="absolute top-4 right-4 text-6xl text-violet-100 font-serif">&ldquo;</div>
-                <div className="relative">
-                  <div className="flex items-center gap-4 mb-4">
-                    <Image
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      width={56}
-                      height={56}
-                      className="w-14 h-14 rounded-xl object-cover"
-                    />
-                    <div>
-                      <h4 className="font-semibold text-slate-900">{testimonial.name}</h4>
-                      <p className="text-sm text-slate-500">{testimonial.role}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-1 text-violet-400 mb-3">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-4 h-4"
-                        fill={i < Math.floor(testimonial.rating) ? "currentColor" : "none"}
-                      />
-                    ))}
-                  </div>
-                  <p className="text-slate-600 text-sm leading-relaxed">
-                    &ldquo;{testimonial.text}&rdquo;
-                  </p>
-                </div>
-              </Card>
-            ))}
-          </div>
+          <TestimonialsScroll />
         </div>
       </section>
 
@@ -456,22 +392,25 @@ export default function Home() {
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-violet-600/95 to-purple-500/95" />
+          {/* Theme-aware base overlay */}
+          <div className="absolute inset-0 bg-white/95 dark:bg-slate-900/95 transition-colors duration-300" />
+          {/* Subtle theme tint (uses --theme-primary) */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(90deg, color-mix(in srgb, var(--theme-primary) 12%, transparent), transparent)" }} />
         </div>
         <div className="relative max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
             Ready to Master Math?
           </h2>
-          <p className="text-violet-100 text-lg mb-8 max-w-xl mx-auto">
+          <p className="text-lg mb-8 max-w-xl mx-auto text-slate-700 dark:text-slate-300">
             Join thousands of students who are already improving their math skills with MathMaster.
           </p>
           <Link href="/auth">
-            <Button size="lg" className="bg-white text-violet-600 hover:bg-violet-50 shadow-xl">
+            <Button size="lg" className="shadow-xl" style={{ background: "linear-gradient(90deg, var(--theme-primary), var(--theme-primary-light))", color: "white" }}>
               <Rocket className="w-5 h-5" />
               Get Started Free
             </Button>
           </Link>
-          <p className="text-violet-200 text-sm mt-4">No credit card required • Free forever</p>
+          <p className="text-slate-600 dark:text-slate-300/70 text-sm mt-4">No credit card required • Free forever</p>
         </div>
       </section>
 
@@ -481,7 +420,7 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-purple-500 flex items-center justify-center text-white font-bold">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: "linear-gradient(135deg, var(--theme-primary), var(--theme-primary-light))" }}>
                   M
                 </div>
                 <span className="text-xl font-bold">MathMaster</span>
@@ -494,33 +433,33 @@ export default function Home() {
             <div>
               <h4 className="font-semibold text-sm uppercase tracking-wider text-slate-400 mb-4">Platform</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/dashboard" className="text-slate-400 hover:text-violet-400 transition-colors">Dashboard</Link></li>
-                <li><Link href="/schedule" className="text-slate-400 hover:text-violet-400 transition-colors">Schedule</Link></li>
-                <li><Link href="/resources" className="text-slate-400 hover:text-violet-400 transition-colors">Resources</Link></li>
-                <li><Link href="/community" className="text-slate-400 hover:text-violet-400 transition-colors">Community</Link></li>
-              </ul>
+                <li><Link href="/dashboard" className="text-slate-400 hover:text-primary-themed transition-colors">Dashboard</Link></li>
+                <li><Link href="/schedule" className="text-slate-400 hover:text-primary-themed transition-colors">Schedule</Link></li>
+                <li><Link href="/resources" className="text-slate-400 hover:text-primary-themed transition-colors">Resources</Link></li>
+                <li><Link href="/community" className="text-slate-400 hover:text-primary-themed transition-colors">Community</Link></li>
+                </ul>
             </div>
 
             <div>
               <h4 className="font-semibold text-sm uppercase tracking-wider text-slate-400 mb-4">Company</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/about" className="text-slate-400 hover:text-violet-400 transition-colors">About Us</Link></li>
-                <li><Link href="/support" className="text-slate-400 hover:text-violet-400 transition-colors">Support</Link></li>
-                <li><Link href="#" className="text-slate-400 hover:text-violet-400 transition-colors">Privacy Policy</Link></li>
-                <li><Link href="#" className="text-slate-400 hover:text-violet-400 transition-colors">Terms of Service</Link></li>
+                <li><Link href="/about" className="text-slate-400 hover:text-primary-themed transition-colors">About Us</Link></li>
+                <li><Link href="/support" className="text-slate-400 hover:text-primary-themed transition-colors">Support</Link></li>
+                <li><Link href="#" className="text-slate-400 hover:text-primary-themed transition-colors">Privacy Policy</Link></li>
+                <li><Link href="#" className="text-slate-400 hover:text-primary-themed transition-colors">Terms of Service</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold text-sm uppercase tracking-wider text-slate-400 mb-4">Connect</h4>
               <div className="flex gap-3">
-                <a href="#" className="w-10 h-10 rounded-lg bg-slate-800 hover:bg-violet-500 flex items-center justify-center text-slate-400 hover:text-white transition-all">
+                <a href="#" className="w-10 h-10 rounded-lg bg-slate-800 hover:bg-primary-themed flex items-center justify-center text-slate-400 hover:text-white transition-all">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 </a>
-                <a href="#" className="w-10 h-10 rounded-lg bg-slate-800 hover:bg-violet-500 flex items-center justify-center text-slate-400 hover:text-white transition-all">
+                <a href="#" className="w-10 h-10 rounded-lg bg-slate-800 hover:bg-primary-themed flex items-center justify-center text-slate-400 hover:text-white transition-all">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                 </a>
-                <a href="#" className="w-10 h-10 rounded-lg bg-slate-800 hover:bg-violet-500 flex items-center justify-center text-slate-400 hover:text-white transition-all">
+                <a href="#" className="w-10 h-10 rounded-lg bg-slate-800 hover:bg-primary-themed flex items-center justify-center text-slate-400 hover:text-white transition-all">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                 </a>
               </div>
