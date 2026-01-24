@@ -29,17 +29,17 @@
 
 /* Dark mode - triggered by .dark class on html */
 .dark {
-  --background: #0f172a;
+  --background: #020617;
   --foreground: #f8fafc;
-  --card: #1e293b;
+  --card: #0f172a;
   --card-foreground: #f8fafc;
-  --secondary: #1e293b;
+  --secondary: #0f172a;
   --secondary-foreground: #f1f5f9;
-  --muted: #1e293b;
+  --muted: #0f172a;
   --muted-foreground: #94a3b8;
-  --accent: #312e81;
+  --accent: #1e1b4b;
   --accent-foreground: #e0e7ff;
-  --border: #334155;
+  --border: #1e293b;
 }
 
 /* Color theme classes */
@@ -47,30 +47,35 @@
   --theme-primary: #7c3aed;
   --theme-primary-light: #a78bfa;
   --theme-primary-dark: #6d28d9;
+  --theme-primary-rgb: 124, 58, 237;
 }
 
 .theme-blue {
   --theme-primary: #2563eb;
   --theme-primary-light: #60a5fa;
   --theme-primary-dark: #1d4ed8;
+  --theme-primary-rgb: 37, 99, 235;
 }
 
 .theme-green {
   --theme-primary: #16a34a;
   --theme-primary-light: #4ade80;
   --theme-primary-dark: #15803d;
+  --theme-primary-rgb: 22, 163, 74;
 }
 
 .theme-red {
   --theme-primary: #dc2626;
   --theme-primary-light: #f87171;
   --theme-primary-dark: #b91c1c;
+  --theme-primary-rgb: 220, 38, 38;
 }
 
 .theme-orange {
   --theme-primary: #ea580c;
   --theme-primary-light: #fb923c;
   --theme-primary-dark: #c2410c;
+  --theme-primary-rgb: 234, 88, 12;
 }
 
 @theme inline {

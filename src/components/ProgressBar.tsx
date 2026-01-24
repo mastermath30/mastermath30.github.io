@@ -21,7 +21,7 @@ export function ProgressBar({
     <div className="w-full">
       <div
         className={clsx(
-          "w-full bg-slate-100 rounded-full overflow-hidden",
+          "w-full bg-slate-200 dark:bg-slate-100 rounded-full overflow-hidden",
           {
             "h-1.5": size === "sm",
             "h-2": size === "md",

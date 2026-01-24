@@ -7,6 +7,8 @@ import Image from "next/image";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
+import { MathLogo } from "@/components/MathLogo";
+import { FadeIn, GlowingOrbs } from "@/components/motion";
 import {
   User,
   Lock,
@@ -21,6 +23,7 @@ import {
   MessageCircle,
   CheckCircle2,
   GraduationCap,
+  X,
 } from "lucide-react";
 
 interface Profile {
@@ -34,6 +37,9 @@ export default function AuthPage() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [error, setError] = useState("");
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     try {
@@ -96,28 +102,85 @@ export default function AuthPage() {
     setProfile(null);
   };
 
+  const handleUpdateProfile = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    setSuccessMessage("");
+    
+    const form = e.currentTarget;
+    const firstName = (form.elements.namedItem("firstName") as HTMLInputElement).value.trim();
+    const lastName = (form.elements.namedItem("lastName") as HTMLInputElement).value.trim();
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value.trim();
+
+    if (!firstName || !lastName || !email) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    const updatedProfile: Profile = { email, firstName, lastName };
+    localStorage.setItem("mm_profile", JSON.stringify(updatedProfile));
+    localStorage.setItem("mm_session", JSON.stringify({ email }));
+    setProfile(updatedProfile);
+    setIsEditingProfile(false);
+    setSuccessMessage("Profile updated successfully!");
+    setTimeout(() => setSuccessMessage(""), 3000);
+  };
+
+  const handleChangePassword = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    setSuccessMessage("");
+    
+    const form = e.currentTarget;
+    const currentPassword = (form.elements.namedItem("currentPassword") as HTMLInputElement).value;
+    const newPassword = (form.elements.namedItem("newPassword") as HTMLInputElement).value;
+    const confirmPassword = (form.elements.namedItem("confirmPassword") as HTMLInputElement).value;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("New passwords do not match.");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    // In a real app, you'd verify the current password
+    // For now, we'll just simulate success
+    setIsChangingPassword(false);
+    setSuccessMessage("Password changed successfully!");
+    setTimeout(() => setSuccessMessage(""), 3000);
+  };
+
   if (profile) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
         {/* Hero Header */}
         <header className="relative overflow-hidden">
+          <GlowingOrbs variant="section" />
           <div className="absolute inset-0">
             <Image
               src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&h=400&fit=crop"
               alt="Account"
               fill
-              className="object-cover"
+              className="object-cover opacity-20"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-800/90 to-slate-900/95" />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/98 via-slate-950/95 to-black/98" />
           </div>
 
           <div className="relative max-w-6xl mx-auto px-6 py-16">
             <div className="flex items-center gap-6">
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center text-white text-3xl font-bold">
+              <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-white text-3xl font-bold" style={{ background: 'linear-gradient(135deg, var(--theme-primary), var(--theme-primary-light))' }}>
                 {profile.firstName.charAt(0).toUpperCase()}
               </div>
               <div className="text-white">
-                <p className="text-violet-400 text-sm font-medium mb-1">Welcome back</p>
+                <p className="text-sm font-medium mb-1" style={{ color: 'var(--theme-primary-light)' }}>Welcome back</p>
                 <h1 className="text-4xl font-bold">{profile.firstName} {profile.lastName}</h1>
                 <p className="text-slate-400 mt-1">{profile.email}</p>
               </div>
@@ -127,7 +190,7 @@ export default function AuthPage() {
 
         <main className="max-w-4xl mx-auto px-6 py-8 pb-32">
           <Card className="mb-6">
-            <h2 className="text-xl font-semibold text-slate-900 mb-4">Quick Actions</h2>
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">Quick Actions</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Link href="/dashboard" className="p-4 rounded-xl bg-violet-50 hover:bg-violet-100 text-center transition-all group">
                 <BarChart3 className="w-8 h-8 text-violet-500 mx-auto mb-2 group-hover:scale-110 transition-transform" />
@@ -148,38 +211,164 @@ export default function AuthPage() {
             </div>
           </Card>
 
+          {successMessage && (
+            <div className="mb-6 p-4 rounded-xl bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-900 flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+              <span className="text-green-800 dark:text-green-300 font-medium">{successMessage}</span>
+            </div>
+          )}
+
           <Card>
-            <h2 className="text-xl font-semibold text-slate-900 mb-4">Account Settings</h2>
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">Account Settings</h2>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800">
                 <div className="flex items-center gap-3">
                   <Settings className="w-5 h-5 text-slate-400" />
-                  <span className="text-slate-700">Profile Settings</span>
+                  <span className="text-slate-700 dark:text-slate-300">Profile Settings</span>
                 </div>
-                <Button variant="ghost" size="sm">Edit</Button>
+                <Button variant="ghost" size="sm" onClick={() => setIsEditingProfile(true)}>Edit</Button>
               </div>
-              <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800">
                 <div className="flex items-center gap-3">
                   <Lock className="w-5 h-5 text-slate-400" />
-                  <span className="text-slate-700">Change Password</span>
+                  <span className="text-slate-700 dark:text-slate-300">Change Password</span>
                 </div>
-                <Button variant="ghost" size="sm">Update</Button>
+                <Button variant="ghost" size="sm" onClick={() => setIsChangingPassword(true)}>Update</Button>
               </div>
             </div>
-            <div className="mt-6 pt-6 border-t border-slate-200">
-              <Button variant="outline" onClick={handleSignOut} className="text-red-600 border-red-200 hover:bg-red-50">
+            <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+              <Button variant="outline" onClick={handleSignOut} className="text-red-600 border-red-200 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950">
                 <LogOut className="w-4 h-4" />
                 Sign Out
               </Button>
             </div>
           </Card>
+
+          {/* Edit Profile Modal */}
+          {isEditingProfile && (
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">Edit Profile</h3>
+                  <button onClick={() => { setIsEditingProfile(false); setError(""); }} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                
+                {error && (
+                  <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 text-red-800 dark:text-red-300 text-sm">
+                    {error}
+                  </div>
+                )}
+
+                <form onSubmit={handleUpdateProfile} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">First Name</label>
+                    <Input
+                      type="text"
+                      name="firstName"
+                      defaultValue={profile.firstName}
+                      placeholder="Enter first name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Last Name</label>
+                    <Input
+                      type="text"
+                      name="lastName"
+                      defaultValue={profile.lastName}
+                      placeholder="Enter last name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
+                    <Input
+                      type="email"
+                      name="email"
+                      defaultValue={profile.email}
+                      placeholder="Enter email"
+                      required
+                    />
+                  </div>
+                  <div className="flex gap-3 pt-4">
+                    <Button type="button" variant="outline" onClick={() => { setIsEditingProfile(false); setError(""); }} className="flex-1">
+                      Cancel
+                    </Button>
+                    <Button type="submit" className="flex-1">
+                      Save Changes
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Change Password Modal */}
+          {isChangingPassword && (
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">Change Password</h3>
+                  <button onClick={() => { setIsChangingPassword(false); setError(""); }} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                
+                {error && (
+                  <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 text-red-800 dark:text-red-300 text-sm">
+                    {error}
+                  </div>
+                )}
+
+                <form onSubmit={handleChangePassword} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Current Password</label>
+                    <Input
+                      type="password"
+                      name="currentPassword"
+                      placeholder="Enter current password"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">New Password</label>
+                    <Input
+                      type="password"
+                      name="newPassword"
+                      placeholder="Enter new password"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Confirm New Password</label>
+                    <Input
+                      type="password"
+                      name="confirmPassword"
+                      placeholder="Confirm new password"
+                      required
+                    />
+                  </div>
+                  <div className="flex gap-3 pt-4">
+                    <Button type="button" variant="outline" onClick={() => { setIsChangingPassword(false); setError(""); }} className="flex-1">
+                      Cancel
+                    </Button>
+                    <Button type="submit" className="flex-1">
+                      Update Password
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-slate-950">
       {/* Left side - Image */}
       <div className="hidden lg:flex lg:w-1/2 relative">
         <Image
@@ -219,31 +408,31 @@ export default function AuthPage() {
       </div>
 
       {/* Right side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-slate-50">
-        <div className="w-full max-w-md">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-slate-950 relative overflow-hidden">
+        <GlowingOrbs variant="hero" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-transparent to-slate-950" />
+        <FadeIn className="relative w-full max-w-md">
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center text-white font-bold">
-                M
-              </div>
-              <span className="text-xl font-bold text-slate-900">MathMaster</span>
+              <MathLogo className="w-10 h-10" />
+              <span className="text-xl font-bold text-white">MathMaster</span>
             </Link>
-            <h1 className="text-3xl font-bold text-slate-900">
+            <h1 className="text-3xl font-bold text-white">
               {mode === "signin" ? "Welcome back" : "Create your account"}
             </h1>
-            <p className="text-slate-500 mt-2">
+            <p className="text-slate-400 mt-2">
               {mode === "signin" ? "Sign in to continue learning" : "Start your math journey today"}
             </p>
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-2 mb-8 p-1 bg-slate-200 rounded-xl">
+          <div className="flex gap-2 mb-8 p-1 bg-slate-900 rounded-xl">
             <button
               onClick={() => { setMode("signin"); setError(""); }}
               className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
                 mode === "signin"
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-500 hover:text-slate-700"
+                  ? "bg-slate-800 text-white shadow-sm"
+                  : "text-slate-400 hover:text-slate-300"
               }`}
             >
               <LogIn className="w-4 h-4 inline mr-2" />
@@ -253,8 +442,8 @@ export default function AuthPage() {
               onClick={() => { setMode("signup"); setError(""); }}
               className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
                 mode === "signup"
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-500 hover:text-slate-700"
+                  ? "bg-slate-800 text-white shadow-sm"
+                  : "text-slate-400 hover:text-slate-300"
               }`}
             >
               <UserPlus className="w-4 h-4 inline mr-2" />
@@ -263,7 +452,7 @@ export default function AuthPage() {
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+            <div className="mb-6 p-4 bg-red-950 border border-red-900 rounded-xl text-red-300 text-sm">
               {error}
             </div>
           )}
@@ -314,12 +503,12 @@ export default function AuthPage() {
             </p>
           </div>
 
-          <div className="mt-8 pt-8 border-t border-slate-200 text-center">
+          <div className="mt-8 pt-8 border-t border-slate-800 text-center">
             <p className="text-slate-400 text-xs">
               By continuing, you agree to our Terms of Service and Privacy Policy.
             </p>
           </div>
-        </div>
+        </FadeIn>
       </div>
     </div>
   );

@@ -118,9 +118,9 @@ const rightColumnTestimonials: Testimonial[] = [
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
-    <div className="testimonial-card rounded-2xl p-5 mb-4 border border-slate-700/50 shadow-sm hover:shadow-md transition-shadow">
-      <p className="text-slate-200 text-sm leading-relaxed mb-4">
-        {testimonial.text}
+    <div className="testimonial-card rounded-2xl p-5 mb-4 transition-all duration-300 hover:-translate-y-1 border bg-white border-slate-200 shadow-lg dark:bg-slate-900/80 dark:border-slate-700/50 dark:shadow-[0_0_20px_rgba(var(--theme-primary-rgb),0.2)] dark:hover:shadow-[0_0_35px_rgba(var(--theme-primary-rgb),0.35)]">
+      <p className="text-sm leading-relaxed mb-4 font-medium text-slate-700 dark:text-slate-200">
+        &quot;{testimonial.text}&quot;
       </p>
       <div className="flex items-center gap-3">
         <Image
@@ -128,11 +128,11 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
           alt={testimonial.name}
           width={40}
           height={40}
-          className="w-10 h-10 rounded-full object-cover"
+          className="w-10 h-10 rounded-full object-cover ring-2 ring-slate-200 dark:ring-slate-700"
         />
         <div>
-          <h4 className="font-semibold text-white text-sm">{testimonial.name}</h4>
-          <p className="text-xs text-slate-400">{testimonial.role}</p>
+          <h4 className="font-semibold text-sm text-slate-900 dark:text-white">{testimonial.name}</h4>
+          <p className="text-xs text-slate-600 dark:text-slate-400">{testimonial.role}</p>
         </div>
       </div>
     </div>
@@ -199,8 +199,8 @@ export function TestimonialsScroll() {
   return (
     <div className="relative">
       {/* Gradient overlays for smooth fade effect */}
-      <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-slate-950 to-transparent z-10 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-slate-950 to-transparent z-10 pointer-events-none" />
+      <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none" />
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
         {/* Left column - faster */}
@@ -239,12 +239,9 @@ export function TestimonialsScroll() {
           }
         }
 
+        /* Theme-colored left border accent */
         .testimonial-card {
-          background: linear-gradient(
-            135deg,
-            rgba(30, 41, 59, 0.95) 0%,
-            rgba(15, 23, 42, 0.9) 100%
-          );
+          border-left: 3px solid var(--theme-primary, #7c3aed);
         }
 
         .dark .testimonial-card {
@@ -254,11 +251,6 @@ export function TestimonialsScroll() {
             rgba(15, 23, 42, 0.9) 100%
           );
           border-color: rgba(71, 85, 105, 0.3);
-        }
-
-        /* Theme-colored left border accent */
-        .testimonial-card {
-          border-left: 3px solid var(--theme-primary, #7c3aed);
         }
       `}</style>
     </div>

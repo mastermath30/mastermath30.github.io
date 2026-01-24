@@ -20,12 +20,20 @@ const themeInitScript = `
   (function() {
     try {
       const savedColor = localStorage.getItem('mm_color_theme') || 'violet';
+      const savedMode = localStorage.getItem('mm_dark_mode');
+      const isDark = savedMode === null ? true : savedMode === 'true';
 
-      localStorage.setItem('mm_theme', 'dark');
-      document.documentElement.classList.add('dark');
-      document.body.classList.add('dark');
-      document.body.style.background = '#0f172a';
-      document.body.style.color = '#f8fafc';
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        document.body.classList.add('dark');
+        document.body.style.background = '#020617';
+        document.body.style.color = '#f8fafc';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.body.classList.remove('dark');
+        document.body.style.background = '#f8fafc';
+        document.body.style.color = '#0f172a';
+      }
       
       document.documentElement.classList.add('theme-' + savedColor);
     } catch (e) {}
@@ -38,11 +46,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className={`${inter.variable} antialiased min-h-screen dark`}>
+      <body className={`${inter.variable} antialiased min-h-screen`}>
         <TopBar />
         <main className="pb-24 md:pb-0">
           {children}

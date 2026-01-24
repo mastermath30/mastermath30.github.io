@@ -5,6 +5,7 @@ import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeSelector } from "./ThemeSelector";
+import { MathLogo } from "./MathLogo";
 
 const navigation = [
 	{ name: "About", href: "/about" },
@@ -87,9 +88,7 @@ export function TopBar() {
 								href="/"
 								className="flex items-center gap-2 hover:scale-105 transition-transform duration-200 cursor-pointer"
 							>
-								<div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-violet-600 to-purple-500 flex items-center justify-center text-white font-bold text-sm md:text-lg shadow-lg shadow-violet-500/30">
-									M
-								</div>
+								<MathLogo className="w-8 h-8 md:w-10 md:h-10" />
 								<span className="text-lg md:text-xl font-bold text-slate-900 dark:text-white hidden sm:block">
 									Math
 									<span className="gradient-text">Master</span>

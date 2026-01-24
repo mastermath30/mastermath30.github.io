@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Palette, Check } from "lucide-react";
+import { Palette, Check, Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const COLOR_THEMES = [
@@ -15,6 +15,7 @@ const COLOR_THEMES = [
 export function ThemeSelector({ className = "" }: { className?: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [colorTheme, setColorTheme] = useState("violet");
+  const [isDark, setIsDark] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const applyColorTheme = (colorName: string) => {
@@ -26,10 +27,29 @@ export function ThemeSelector({ className = "" }: { className?: string }) {
     document.documentElement.classList.add(`theme-${colorName}`);
   };
 
+  const applyDarkMode = (dark: boolean) => {
+    if (dark) {
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
+      document.body.style.background = '#020617';
+      document.body.style.color = '#f8fafc';
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
+      document.body.style.background = '#f8fafc';
+      document.body.style.color = '#0f172a';
+    }
+  };
+
   useEffect(() => {
     const savedColor = localStorage.getItem("mm_color_theme") || "violet";
+    const savedMode = localStorage.getItem("mm_dark_mode");
+    const dark = savedMode === null ? true : savedMode === "true";
+    
     setColorTheme(savedColor);
+    setIsDark(dark);
     applyColorTheme(savedColor);
+    applyDarkMode(dark);
   }, []);
 
   useEffect(() => {
@@ -55,16 +75,22 @@ export function ThemeSelector({ className = "" }: { className?: string }) {
     setColorTheme(newColor);
     localStorage.setItem("mm_color_theme", newColor);
     applyColorTheme(newColor);
-    setIsOpen(false);
+  };
+
+  const handleModeToggle = () => {
+    const newMode = !isDark;
+    setIsDark(newMode);
+    localStorage.setItem("mm_dark_mode", String(newMode));
+    applyDarkMode(newMode);
   };
 
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-full bg-slate-800/90 backdrop-blur-sm border border-slate-700 hover:bg-slate-700 transition-all shadow-sm"
+        className="flex items-center gap-2 px-3 py-2 rounded-full bg-slate-800/90 dark:bg-slate-800/90 light:bg-white/90 backdrop-blur-sm border border-slate-700 dark:border-slate-700 hover:bg-slate-700 dark:hover:bg-slate-700 transition-all shadow-sm"
       >
-        <Palette className="w-4 h-4 text-slate-300" />
+        <Palette className="w-4 h-4 text-slate-300 dark:text-slate-300" />
       </button>
 
       <AnimatePresence>
@@ -75,37 +101,72 @@ export function ThemeSelector({ className = "" }: { className?: string }) {
               initial={{ opacity: 0, scale: 0.95, y: -10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -10 }}
-              className="absolute right-0 mt-2 w-56 bg-slate-800 rounded-2xl shadow-xl border border-slate-700 overflow-hidden z-50"
+              className="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden z-50"
             >
-              <div className="p-2">
-                <div className="text-xs font-semibold text-slate-400 px-3 py-2">Color Theme</div>
-                {COLOR_THEMES.map((c) => {
-                  const isSelected = colorTheme === c.value;
-                  return (
+              <div className="p-3">
+                {/* Dark/Light Mode Toggle */}
+                <div className="mb-3">
+                  <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 px-2 py-1.5">Appearance</div>
+                  <div className="flex gap-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl">
                     <button
-                      key={c.value}
-                      onClick={() => handleColorChange(c.value)}
-                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-all ${
-                        isSelected
-                          ? ""
-                          : "text-slate-300 hover:bg-slate-700"
+                      onClick={() => { if (!isDark) handleModeToggle(); }}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
+                        isDark
+                          ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
+                          : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
                       }`}
-                      style={isSelected ? { 
-                        backgroundColor: `${c.color}20`,
-                        boxShadow: `inset 0 0 0 2px ${c.color}`
-                      } : {}}
                     >
-                      <span className="flex items-center gap-2">
-                        <span 
-                          className={`w-4 h-4 rounded-full ${isSelected ? 'ring-2 ring-white shadow-md' : ''}`}
-                          style={{ backgroundColor: c.color }}
-                        />
-                        <span className="text-sm font-medium text-slate-300">{c.name}</span>
-                      </span>
-                      {isSelected && <Check className="w-4 h-4" style={{ color: c.color }} />}
+                      <Moon className="w-4 h-4" />
+                      Dark
                     </button>
-                  );
-                })}
+                    <button
+                      onClick={() => { if (isDark) handleModeToggle(); }}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
+                        !isDark
+                          ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
+                          : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                      }`}
+                    >
+                      <Sun className="w-4 h-4" />
+                      Light
+                    </button>
+                  </div>
+                </div>
+
+                {/* Color Theme */}
+                <div className="border-t border-slate-200 dark:border-slate-700 pt-3">
+                  <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 px-2 py-1.5">Accent Color</div>
+                  <div className="grid grid-cols-5 gap-2 px-1">
+                    {COLOR_THEMES.map((c) => {
+                      const isSelected = colorTheme === c.value;
+                      return (
+                        <button
+                          key={c.value}
+                          onClick={() => handleColorChange(c.value)}
+                          className="group relative flex flex-col items-center"
+                          title={c.name}
+                        >
+                          <div
+                            className={`w-8 h-8 rounded-full transition-all ${
+                              isSelected ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-800 scale-110' : 'hover:scale-110'
+                            }`}
+                            style={{ 
+                              backgroundColor: c.color,
+                              ringColor: c.color
+                            }}
+                          >
+                            {isSelected && (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-[10px] mt-1 text-slate-500 dark:text-slate-400">{c.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </motion.div>
           </>

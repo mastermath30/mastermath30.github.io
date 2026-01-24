@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/Button";
 import { Input, Textarea } from "@/components/Input";
 import { SectionLabel } from "@/components/SectionLabel";
+import { FadeIn, GlowingOrbs } from "@/components/motion";
 import {
   Search,
   Rocket,
@@ -30,7 +31,11 @@ const helpCategories = [
     title: "Getting Started",
     description: "New to MathMaster? Learn the basics and set up your account.",
     color: "violet",
-    links: ["Creating your account", "Setting up your profile", "Navigating the platform"],
+    links: [
+      { text: "Creating your account", href: "/auth" },
+      { text: "Setting up your profile", href: "/dashboard" },
+      { text: "Navigating the platform", href: "/about" }
+    ],
     image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=100&h=100&fit=crop",
   },
   {
@@ -38,7 +43,11 @@ const helpCategories = [
     title: "Account & Settings",
     description: "Manage your account, preferences, and privacy settings.",
     color: "purple",
-    links: ["Update your profile", "Change password", "Notification settings"],
+    links: [
+      { text: "Update your profile", href: "/dashboard" },
+      { text: "Change password", href: "/auth" },
+      { text: "Notification settings", href: "/dashboard" }
+    ],
     image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=100&h=100&fit=crop",
   },
   {
@@ -46,7 +55,11 @@ const helpCategories = [
     title: "Technical Support",
     description: "Troubleshoot issues and get help with technical problems.",
     color: "blue",
-    links: ["Browser compatibility", "Report a bug", "System requirements"],
+    links: [
+      { text: "Browser compatibility", href: "#faq" },
+      { text: "Report a bug", href: "#contact" },
+      { text: "System requirements", href: "#faq" }
+    ],
     image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=100&h=100&fit=crop",
   },
   {
@@ -54,7 +67,11 @@ const helpCategories = [
     title: "Learning Resources",
     description: "Find tutorials and guides to enhance your learning.",
     color: "green",
-    links: ["Video tutorials", "Practice problems", "Study guides"],
+    links: [
+      { text: "Video tutorials", href: "/resources" },
+      { text: "Practice problems", href: "/resources" },
+      { text: "Study guides", href: "/resources" }
+    ],
     image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&h=100&fit=crop",
   },
   {
@@ -62,7 +79,11 @@ const helpCategories = [
     title: "Community",
     description: "Connect with other learners and share knowledge.",
     color: "yellow",
-    links: ["Community guidelines", "Discussion forums", "Study groups"],
+    links: [
+      { text: "Community guidelines", href: "/community" },
+      { text: "Discussion forums", href: "/community" },
+      { text: "Study groups", href: "/community" }
+    ],
     image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=100&h=100&fit=crop",
   },
 ];
@@ -104,9 +125,11 @@ export default function SupportPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Hero Header */}
       <header className="relative overflow-hidden">
+        {/* Glowing orbs */}
+        <GlowingOrbs variant="section" />
         {/* Background */}
         <div className="absolute inset-0">
           <Image
@@ -115,7 +138,7 @@ export default function SupportPage() {
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-slate-950/70" />
+          <div className="absolute inset-0 bg-slate-950/80" />
           <div
             className="absolute inset-0"
             style={{ background: "linear-gradient(90deg, color-mix(in srgb, var(--theme-primary) 35%, transparent), transparent)" }}
@@ -139,7 +162,8 @@ export default function SupportPage() {
               <input
                 type="text"
                 placeholder="Search help articles..."
-                className="w-full pl-12 pr-4 py-4 bg-slate-900 border border-slate-700 rounded-2xl text-slate-100 placeholder:text-slate-500 shadow-xl focus:outline-none focus:ring-4 focus:ring-violet-500/20"
+                className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur border border-white/20 rounded-2xl text-white placeholder:text-slate-400 shadow-xl focus:outline-none focus:ring-4"
+                style={{ boxShadow: '0 0 0 4px rgba(var(--theme-primary-rgb), 0.2)' }}
               />
             </div>
           </div>
@@ -152,11 +176,11 @@ export default function SupportPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 -mt-8 mb-12">
           {contactMethods.map((method) => (
             <Card key={method.title} className="text-center">
-              <div className="w-14 h-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto mb-4" style={{ color: "var(--theme-primary)" }}>
+              <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center mx-auto mb-4" style={{ color: "var(--theme-primary)" }}>
                 <method.icon className="w-7 h-7" />
               </div>
-              <h3 className="font-semibold text-white mb-1">{method.title}</h3>
-              <p className="text-slate-400 text-sm mb-4">{method.description}</p>
+              <h3 className="font-semibold text-slate-900 dark:text-white mb-1">{method.title}</h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">{method.description}</p>
               <Button variant="outline" size="sm" className="mx-auto">
                 {method.action}
               </Button>
@@ -165,7 +189,7 @@ export default function SupportPage() {
         </div>
 
         {/* Help Categories */}
-        <h2 className="text-2xl font-bold text-white mb-6">Browse by Category</h2>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Browse by Category</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
           {helpCategories.map((cat) => (
             <Card key={cat.title} className="group">
@@ -178,18 +202,18 @@ export default function SupportPage() {
                   className="w-14 h-14 rounded-xl object-cover"
                 />
                 <div>
-                  <h3 className="font-semibold text-white group-hover:text-primary-themed transition-colors">{cat.title}</h3>
-                  <p className="text-slate-400 text-sm">{cat.description}</p>
+                  <h3 className="font-semibold text-slate-900 dark:text-white group-hover:text-primary-themed transition-colors">{cat.title}</h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm">{cat.description}</p>
                 </div>
               </div>
               <div className="space-y-2">
                 {cat.links.map((link) => (
                   <a
-                    key={link}
-                    href="#"
-                    className="flex items-center gap-2 text-slate-300 text-sm hover:text-primary-themed hover:gap-3 transition-all"
+                    key={link.text}
+                    href={link.href}
+                    className="flex items-center gap-2 text-slate-600 dark:text-slate-300 text-sm hover:text-primary-themed hover:gap-3 transition-all"
                   >
-                    <span>{link}</span>
+                    <span>{link.text}</span>
                     <ArrowRight className="w-4 h-4" />
                   </a>
                 ))}
@@ -220,19 +244,19 @@ export default function SupportPage() {
 
         {/* FAQ Section */}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold text-white text-center mb-8">Frequently Asked Questions</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white text-center mb-8">Frequently Asked Questions</h2>
 
           <div className="max-w-3xl mx-auto space-y-3">
             {faqs.map((faq, index) => (
               <div
                 key={index}
-                className="bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden hover:shadow-lg hover:shadow-black/40 transition-shadow"
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden hover:shadow-lg hover:shadow-black/10 dark:hover:shadow-black/40 transition-shadow"
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
                   className="w-full px-6 py-5 flex items-center justify-between text-left"
                 >
-                  <span className="font-semibold text-white">{faq.question}</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">{faq.question}</span>
                   <ChevronDown
                     className={`w-5 h-5 text-slate-400 transition-transform ${
                       openFaq === index ? "rotate-180" : ""
@@ -240,7 +264,7 @@ export default function SupportPage() {
                   />
                 </button>
                 {openFaq === index && (
-                  <div className="px-6 pb-5 text-slate-300 border-t border-slate-800 pt-4">
+                  <div className="px-6 pb-5 text-slate-600 dark:text-slate-300 border-t border-slate-200 dark:border-slate-800 pt-4">
                     {faq.answer}
                   </div>
                 )}
@@ -250,49 +274,94 @@ export default function SupportPage() {
         </div>
 
         {/* Contact Form */}
-        <Card id="contact" className="max-w-3xl mx-auto overflow-hidden" padding="none">
-          <div
-            className="p-8 text-center text-white"
-            style={{ background: "linear-gradient(90deg, var(--theme-primary), var(--theme-primary-light))" }}
-          >
-            <h2 className="text-2xl font-bold mb-2">Still need help?</h2>
-            <p className="text-white/80">Send us a message and we&apos;ll get back to you within 24 hours.</p>
-          </div>
-
-          <div className="p-8">
-            {submitted ? (
-              <div className="text-center py-8">
-                <div className="w-20 h-20 rounded-full bg-green-500/15 flex items-center justify-center text-green-300 mx-auto mb-4 border border-green-500/20">
-                  <CheckCircle2 className="w-10 h-10" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
-                <p className="text-slate-400">We&apos;ll get back to you within 24 hours.</p>
+        <div className="max-w-4xl mx-auto">
+          <FadeIn>
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-4" style={{ background: 'rgba(var(--theme-primary-rgb), 0.1)', color: 'var(--theme-primary)' }}>
+                <MessageCircle className="w-4 h-4" />
+                Still need help?
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input label="Full Name" placeholder="Your name" required />
-                  <Input label="Email" type="email" placeholder="you@example.com" required />
-                </div>
-                <Input label="Subject" placeholder="How can we help?" required />
-                <Textarea label="Message" rows={5} placeholder="Describe your issue or question..." required />
-                <div className="flex items-center justify-between pt-2">
-                  <p className="text-slate-400 text-sm">We&apos;ll respond within 24 hours</p>
-                  <Button type="submit" size="lg">
-                    Send Message
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </form>
-            )}
-          </div>
-        </Card>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-3">Get in Touch</h2>
+              <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl mx-auto">
+                Send us a message and we&apos;ll get back to you within 24 hours. Our team is here to help.
+              </p>
+            </div>
+          </FadeIn>
+
+          <FadeIn delay={0.1}>
+            <Card id="contact" className="overflow-hidden relative" padding="none">
+              {/* Decorative gradient accent */}
+              <div className="absolute top-0 left-0 right-0 h-1" style={{ background: 'linear-gradient(90deg, var(--theme-primary), var(--theme-primary-light))' }} />
+              
+              <div className="p-8 md:p-10">
+                {submitted ? (
+                  <div className="text-center py-12">
+                    <div 
+                      className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border-2 animate-float"
+                      style={{ 
+                        background: 'rgba(var(--theme-primary-rgb), 0.1)',
+                        borderColor: 'var(--theme-primary)',
+                        color: 'var(--theme-primary)'
+                      }}
+                    >
+                      <CheckCircle2 className="w-10 h-10" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Message Sent Successfully!</h3>
+                    <p className="text-slate-500 dark:text-slate-400 mb-8">We&apos;ve received your message and will respond within 24 hours.</p>
+                    <Button onClick={() => setSubmitted(false)} variant="outline">
+                      Send Another Message
+                    </Button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Full Name *</label>
+                        <Input placeholder="Malhar Pawar" required />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Email Address *</label>
+                        <Input type="email" placeholder="malharspawar@gmail.com" required />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Subject *</label>
+                      <Input placeholder="How can we help you?" required />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Message *</label>
+                      <Textarea rows={6} placeholder="Describe your issue or question in detail..." required />
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                      <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm">
+                        <div className="w-2 h-2 rounded-full" style={{ background: 'var(--theme-primary)' }} />
+                        Average response time: 12 hours
+                      </div>
+                      <Button 
+                        type="submit" 
+                        size="lg"
+                        className="shadow-lg"
+                        style={{ background: 'linear-gradient(90deg, var(--theme-primary), var(--theme-primary-light))', color: 'white' }}
+                      >
+                        Send Message
+                        <ArrowRight className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            </Card>
+          </FadeIn>
+        </div>
       </main>
 
       {/* Footer */}
-      <footer className="py-12 bg-slate-900 border-t border-slate-800">
+      <footer className="py-12 bg-slate-100 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
         <div className="max-w-6xl mx-auto px-6 text-center">
-          <p className="text-slate-400 text-sm">
+          <p className="text-slate-500 dark:text-slate-400 text-sm">
             © 2025 MathMaster. All rights reserved. Built for FBLA Website Design Competition.
           </p>
         </div>

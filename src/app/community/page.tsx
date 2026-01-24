@@ -8,6 +8,7 @@ import { Button } from "@/components/Button";
 import { Input, Textarea, Select } from "@/components/Input";
 import { Badge } from "@/components/Badge";
 import { SectionLabel } from "@/components/SectionLabel";
+import { FadeIn, GlowingOrbs } from "@/components/motion";
 import {
   MessageCircle,
   Plus,
@@ -163,9 +164,11 @@ export default function CommunityPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Hero Header */}
       <header className="relative overflow-hidden">
+        {/* Glowing orbs */}
+        <GlowingOrbs variant="section" />
         {/* Background */}
         <div className="absolute inset-0">
           <Image
@@ -174,7 +177,7 @@ export default function CommunityPage() {
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-slate-950/70" />
+          <div className="absolute inset-0 bg-slate-950/80" />
           <div
             className="absolute inset-0"
             style={{ background: "linear-gradient(90deg, color-mix(in srgb, var(--theme-primary) 35%, transparent), transparent)" }}
@@ -196,7 +199,10 @@ export default function CommunityPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-12">
+      <main className="max-w-7xl mx-auto px-6 py-12 relative">
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <GlowingOrbs variant="subtle" />
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Forum Section */}
           <div className="lg:col-span-2">
@@ -219,8 +225,8 @@ export default function CommunityPage() {
                 </div>
 
                 {/* Post Form */}
-                <div id="ask" className="p-5 rounded-xl bg-slate-950 border border-slate-700 shadow-sm">
-                  <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                <div id="ask" className="p-5 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 shadow-sm">
+                  <h3 className="font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                     <HelpCircle className="w-5 h-5" style={{ color: "var(--theme-primary)" }} />
                     Ask a Question
                   </h3>
@@ -271,7 +277,7 @@ export default function CommunityPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-3">
-                              <h4 className="font-semibold text-white hover:text-primary-themed cursor-pointer transition-colors">{post.title}</h4>
+                              <h4 className="font-semibold text-slate-900 dark:text-white hover:text-primary-themed cursor-pointer transition-colors">{post.title}</h4>
                               <span className="text-slate-400 text-xs shrink-0">
                                 {formatTimeAgo(post.createdAt)}
                               </span>
@@ -296,37 +302,37 @@ export default function CommunityPage() {
             {/* Stats */}
             <Card padding="none" className="overflow-hidden">
               <div className="p-4 border-b border-slate-700 bg-slate-900">
-                <h2 className="font-semibold text-white flex items-center gap-2">
+                <h2 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                   <TrendingUp className="w-5 h-5" style={{ color: "var(--theme-primary)" }} />
                   Community Stats
                 </h2>
               </div>
-              <div className="divide-y divide-slate-800">
+              <div className="divide-y divide-slate-200 dark:divide-slate-800">
                 <div className="p-4 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
+                  <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
                     <Users className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-slate-400 text-sm">Total Members</p>
-                    <p className="text-2xl font-bold text-white font-mono">1,245</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm">Total Members</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white font-mono">1,245</p>
                   </div>
                 </div>
                 <div className="p-4 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
+                  <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
                     <MessageCircle className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-slate-400 text-sm">Active Discussions</p>
-                    <p className="text-2xl font-bold text-white font-mono">{328 + posts.length}</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm">Active Discussions</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white font-mono">{328 + posts.length}</p>
                   </div>
                 </div>
                 <div className="p-4 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
+                  <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
                     <BookOpen className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-slate-400 text-sm">Problems Solved</p>
-                    <p className="text-2xl font-bold text-white font-mono">5,723</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm">Problems Solved</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white font-mono">5,723</p>
                   </div>
                 </div>
               </div>
@@ -335,7 +341,7 @@ export default function CommunityPage() {
             {/* Top Contributors */}
             <Card padding="none" className="overflow-hidden">
               <div className="p-4 border-b border-slate-700 bg-slate-900">
-                <h2 className="font-semibold text-white flex items-center gap-2">
+                <h2 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                   <Trophy className="w-5 h-5" style={{ color: "var(--theme-primary)" }} />
                   Top Contributors
                 </h2>
@@ -344,7 +350,7 @@ export default function CommunityPage() {
                 {topContributors.map((contributor, index) => (
                   <div
                     key={contributor.name}
-                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-900/50 transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900/50 transition-colors"
                   >
                     <div className="relative">
                       <Image
@@ -361,8 +367,8 @@ export default function CommunityPage() {
                       </div>
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium text-sm text-white">{contributor.name}</p>
-                      <p className="text-slate-400 text-xs">{contributor.points.toLocaleString()} points</p>
+                      <p className="font-medium text-sm text-slate-900 dark:text-white">{contributor.name}</p>
+                      <p className="text-slate-500 dark:text-slate-400 text-xs">{contributor.points.toLocaleString()} points</p>
                     </div>
                     <Badge
                       variant={
@@ -380,17 +386,17 @@ export default function CommunityPage() {
 
             {/* Quick Links */}
             <Card>
-              <h3 className="font-semibold text-white mb-4">Quick Links</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Quick Links</h3>
               <div className="space-y-3">
-                <Link href="/resources" className="flex items-center gap-3 p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-primary-themed transition-all text-sm">
+                <Link href="/resources" className="flex items-center gap-3 p-3 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-primary-themed transition-all text-sm">
                   <BookOpen className="w-5 h-5" />
                   Browse Resources
                 </Link>
-                <Link href="/schedule" className="flex items-center gap-3 p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-primary-themed transition-all text-sm">
+                <Link href="/schedule" className="flex items-center gap-3 p-3 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-primary-themed transition-all text-sm">
                   <Calendar className="w-5 h-5" />
                   Book a Session
                 </Link>
-                <Link href="/support" className="flex items-center gap-3 p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-primary-themed transition-all text-sm">
+                <Link href="/support" className="flex items-center gap-3 p-3 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-primary-themed transition-all text-sm">
                   <HelpCircle className="w-5 h-5" />
                   Get Help
                 </Link>

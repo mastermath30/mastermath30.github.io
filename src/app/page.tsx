@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/Button";
@@ -6,6 +8,7 @@ import { SectionLabel } from "@/components/SectionLabel";
 import { Avatar } from "@/components/Avatar";
 import { AnimatedNumberClient } from "@/components/AnimatedNumberClient";
 import { TestimonialsScroll } from "@/components/TestimonialsScroll";
+import { FadeIn, FadeInStagger, FadeInStaggerItem, GlowingOrbs } from "@/components/motion";
 import {
   GraduationCap,
   Rocket,
@@ -91,39 +94,39 @@ const steps = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-100 via-white to-slate-100 dark:from-slate-950 dark:via-slate-950 dark:to-black">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0">
           <Image
             src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=1920&h=1080&fit=crop"
             alt="Mathematics background"
             fill
-            className="object-cover"
+            className="object-cover opacity-5 dark:opacity-20"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-950/95 via-slate-900/90 to-slate-950/95" />
+          <div className="absolute inset-0 bg-gradient-to-br from-white/90 via-slate-50/80 to-white/90 dark:from-slate-950/98 dark:via-slate-950/95 dark:to-black/98" />
         </div>
         
         {/* Animated gradient orbs */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-violet-400/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-300/10 rounded-full blur-3xl" />
+        <div className="absolute top-20 left-10 w-72 h-72 rounded-full blur-3xl animate-pulse opacity-20 dark:opacity-10" style={{ background: 'var(--theme-primary)' }} />
+        <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full blur-3xl animate-pulse delay-1000 opacity-15 dark:opacity-10" style={{ background: 'var(--theme-primary-light)' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl opacity-10 dark:opacity-5" style={{ background: 'var(--theme-primary)' }} />
 
         {/* Floating math symbols */}
-        <div className="absolute top-20 left-[15%] text-7xl text-violet-400/30 font-serif animate-bounce" style={{ animationDuration: '3s' }}>∫</div>
-        <div className="absolute top-32 right-[20%] text-6xl text-purple-400/30 font-serif animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }}>π</div>
-        <div className="absolute bottom-40 left-[10%] text-5xl text-violet-400/30 font-serif animate-bounce" style={{ animationDuration: '3.5s', animationDelay: '0.5s' }}>∑</div>
-        <div className="absolute bottom-32 right-[15%] text-6xl text-purple-400/30 font-serif animate-bounce" style={{ animationDuration: '4.5s', animationDelay: '1.5s' }}>√</div>
-        <div className="absolute top-1/2 left-[5%] text-5xl text-violet-400/20 font-serif animate-bounce" style={{ animationDuration: '5s', animationDelay: '2s' }}>∞</div>
-        <div className="absolute top-[40%] right-[8%] text-4xl text-purple-400/20 font-serif animate-bounce" style={{ animationDuration: '3.8s', animationDelay: '0.8s' }}>θ</div>
+        <div className="absolute top-20 left-[15%] text-7xl font-serif animate-bounce opacity-10 dark:opacity-15" style={{ animationDuration: '3s', color: 'var(--theme-primary)' }}>∫</div>
+        <div className="absolute top-32 right-[20%] text-6xl font-serif animate-bounce opacity-10 dark:opacity-15" style={{ animationDuration: '4s', animationDelay: '1s', color: 'var(--theme-primary-light)' }}>π</div>
+        <div className="absolute bottom-40 left-[10%] text-5xl font-serif animate-bounce opacity-10 dark:opacity-15" style={{ animationDuration: '3.5s', animationDelay: '0.5s', color: 'var(--theme-primary)' }}>∑</div>
+        <div className="absolute bottom-32 right-[15%] text-6xl font-serif animate-bounce opacity-10 dark:opacity-15" style={{ animationDuration: '4.5s', animationDelay: '1.5s', color: 'var(--theme-primary-light)' }}>√</div>
+        <div className="absolute top-1/2 left-[5%] text-5xl font-serif animate-bounce opacity-5 dark:opacity-10" style={{ animationDuration: '5s', animationDelay: '2s', color: 'var(--theme-primary)' }}>∞</div>
+        <div className="absolute top-[40%] right-[8%] text-4xl font-serif animate-bounce opacity-5 dark:opacity-10" style={{ animationDuration: '3.8s', animationDelay: '0.8s', color: 'var(--theme-primary-light)' }}>θ</div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left content */}
             <div className="text-center lg:text-left">
-              <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+              <h1 className="text-5xl md:text-7xl font-bold text-slate-900 dark:text-white mb-6 leading-tight">
                 Master Mathematics
                 <br />
                 <span className="gradient-text relative">
@@ -132,28 +135,28 @@ export default function Home() {
                     <path d="M2 10C50 4 150 4 298 10" stroke="url(#gradient)" strokeWidth="4" strokeLinecap="round"/>
                     <defs>
                       <linearGradient id="gradient" x1="0" y1="0" x2="300" y2="0">
-                        <stop stopColor="#7c3aed"/>
-                        <stop offset="1" stopColor="#a78bfa"/>
+                        <stop style={{ stopColor: 'var(--theme-primary)' }} />
+                        <stop offset="1" style={{ stopColor: 'var(--theme-primary-light)' }} />
                       </linearGradient>
                     </defs>
                   </svg>
                 </span>
               </h1>
 
-              <p className="text-xl text-slate-300 mb-8 max-w-xl leading-relaxed">
+              <p className="text-xl text-slate-600 dark:text-slate-300 mb-8 max-w-xl leading-relaxed">
                 An interactive learning platform created by students, for students.
                 Unlock the beauty of numbers through peer tutoring and collaboration.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
                 <Link href="/auth">
-                  <Button size="lg" className="shadow-xl shadow-violet-500/25 group">
+                  <Button size="lg" className="shadow-xl group" style={{ boxShadow: '0 10px 40px rgba(var(--theme-primary-rgb), 0.25)' }}>
                     <Rocket className="w-5 h-5 group-hover:rotate-12 transition-transform" />
                     Start Learning Now
                   </Button>
                 </Link>
                 <Link href="#features">
-                  <Button variant="outline" size="lg" className="bg-slate-900/60 backdrop-blur">
+                  <Button variant="outline" size="lg" className="bg-white/60 dark:bg-slate-900/60 backdrop-blur border-slate-300 dark:border-slate-700">
                     <PlayCircle className="w-5 h-5" />
                     See How It Works
                   </Button>
@@ -167,7 +170,7 @@ export default function Home() {
                     <div className="text-2xl font-bold gradient-text font-mono">
                       <AnimatedNumberClient value={stat.value} duration={900} label={stat.label} />
                     </div>
-                    <div className="text-slate-400 text-xs">{stat.label}</div>
+                    <div className="text-slate-500 dark:text-slate-400 text-xs">{stat.label}</div>
                   </div>
                 ))}
               </div>
@@ -178,9 +181,9 @@ export default function Home() {
               <div className="relative">
                 {/* Main image */}
                 <div className="relative w-full aspect-square max-w-lg mx-auto">
-                  <div className="absolute inset-0 bg-gradient-to-br from-violet-600 to-purple-500 rounded-3xl rotate-6 opacity-20" />
-                  <div className="absolute inset-0 bg-gradient-to-br from-violet-600 to-purple-500 rounded-3xl -rotate-3 opacity-10" />
-                  <div className="relative bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-700">
+                  <div className="absolute inset-0 rounded-3xl rotate-6 opacity-20" style={{ background: 'linear-gradient(135deg, var(--theme-primary), var(--theme-primary-light))' }} />
+                  <div className="absolute inset-0 rounded-3xl -rotate-3 opacity-10" style={{ background: 'linear-gradient(135deg, var(--theme-primary), var(--theme-primary-light))' }} />
+                  <div className="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700">
                     <Image
                       src="https://images.unsplash.com/photo-1596496050755-c923e73e42e1?w=600&h=600&fit=crop"
                       alt="Student studying mathematics"
@@ -192,38 +195,38 @@ export default function Home() {
                 </div>
 
                 {/* Floating cards */}
-                <div className="absolute -top-4 -left-4 bg-slate-900/90 rounded-2xl shadow-xl p-4 border border-slate-700 animate-float">
+                <div className="absolute -top-4 -left-4 bg-white/90 dark:bg-slate-900/90 rounded-2xl shadow-xl p-4 border border-slate-200 dark:border-slate-700 animate-float">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
-                      <TrendingUp className="w-5 h-5 text-green-400" />
+                      <TrendingUp className="w-5 h-5 text-green-500 dark:text-green-400" />
                     </div>
                     <div>
-                      <p className="text-xs text-slate-400">Progress</p>
-                      <p className="font-bold text-white">+27% this week</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Progress</p>
+                      <p className="font-bold text-slate-900 dark:text-white">+27% this week</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="absolute -bottom-4 -right-4 bg-slate-900/90 rounded-2xl shadow-xl p-4 border border-slate-700 animate-float" style={{ animationDelay: '1s' }}>
+                <div className="absolute -bottom-4 -right-4 bg-white/90 dark:bg-slate-900/90 rounded-2xl shadow-xl p-4 border border-slate-200 dark:border-slate-700 animate-float" style={{ animationDelay: '1s' }}>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center">
-                      <Target className="w-5 h-5 text-violet-300" />
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(var(--theme-primary-rgb), 0.1)' }}>
+                      <Target className="w-5 h-5" style={{ color: 'var(--theme-primary)' }} />
                     </div>
                     <div>
-                      <p className="text-xs text-slate-400">Problems Solved</p>
-                      <p className="font-bold text-white">148 today</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Problems Solved</p>
+                      <p className="font-bold text-slate-900 dark:text-white">148 today</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="absolute top-1/2 -right-8 bg-slate-900/90 rounded-2xl shadow-xl p-3 border border-slate-700 animate-float" style={{ animationDelay: '0.5s' }}>
+                <div className="absolute top-1/2 -right-8 bg-white/90 dark:bg-slate-900/90 rounded-2xl shadow-xl p-3 border border-slate-200 dark:border-slate-700 animate-float" style={{ animationDelay: '0.5s' }}>
                   <div className="flex items-center gap-2">
                     <div className="flex -space-x-2">
-                      <Image src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&fit=crop" alt="" width={32} height={32} className="w-8 h-8 rounded-full border-2 border-slate-900" />
-                      <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop" alt="" width={32} height={32} className="w-8 h-8 rounded-full border-2 border-slate-900" />
-                      <Image src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop" alt="" width={32} height={32} className="w-8 h-8 rounded-full border-2 border-slate-900" />
+                      <Image src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&fit=crop" alt="" width={32} height={32} className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900" />
+                      <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop" alt="" width={32} height={32} className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900" />
+                      <Image src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop" alt="" width={32} height={32} className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900" />
                     </div>
-                    <span className="text-xs text-slate-400">+2.4k online</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">+2.4k online</span>
                   </div>
                 </div>
               </div>
@@ -232,36 +235,71 @@ export default function Home() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-400">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500 dark:text-slate-400">
           <span className="text-xs font-medium tracking-wider uppercase">Scroll</span>
           <ChevronDown className="w-5 h-5 animate-bounce" />
         </div>
       </section>
 
       {/* Trusted By Section */}
-      <section className="py-12 bg-slate-950 border-y border-slate-800">
+      <section className="py-16 bg-slate-100 dark:bg-slate-950 border-y border-slate-200 dark:border-slate-800/50">
         <div className="max-w-7xl mx-auto px-6">
-          <p className="text-center text-slate-500 text-sm mb-8">Trusted by students from top institutions</p>
-          <div className="flex flex-wrap justify-center items-center gap-12 opacity-50 grayscale">
-            <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/MIT_logo.svg/2560px-MIT_logo.svg.png" alt="MIT" width={80} height={40} className="h-8 w-auto object-contain" />
-            <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Stanford_University_seal_2003.svg/1200px-Stanford_University_seal_2003.svg.png" alt="Stanford" width={40} height={40} className="h-10 w-auto object-contain" />
-            <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Harvard_University_logo.svg/2560px-Harvard_University_logo.svg.png" alt="Harvard" width={120} height={40} className="h-8 w-auto object-contain" />
-            <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Berkeley_wordmark.svg/2560px-Berkeley_wordmark.svg.png" alt="Berkeley" width={100} height={40} className="h-6 w-auto object-contain" />
+          <p className="text-center text-slate-500 text-sm mb-10 uppercase tracking-widest">Trusted by students from top institutions</p>
+          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-16">
+            <div className="group flex flex-col items-center gap-3 opacity-80 hover:opacity-100 transition-all duration-300 hover:scale-105">
+              <div className="w-14 h-14 relative transition-all duration-300 rounded-lg p-2 shadow-[0_0_15px_rgba(var(--theme-primary-rgb),0.08)] hover:shadow-[0_0_25px_rgba(var(--theme-primary-rgb),0.15)]">
+                <Image src="/logos/mit.png" alt="MIT" fill className="object-contain" />
+              </div>
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">MIT</span>
+            </div>
+            <div className="group flex flex-col items-center gap-3 opacity-80 hover:opacity-100 transition-all duration-300 hover:scale-105">
+              <div className="w-14 h-14 relative transition-all duration-300 rounded-lg p-2 shadow-[0_0_15px_rgba(var(--theme-primary-rgb),0.08)] hover:shadow-[0_0_25px_rgba(var(--theme-primary-rgb),0.15)]">
+                <Image src="/logos/stanford.png" alt="Stanford" fill className="object-contain" />
+              </div>
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">Stanford</span>
+            </div>
+            <div className="group flex flex-col items-center gap-3 opacity-80 hover:opacity-100 transition-all duration-300 hover:scale-105">
+              <div className="w-14 h-14 relative transition-all duration-300 rounded-lg p-2 shadow-[0_0_15px_rgba(var(--theme-primary-rgb),0.08)] hover:shadow-[0_0_25px_rgba(var(--theme-primary-rgb),0.15)]">
+                <Image src="/logos/harvard.png" alt="Harvard" fill className="object-contain" />
+              </div>
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">Harvard</span>
+            </div>
+            <div className="group flex flex-col items-center gap-3 opacity-80 hover:opacity-100 transition-all duration-300 hover:scale-105">
+              <div className="w-14 h-14 relative transition-all duration-300 rounded-lg p-2 shadow-[0_0_15px_rgba(var(--theme-primary-rgb),0.08)] hover:shadow-[0_0_25px_rgba(var(--theme-primary-rgb),0.15)]">
+                <Image src="/logos/berkeley.png" alt="Berkeley" fill className="object-contain" />
+              </div>
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">Berkeley</span>
+            </div>
+            <div className="group flex flex-col items-center gap-3 opacity-80 hover:opacity-100 transition-all duration-300 hover:scale-105">
+              <div className="w-14 h-14 relative transition-all duration-300 rounded-lg p-2 shadow-[0_0_15px_rgba(var(--theme-primary-rgb),0.08)] hover:shadow-[0_0_25px_rgba(var(--theme-primary-rgb),0.15)]">
+                <Image src="/logos/caltech.png" alt="Caltech" fill className="object-contain" />
+              </div>
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">Caltech</span>
+            </div>
+            <div className="group flex flex-col items-center gap-3 opacity-80 hover:opacity-100 transition-all duration-300 hover:scale-105">
+              <div className="w-14 h-14 relative transition-all duration-300 rounded-lg p-2 shadow-[0_0_15px_rgba(var(--theme-primary-rgb),0.08)] hover:shadow-[0_0_25px_rgba(var(--theme-primary-rgb),0.15)]">
+                <Image src="/logos/princeton-new.png" alt="Princeton" fill className="object-contain" />
+              </div>
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">Princeton</span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 bg-gradient-to-b from-slate-950 to-slate-900">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="features" className="py-24 bg-slate-100 dark:bg-slate-900 relative overflow-hidden">
+        {/* Background gradient orbs */}
+        <GlowingOrbs variant="section" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-100 via-transparent to-slate-100 dark:from-slate-900 dark:via-transparent dark:to-slate-900" />
+        <div className="relative max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <SectionLabel icon={Zap} className="mb-4">
               Why Choose MathMaster?
             </SectionLabel>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mt-6 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mt-6 mb-4">
               Learn Smarter, Not Harder
             </h2>
-            <p className="text-slate-300 text-lg max-w-2xl mx-auto">
+            <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl mx-auto">
               Our platform combines the best of peer learning with powerful tools to help you succeed in mathematics.
             </p>
           </div>
@@ -280,16 +318,17 @@ export default function Home() {
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/20" />
                   </div>
                   <div className="md:w-3/5 p-6">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center text-violet-500 mb-4 group-hover:scale-110 transition-transform duration-300">
-                      <feature.icon className="w-6 h-6" />
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300" style={{ background: 'rgba(var(--theme-primary-rgb), 0.15)' }}>
+                      <feature.icon className="w-6 h-6" style={{ color: 'var(--theme-primary)' }} />
                     </div>
-                    <h3 className="text-xl font-semibold text-slate-900 mb-2">{feature.title}</h3>
-                    <p className="text-slate-500 text-sm leading-relaxed mb-4">
+                    <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">{feature.title}</h3>
+                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4">
                       {feature.description}
                     </p>
                     <Link
                       href={feature.link}
-                      className="inline-flex items-center gap-2 text-violet-500 text-sm font-medium hover:gap-3 transition-all"
+                      className="inline-flex items-center gap-2 text-sm font-medium hover:gap-3 transition-all"
+                      style={{ color: 'var(--theme-primary)' }}
                     >
                       {feature.linkText}
                       <ArrowRight className="w-4 h-4" />
@@ -303,27 +342,29 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="py-24 relative overflow-hidden bg-slate-100 dark:bg-slate-900">
+        {/* Glowing orbs */}
+        <GlowingOrbs variant="subtle" />
         {/* Background image */}
         <div className="absolute inset-0">
           <Image
             src="https://images.unsplash.com/photo-1509228468518-180dd4864904?w=1920&h=1080&fit=crop"
             alt="Background"
             fill
-            className="object-cover opacity-5"
+            className="object-cover opacity-3 dark:opacity-5"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900/60 to-slate-950" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-100 via-slate-100/90 to-slate-100 dark:from-slate-900 dark:via-slate-900/80 dark:to-slate-900" />
 
         <div className="relative max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <SectionLabel icon={Rocket} className="mb-4">
               Your Learning Journey
             </SectionLabel>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mt-6 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mt-6 mb-4">
               How MathMaster Works
             </h2>
-            <p className="text-slate-300 text-lg max-w-2xl mx-auto">
+            <p className="text-slate-600 dark:text-slate-300 text-lg max-w-2xl mx-auto">
               Three simple steps to transform your math skills
             </p>
           </div>
@@ -333,7 +374,7 @@ export default function Home() {
               <div key={step.title} className="relative h-full">
                 {/* Connector line */}
                 {index < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-24 left-[60%] w-full h-0.5 bg-gradient-to-r from-violet-300 to-transparent" />
+                  <div className="hidden md:block absolute top-24 left-[60%] w-full h-0.5" style={{ background: 'linear-gradient(to right, var(--theme-primary-light), transparent)' }} />
                 )}
                 <Card variant="gradient" className="relative overflow-visible h-full flex flex-col">
                   {/* Step number badge */}
@@ -351,17 +392,17 @@ export default function Home() {
                       fill
                       className="object-cover object-center"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-slate-950 to-transparent" />
                   </div>
                   <div className="flex-1 flex flex-col">
                     <div
-                      className="w-12 h-12 rounded-xl bg-slate-900/60 flex items-center justify-center mb-4 shadow-sm border border-slate-700"
+                      className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-900/60 flex items-center justify-center mb-4 shadow-sm border border-slate-200 dark:border-slate-700"
                       style={{ color: "var(--theme-primary)" }}
                     >
                       <step.icon className="w-6 h-6" />
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>
-                    <p className="text-slate-300 leading-relaxed text-sm">{step.description}</p>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">{step.title}</h3>
+                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm">{step.description}</p>
                   </div>
                 </Card>
               </div>
@@ -371,18 +412,18 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-24 bg-slate-950 relative overflow-hidden">
-        {/* Background gradient orbs (theme-tinted) */}
-        <div className="absolute top-20 left-10 w-72 h-72 rounded-full blur-3xl bg-violet-500/10" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full blur-3xl bg-purple-500/10" />
+      <section className="py-24 bg-slate-100 dark:bg-slate-900 relative overflow-hidden">
+        {/* Background gradient orbs */}
+        <GlowingOrbs variant="section" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-100 via-transparent to-slate-100 dark:from-slate-900 dark:via-transparent dark:to-slate-900" />
         
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="relative max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
       
-            <h2 className="text-4xl md:text-5xl font-bold text-white mt-6 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mt-6 mb-4">
               What Students Say
             </h2>
-            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+            <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl mx-auto">
               See what our students have to say about us.
             </p>
           </div>
@@ -392,89 +433,87 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="https://images.unsplash.com/photo-1557683316-973673bdar25d?w=1920&h=600&fit=crop"
-            alt="Background"
-            fill
-            className="object-cover"
-          />
-          {/* Theme-aware base overlay */}
-          <div className="absolute inset-0 bg-slate-950/95 transition-colors duration-300" />
-          {/* Subtle theme tint (uses --theme-primary) */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(90deg, color-mix(in srgb, var(--theme-primary) 12%, transparent), transparent)" }} />
-        </div>
+      <section className="py-24 relative overflow-hidden bg-slate-100 dark:bg-slate-900">
+        {/* Glowing orbs */}
+        <GlowingOrbs variant="subtle" />
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-100 via-transparent to-slate-100 dark:from-slate-900 dark:via-transparent dark:to-slate-900" />
         <div className="relative max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            Ready to Master Math?
-          </h2>
-          <p className="text-lg mb-8 max-w-xl mx-auto text-slate-300">
-            Join thousands of students who are already improving their math skills with MathMaster.
-          </p>
-          <Link href="/auth">
-            <Button size="lg" className="shadow-xl" style={{ background: "linear-gradient(90deg, var(--theme-primary), var(--theme-primary-light))", color: "white" }}>
-              <Rocket className="w-5 h-5" />
-              Get Started Free
-            </Button>
-          </Link>
-          <p className="text-slate-400 text-sm mt-4">No credit card required • Free forever</p>
+          <FadeIn>
+            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
+              Ready to Master Math?
+            </h2>
+          </FadeIn>
+          <FadeIn delay={0.1}>
+            <p className="text-lg mb-8 max-w-xl mx-auto text-slate-600 dark:text-slate-300">
+              Join thousands of students who are already improving their math skills with MathMaster.
+            </p>
+          </FadeIn>
+          <FadeIn delay={0.2}>
+            <Link href="/auth">
+              <Button size="lg" className="shadow-xl" style={{ background: "linear-gradient(90deg, var(--theme-primary), var(--theme-primary-light))", color: "white" }}>
+                <Rocket className="w-5 h-5" />
+                Get Started Free
+              </Button>
+            </Link>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-4">No credit card required • Free forever</p>
+          </FadeIn>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-16 bg-slate-900 text-white">
+      <footer className="py-16 bg-slate-100 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: "linear-gradient(135deg, var(--theme-primary), var(--theme-primary-light))" }}>
-                  M
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold font-serif text-xl" style={{ background: "linear-gradient(135deg, var(--theme-primary), var(--theme-primary-light))" }}>
+                  π
                 </div>
                 <span className="text-xl font-bold">MathMaster</span>
               </div>
-              <p className="text-slate-400 text-sm">
+              <p className="text-slate-500 dark:text-slate-400 text-sm">
                 Empowering students to master mathematics through peer learning and collaboration.
               </p>
             </div>
 
             <div>
-              <h4 className="font-semibold text-sm uppercase tracking-wider text-slate-400 mb-4">Platform</h4>
+              <h4 className="font-semibold text-sm uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4">Platform</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/dashboard" className="text-slate-400 hover:text-primary-themed transition-colors">Dashboard</Link></li>
-                <li><Link href="/schedule" className="text-slate-400 hover:text-primary-themed transition-colors">Schedule</Link></li>
-                <li><Link href="/resources" className="text-slate-400 hover:text-primary-themed transition-colors">Resources</Link></li>
-                <li><Link href="/community" className="text-slate-400 hover:text-primary-themed transition-colors">Community</Link></li>
+                <li><Link href="/dashboard" className="text-slate-500 dark:text-slate-400 hover:text-primary-themed transition-colors">Dashboard</Link></li>
+                <li><Link href="/schedule" className="text-slate-500 dark:text-slate-400 hover:text-primary-themed transition-colors">Schedule</Link></li>
+                <li><Link href="/resources" className="text-slate-500 dark:text-slate-400 hover:text-primary-themed transition-colors">Resources</Link></li>
+                <li><Link href="/community" className="text-slate-500 dark:text-slate-400 hover:text-primary-themed transition-colors">Community</Link></li>
                 </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold text-sm uppercase tracking-wider text-slate-400 mb-4">Company</h4>
+              <h4 className="font-semibold text-sm uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4">Company</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/about" className="text-slate-400 hover:text-primary-themed transition-colors">About Us</Link></li>
-                <li><Link href="/support" className="text-slate-400 hover:text-primary-themed transition-colors">Support</Link></li>
-                <li><Link href="#" className="text-slate-400 hover:text-primary-themed transition-colors">Privacy Policy</Link></li>
-                <li><Link href="#" className="text-slate-400 hover:text-primary-themed transition-colors">Terms of Service</Link></li>
+                <li><Link href="/about" className="text-slate-500 dark:text-slate-400 hover:text-primary-themed transition-colors">About Us</Link></li>
+                <li><Link href="/support" className="text-slate-500 dark:text-slate-400 hover:text-primary-themed transition-colors">Support</Link></li>
+                <li><Link href="#" className="text-slate-500 dark:text-slate-400 hover:text-primary-themed transition-colors">Privacy Policy</Link></li>
+                <li><Link href="#" className="text-slate-500 dark:text-slate-400 hover:text-primary-themed transition-colors">Terms of Service</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold text-sm uppercase tracking-wider text-slate-400 mb-4">Connect</h4>
+              <h4 className="font-semibold text-sm uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4">Connect</h4>
               <div className="flex gap-3">
-                <a href="#" className="w-10 h-10 rounded-lg bg-slate-800 hover:bg-primary-themed flex items-center justify-center text-slate-400 hover:text-white transition-all">
+                <a href="#" className="w-10 h-10 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-primary-themed flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-white transition-all">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 </a>
-                <a href="#" className="w-10 h-10 rounded-lg bg-slate-800 hover:bg-primary-themed flex items-center justify-center text-slate-400 hover:text-white transition-all">
+                <a href="#" className="w-10 h-10 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-primary-themed flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-white transition-all">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                 </a>
-                <a href="#" className="w-10 h-10 rounded-lg bg-slate-800 hover:bg-primary-themed flex items-center justify-center text-slate-400 hover:text-white transition-all">
+                <a href="#" className="w-10 h-10 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-primary-themed flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-white transition-all">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                 </a>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-slate-800 pt-8">
+          <div className="border-t border-slate-200 dark:border-slate-800 pt-8">
             <p className="text-center text-slate-500 text-sm">
               © 2025 MathMaster. All rights reserved. Built for FBLA Website Design Competition.
             </p>

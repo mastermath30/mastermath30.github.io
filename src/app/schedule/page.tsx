@@ -8,6 +8,7 @@ import { Button } from "@/components/Button";
 import { Badge } from "@/components/Badge";
 import { Avatar } from "@/components/Avatar";
 import { SectionLabel } from "@/components/SectionLabel";
+import { FadeIn, GlowingOrbs } from "@/components/motion";
 import {
   CalendarCheck,
   Plus,
@@ -168,8 +169,8 @@ export default function SchedulePage() {
       calendarDays.push(
         <div
           key={day}
-          className={`h-12 flex flex-col items-center justify-center rounded-lg text-sm transition-all cursor-pointer hover:bg-slate-800/60 ${
-            isToday ? "bg-gradient-to-br from-violet-500 to-purple-500 text-white font-semibold shadow-lg" : "text-slate-300 hover:text-primary-themed"
+          className={`h-12 flex flex-col items-center justify-center rounded-lg text-sm transition-all cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/60 ${
+            isToday ? "bg-gradient-to-br from-violet-500 to-purple-500 text-white font-semibold shadow-lg" : "text-slate-700 dark:text-slate-300 hover:text-primary-themed"
           }`}
         >
           {day}
@@ -187,9 +188,11 @@ export default function SchedulePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Hero Header */}
       <header className="relative overflow-hidden">
+        {/* Glowing orbs */}
+        <GlowingOrbs variant="section" />
         {/* Background */}
         <div className="absolute inset-0">
           <Image
@@ -198,7 +201,7 @@ export default function SchedulePage() {
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-slate-950/70" />
+          <div className="absolute inset-0 bg-slate-950/80" />
           <div
             className="absolute inset-0"
             style={{ background: "linear-gradient(90deg, color-mix(in srgb, var(--theme-primary) 35%, transparent), transparent)" }}
@@ -245,12 +248,12 @@ export default function SchedulePage() {
       <main className="max-w-7xl mx-auto px-6 py-8 pb-32">
         {/* Calendar */}
         <Card className="mb-8 overflow-hidden">
-          <div className="flex items-center justify-between p-6 bg-slate-900 border-b border-slate-700">
+          <div className="flex items-center justify-between p-6 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
+              <div className="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
                 <CalendarCheck className="w-6 h-6" />
               </div>
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
                 {monthNames[currentMonth]} {currentYear}
               </h2>
             </div>
@@ -297,20 +300,20 @@ export default function SchedulePage() {
 
         {/* Upcoming Sessions */}
         <Card padding="none" className="mb-8 overflow-hidden">
-          <div className="p-6 border-b border-slate-700 bg-slate-900">
+          <div className="p-6 border-b border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
+              <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
                 <Video className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-white">Upcoming Sessions</h2>
-                <p className="text-slate-400 text-sm">Your next scheduled tutoring sessions</p>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Upcoming Sessions</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm">Your next scheduled tutoring sessions</p>
               </div>
             </div>
           </div>
-          <div className="divide-y divide-slate-800">
+          <div className="divide-y divide-slate-200 dark:divide-slate-800">
             {sessions.map((session) => (
-              <div key={session.title} className="p-4 flex items-center gap-4 hover:bg-slate-900/50 transition-colors">
+              <div key={session.title} className="p-4 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
                 <Image
                   src={session.image}
                   alt={session.tutor}
@@ -319,9 +322,9 @@ export default function SchedulePage() {
                   className="w-12 h-12 rounded-xl object-cover"
                 />
                 <div className="flex-1">
-                  <h4 className="font-semibold text-white">{session.title}</h4>
+                  <h4 className="font-semibold text-slate-900 dark:text-white">{session.title}</h4>
                   <p className="text-slate-500 text-sm">{session.time}</p>
-                  <p className="text-slate-400 text-sm mt-1">With: {session.tutor}</p>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">With: {session.tutor}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <Badge variant={session.status === "confirmed" ? "success" : "warning"}>
@@ -338,8 +341,8 @@ export default function SchedulePage() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-white">Available Tutors</h2>
-              <p className="text-slate-400 text-sm mt-1">Book a session with our expert peer tutors</p>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Available Tutors</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Book a session with our expert peer tutors</p>
             </div>
             <Link href="#" className="text-primary-themed text-sm font-medium hover:underline">
               View all tutors
@@ -369,16 +372,16 @@ export default function SchedulePage() {
                   )}
                 </div>
                 <div className="p-5">
-                  <h3 className="font-semibold text-white">{tutor.name}</h3>
-                  <p className="text-slate-400 text-sm mb-3">{tutor.subjects}</p>
+                  <h3 className="font-semibold text-slate-900 dark:text-white">{tutor.name}</h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm mb-3">{tutor.subjects}</p>
                   <div className="flex items-center gap-4 mb-4">
                     <div className="flex items-center gap-1 text-primary-themed">
                       <Star className="w-4 h-4 fill-current" />
                       <span className="font-medium">{tutor.rating}</span>
                     </div>
-                    <span className="text-slate-400 text-sm">{tutor.reviews} reviews</span>
+                    <span className="text-slate-500 dark:text-slate-400 text-sm">{tutor.reviews} reviews</span>
                     <span className="ml-auto text-slate-500">
-                      <span className="font-bold text-white text-lg">${tutor.price}</span>/hr
+                      <span className="font-bold text-slate-900 dark:text-white text-lg">${tutor.price}</span>/hr
                     </span>
                   </div>
                   <Button className="w-full" disabled={!tutor.available}>
@@ -394,8 +397,8 @@ export default function SchedulePage() {
         <div>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-white">Open Study Groups</h2>
-              <p className="text-slate-400 text-sm mt-1">Join collaborative learning sessions with other students</p>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Open Study Groups</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Join collaborative learning sessions with other students</p>
             </div>
           </div>
 
@@ -419,7 +422,7 @@ export default function SchedulePage() {
                   </div>
                 </div>
                 <div className="p-5">
-                  <p className="text-slate-300 text-sm mb-4">{group.description}</p>
+                  <p className="text-slate-600 dark:text-slate-300 text-sm mb-4">{group.description}</p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Users className="w-4 h-4 text-slate-400" />

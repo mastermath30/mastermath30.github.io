@@ -9,6 +9,7 @@ import { Badge } from "@/components/Badge";
 import { StatCard } from "@/components/StatCard";
 import { ProgressBar } from "@/components/ProgressBar";
 import { SectionLabel } from "@/components/SectionLabel";
+import { FadeIn, GlowingOrbs } from "@/components/motion";
 import {
   Clock,
   CheckCircle2,
@@ -87,9 +88,11 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Hero Header */}
       <header className="relative overflow-hidden">
+        {/* Glowing orbs */}
+        <GlowingOrbs variant="section" />
         {/* Background */}
         <div className="absolute inset-0">
           <Image
@@ -98,7 +101,7 @@ export default function DashboardPage() {
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-slate-950/70" />
+          <div className="absolute inset-0 bg-slate-950/80" />
           <div
             className="absolute inset-0"
             style={{ background: "linear-gradient(90deg, color-mix(in srgb, var(--theme-primary) 35%, transparent), transparent)" }}
@@ -300,14 +303,14 @@ export default function DashboardPage() {
                       <challenge.icon className="w-5 h-5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-sm text-white">{challenge.title}</h4>
+                      <h4 className="font-medium text-sm text-slate-900 dark:text-white">{challenge.title}</h4>
                       <p className={`text-xs mt-0.5 ${challenge.isQuiz ? 'text-yellow-600' : 'text-slate-500'}`}>
                         {challenge.due} • {challenge.count}
                       </p>
                       {!challenge.isQuiz && (
                         <div className="mt-2">
                           <ProgressBar value={challenge.progress} color={challenge.color} size="sm" />
-                          <p className="text-slate-400 text-xs mt-1">{challenge.completed}/{challenge.total} completed</p>
+                          <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">{challenge.completed}/{challenge.total} completed</p>
                         </div>
                       )}
                     </div>
@@ -347,19 +350,19 @@ export default function DashboardPage() {
                       <activity.icon className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="font-medium text-sm text-white">{activity.title}</h4>
-                      <p className="text-slate-400 text-xs mt-0.5">{activity.time}</p>
+                      <h4 className="font-medium text-sm text-slate-900 dark:text-white">{activity.title}</h4>
+                      <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">{activity.time}</p>
                       {activity.xp && (
                         <div className="flex items-center gap-3 mt-2">
-                          <span className="text-primary-themed text-xs font-medium bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">{activity.xp}</span>
-                          <span className="text-slate-400 text-xs">{activity.badge}</span>
+                          <span className="text-primary-themed text-xs font-medium bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">{activity.xp}</span>
+                          <span className="text-slate-500 dark:text-slate-400 text-xs">{activity.badge}</span>
                         </div>
                       )}
                       {activity.preview && (
-                        <p className="text-slate-400 text-xs mt-2 italic">{activity.preview}</p>
+                        <p className="text-slate-500 dark:text-slate-400 text-xs mt-2 italic">{activity.preview}</p>
                       )}
                       {activity.details && (
-                        <p className="text-slate-400 text-xs mt-2">{activity.details}</p>
+                        <p className="text-slate-500 dark:text-slate-400 text-xs mt-2">{activity.details}</p>
                       )}
                     </div>
                   </div>
@@ -393,7 +396,7 @@ export default function DashboardPage() {
               {goals.map((goal) => (
                 <div key={goal.title} className="p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-sm text-white">{goal.title}</h4>
+                    <h4 className="font-medium text-sm text-slate-900 dark:text-white">{goal.title}</h4>
                     <Badge
                       variant={
                         goal.status === "completed" ? "success" :
@@ -417,7 +420,7 @@ export default function DashboardPage() {
                         }
                       />
                     </div>
-                    <span className="text-slate-400 text-xs font-mono">{goal.label}</span>
+                    <span className="text-slate-500 dark:text-slate-400 text-xs font-mono">{goal.label}</span>
                   </div>
                 </div>
               ))}
@@ -439,7 +442,7 @@ export default function DashboardPage() {
           <div className="relative p-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-white text-center md:text-left">
               <h3 className="text-2xl font-bold mb-2">Keep up the great work!</h3>
-              <p className="text-slate-300">You&apos;re on track to complete your weekly goals. Just 3 more problems to go!</p>
+              <p className="text-slate-200">You&apos;re on track to complete your weekly goals. Just 3 more problems to go!</p>
             </div>
             <Button className="shrink-0">
               Continue Learning

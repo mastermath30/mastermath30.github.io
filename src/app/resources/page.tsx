@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { SectionLabel } from "@/components/SectionLabel";
+import { FadeIn, GlowingOrbs } from "@/components/motion";
 import {
   BookOpen,
   Book,
@@ -152,9 +155,11 @@ const downloads = [
 
 export default function ResourcesPage() {
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Hero Header */}
       <header className="relative overflow-hidden">
+        {/* Glowing orbs */}
+        <GlowingOrbs variant="section" />
         {/* Background */}
         <div className="absolute inset-0">
           <Image
@@ -163,7 +168,7 @@ export default function ResourcesPage() {
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-slate-950/70" />
+          <div className="absolute inset-0 bg-slate-950/80" />
           <div
             className="absolute inset-0"
             style={{ background: "linear-gradient(90deg, color-mix(in srgb, var(--theme-primary) 35%, transparent), transparent)" }}
@@ -207,8 +212,8 @@ export default function ResourcesPage() {
                   </div>
                 </div>
                 <div className="p-5">
-                  <h3 className="text-lg font-semibold text-white mb-1">{cat.title}</h3>
-                  <p className="text-slate-400 text-sm">{cat.description}</p>
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">{cat.title}</h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm">{cat.description}</p>
                 </div>
               </Card>
             </Link>
@@ -223,8 +228,8 @@ export default function ResourcesPage() {
                 <Book className="w-5 h-5 text-violet-600" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-white">Lessons & Study Guides</h2>
-                <p className="text-slate-400 text-sm">Free, high-quality resources to help you learn</p>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Lessons & Study Guides</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm">Free, high-quality resources to help you learn</p>
               </div>
             </div>
             <Link href="#" className="text-primary-themed text-sm font-medium hover:underline">View all</Link>
@@ -250,13 +255,13 @@ export default function ResourcesPage() {
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-3">
-                        <h4 className="font-semibold text-white group-hover:text-primary-themed transition-colors">{lesson.title}</h4>
+                        <h4 className="font-semibold text-slate-900 dark:text-white group-hover:text-primary-themed transition-colors">{lesson.title}</h4>
                         <ExternalLink className="w-4 h-4 text-slate-400 shrink-0" />
                       </div>
-                      <p className="text-slate-400 text-sm mt-1">{lesson.description}</p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{lesson.description}</p>
                       <div className="flex gap-2 mt-3">
                         {lesson.tags.map((tag) => (
-                          <span key={tag} className="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 font-medium">
+                          <span key={tag} className="text-xs px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">
                             {tag}
                           </span>
                         ))}
@@ -272,12 +277,12 @@ export default function ResourcesPage() {
         {/* Practice Section */}
         <section id="practice" className="mb-12">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
+            <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
               <CheckSquare className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white">Practice Problems</h2>
-              <p className="text-slate-400 text-sm">Test your knowledge and improve your skills</p>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Practice Problems</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">Test your knowledge and improve your skills</p>
             </div>
           </div>
 
@@ -301,10 +306,10 @@ export default function ResourcesPage() {
                     />
                     <div className="flex-1">
                       <div className="flex items-center justify-between gap-3">
-                        <h4 className="font-semibold text-white group-hover:text-primary-themed transition-colors">{item.title}</h4>
+                        <h4 className="font-semibold text-slate-900 dark:text-white group-hover:text-primary-themed transition-colors">{item.title}</h4>
                         <ExternalLink className="w-4 h-4 text-slate-400 shrink-0" />
                       </div>
-                      <p className="text-slate-400 text-sm mt-1">{item.description}</p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{item.description}</p>
                     </div>
                   </div>
                 </Card>
@@ -317,12 +322,12 @@ export default function ResourcesPage() {
         <section id="quizzes" className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
+              <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
                 <Sparkles className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-white">Interactive Quizzes</h2>
-                <p className="text-slate-400 text-sm">Test your knowledge and improve your skills</p>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Interactive Quizzes</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm">Test your knowledge and improve your skills</p>
               </div>
             </div>
             <Link href="#" className="text-primary-themed text-sm font-medium hover:underline">View all</Link>
@@ -331,19 +336,19 @@ export default function ResourcesPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {quizzes.map((quiz) => (
               <Card key={quiz.title} className="relative overflow-hidden">
-                <div className="absolute top-0 right-0 px-3 py-1 bg-slate-800 text-slate-200 text-xs font-medium rounded-bl-xl border-l border-b border-slate-700">
+                <div className="absolute top-0 right-0 px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-200 text-xs font-medium rounded-bl-xl border-l border-b border-slate-200 dark:border-slate-700">
                   {quiz.difficulty}
                 </div>
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
+                  <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
                     <quiz.icon className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-white">{quiz.title}</h4>
-                    <p className="text-slate-400 text-xs">{quiz.time}</p>
+                    <h4 className="font-semibold text-slate-900 dark:text-white">{quiz.title}</h4>
+                    <p className="text-slate-500 dark:text-slate-400 text-xs">{quiz.time}</p>
                   </div>
                 </div>
-                <p className="text-slate-400 text-sm mb-4">{quiz.description}</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">{quiz.description}</p>
                 <Button className="w-full">
                   <Play className="w-4 h-4" />
                   Start Quiz
@@ -357,12 +362,12 @@ export default function ResourcesPage() {
         <section id="videos" className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
+              <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center" style={{ color: "var(--theme-primary)" }}>
                 <Video className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-white">Video Lessons</h2>
-                <p className="text-slate-400 text-sm">Visual explanations to help concepts click</p>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Video Lessons</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm">Visual explanations to help concepts click</p>
               </div>
             </div>
             <Link href="#" className="text-primary-themed text-sm font-medium hover:underline">View all</Link>
@@ -398,8 +403,8 @@ export default function ResourcesPage() {
                     </div>
                   </div>
                   <div className="p-4">
-                    <h4 className="font-semibold text-white mb-1 group-hover:text-primary-themed transition-colors">{video.title}</h4>
-                    <p className="text-slate-400 text-sm">{video.description}</p>
+                    <h4 className="font-semibold text-slate-900 dark:text-white mb-1 group-hover:text-primary-themed transition-colors">{video.title}</h4>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm">{video.description}</p>
                   </div>
                 </Card>
               </a>
@@ -409,24 +414,24 @@ export default function ResourcesPage() {
 
         {/* Downloads Section */}
         <Card id="downloads" className="overflow-hidden" padding="none">
-          <div className="p-6 bg-gradient-to-r from-slate-800 to-slate-900 text-white">
+          <div className="p-6 bg-gradient-to-r from-slate-200 dark:from-slate-800 to-slate-300 dark:to-slate-900">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-slate-400/20 dark:bg-white/10 flex items-center justify-center text-slate-700 dark:text-white">
                 <FileDown className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-xl font-bold">Downloads</h2>
-                <p className="text-slate-300 text-sm">Cheat sheets, worksheets, and reference guides</p>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Downloads</h2>
+                <p className="text-slate-600 dark:text-slate-300 text-sm">Cheat sheets, worksheets, and reference guides</p>
               </div>
             </div>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {downloads.map((item) => (
-                <div key={item.title} className="p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 hover:bg-slate-900 transition-all cursor-pointer group">
+                <div key={item.title} className="p-4 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all cursor-pointer group">
                   <div className="text-3xl mb-3">{item.icon}</div>
-                  <h4 className="font-medium text-white text-sm mb-1">{item.title}</h4>
-                  <p className="text-slate-400 text-xs mb-3">{item.description}</p>
+                  <h4 className="font-medium text-slate-900 dark:text-white text-sm mb-1">{item.title}</h4>
+                  <p className="text-slate-500 dark:text-slate-400 text-xs mb-3">{item.description}</p>
                   <Button variant="outline" size="sm" className="w-full group-hover:border-slate-500 group-hover:text-primary-themed">
                     <Download className="w-4 h-4" />
                     Download
